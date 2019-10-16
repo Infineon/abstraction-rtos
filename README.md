@@ -52,9 +52,7 @@ Finally, the following macros need to be defined for memory allocations:
 * [API Reference Guide](https://cypresssemiconductorco.github.io/abstraction-rtos/html/modules.html)
 * [Cypress Semiconductor](http://www.cypress.com)
 * [Cypress Semiconductor GitHub](https://github.com/cypresssemiconductorco)
-* [Version](./version.txt)
-* [LICENSE](./LICENSE)
-* [EULA](./EULA)
+* [ModusToolbox](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
 © Cypress Semiconductor Corporation, 2019.

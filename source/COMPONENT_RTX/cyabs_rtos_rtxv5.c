@@ -217,6 +217,18 @@ cy_rslt_t cy_rtos_join_thread(cy_thread_t *thread)
     return status;
 }
 
+cy_rslt_t cy_rtos_get_thread_handle(cy_thread_t *thread)
+{
+    cy_rslt_t status = CY_RSLT_SUCCESS;
+
+    if (thread == NULL)
+        status = CY_RTOS_BAD_PARAM;
+    else
+        *thread = osThreadGetId();
+
+    return status;
+}
+
 
 /******************************************************
 *                 Mutexes

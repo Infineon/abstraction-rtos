@@ -67,7 +67,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('index.html','');});
+$(document).ready(function(){initNavTree('md_abstraction_rtos_RELEASE.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -87,14 +87,18 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Cypress RTOS Abstraction </div>  </div>
+<div class="title">Cypress RTOS Abstraction Library 1.0.1 </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2>Overview</h2>
-<p>The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but without depending on any particular RTOS.</p>
-<p>To use the RTOS Abstraction, simply include a reference to <code>cyabs_rtos.h</code>.</p>
-<h2>Features</h2>
+<div class="textblock"><p>The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.</p>
+<h3>What's New In This Release?</h3>
 <ul>
+<li>Added a new function to get the ID of the currently running thread.</li>
+<li>A few minor updates to avoid possible warnings depending on compiler.</li>
+<li>Minor documentation updates</li>
+</ul>
+<h3>What's Included?</h3>
+<p>The this release of the RTOS Abstraction API includes support for the following:</p><ul>
 <li>APIs for interacting with common RTOS Features including:<ul>
 <li>Threads</li>
 <li>Mutexes</li>
@@ -110,36 +114,22 @@ $(document).ready(function(){initNavTree('index.html','');});
 </ul>
 </li>
 </ul>
-<h2>Porting Notes</h2>
-<p>In order to port to a new environment, the file cyabs_rtos_impl.h must be provided with definitions of some basic types for the abstraction layer. The types expected to be defined are:</p>
-<ul>
-<li><code>cy_thread_t</code> : typedef from underlying RTOS thread type</li>
-<li><code>cy_thread_arg_t</code> : typedef from the RTOS type that is passed to the entry function of a thread.</li>
-<li><code>cy_mutex_t</code> : typedef from the underlying RTOS mutex type</li>
-<li><code>cy_event_t</code> : typedef from the underlying RTOS event type</li>
-<li><code>cy_queue_t</code> : typedef from the underlying RTOS queue type</li>
-<li><code>cy_timer_callback_arg_t</code> : typedef from the RTOS type that is passed to the timer callback function</li>
-<li><code>cy_timer_t</code> : typedef from the underlying RTOS timer type</li>
-<li><code>cy_time_t</code> : count of time in milliseconds</li>
-<li><code>cy_rtos_error_t</code> : typedef from the underlying RTOS error type</li>
-</ul>
-<p>The enum <code>cy_thread_priority_t</code> needs to have the following priority values defined and mapped to RTOS specific values:</p><ul>
-<li><code>CY_RTOS_PRIORITY_MIN</code></li>
-<li><code>CY_RTOS_PRIORITY_LOW</code></li>
-<li><code>CY_RTOS_PRIORITY_BELOWNORMAL</code></li>
-<li><code>CY_RTOS_PRIORITY_NORMAL</code></li>
-<li><code>CY_RTOS_PRIORITY_ABOVENORMAL</code></li>
-<li><code>CY_RTOS_PRIORITY_HIGH</code></li>
-<li><code>CY_RTOS_PRIORITY_REALTIME</code></li>
-<li><code>CY_RTOS_PRIORITY_MAX</code></li>
-</ul>
-<p>Finally, the following macros need to be defined for memory allocations:</p><ul>
-<li><code>CY_RTOS_MIN_STACK_SIZE</code></li>
-<li><code>CY_RTOS_ALIGNMENT</code></li>
-<li><code>CY_RTOS_ALIGNMENT_MASK</code></li>
-</ul>
-<h2>More information</h2>
-<ul>
+<h3>Supported Software and Tools</h3>
+<p>This version of the RTOS Abstraction API was validated for compatibility with the following Software and Tools:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">Software and Tools  </th><th class="markdownTableHeadCenter">Version   </th></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">ModusToolbox Software Environment  </td><td class="markdownTableBodyCenter">2.0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">GCC Compiler  </td><td class="markdownTableBodyCenter">7.4   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">IAR Compiler  </td><td class="markdownTableBodyCenter">8.32   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">ARM Compiler  </td><td class="markdownTableBodyCenter">6.11   </td></tr>
+</table>
+<h3>More information</h3>
+<p>Use the following links for more information, as needed:</p><ul>
 <li><a href="https://cypresssemiconductorco.github.io/abstraction-rtos/html/modules.html">API Reference Guide</a></li>
 <li><a href="http://www.cypress.com">Cypress Semiconductor</a></li>
 <li><a href="https://github.com/cypresssemiconductorco">Cypress Semiconductor GitHub</a></li>

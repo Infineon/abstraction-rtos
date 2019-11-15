@@ -22,11 +22,12 @@
 * limitations under the License.
 *******************************************************************************/
 
+#include "cy_utils.h"
+#include "cy_result.h"
 #include "cyabs_rtos.h"
 #include <stdlib.h>
 #include <FreeRTOS.h>
 #include <task.h>
-#include <cy_result.h>
 
 static cy_rtos_error_t last_error;
 
@@ -48,7 +49,7 @@ static void timer_callback(TimerHandle_t arg)
 }
 
 /******************************************************
-*             Function definitions
+*                 Error Converter
 ******************************************************/
 
 cy_rtos_error_t cy_rtos_last_error()
@@ -56,11 +57,15 @@ cy_rtos_error_t cy_rtos_last_error()
     return last_error;
 }
 
+/******************************************************
+*                 Threads
+******************************************************/
 
 cy_rslt_t cy_rtos_create_thread(cy_thread_t *thread, cy_thread_entry_fn_t entry_function,
     const char *name, void *stack, uint32_t stack_size, cy_thread_priority_t priority, cy_thread_arg_t arg)
 {
     cy_rslt_t status;
+    CY_UNUSED_PARAMETER(stack);
     if (thread == NULL || stack_size < CY_RTOS_MIN_STACK_SIZE)
     {
         status = CY_RTOS_BAD_PARAM;
@@ -181,6 +186,22 @@ cy_rslt_t cy_rtos_join_thread(cy_thread_t *thread)
     return status;
 }
 
+cy_rslt_t cy_rtos_get_thread_handle(cy_thread_t *thread)
+{
+    cy_rslt_t status = CY_RSLT_SUCCESS;
+
+    if (thread == NULL)
+        status = CY_RTOS_BAD_PARAM;
+    else
+        *thread = xTaskGetCurrentTaskHandle();
+
+    return status;
+}
+
+
+/******************************************************
+*                 Mutexes
+******************************************************/
 
 cy_rslt_t cy_rtos_init_mutex(cy_mutex_t *mutex)
 {
@@ -251,6 +272,10 @@ cy_rslt_t cy_rtos_deinit_mutex(cy_mutex_t *mutex)
     return status;
 }
 
+
+/******************************************************
+*                 Semaphores
+******************************************************/
 
 cy_rslt_t cy_rtos_init_semaphore(cy_semaphore_t *semaphore, uint32_t maxcount, uint32_t initcount)
 {
@@ -340,6 +365,10 @@ cy_rslt_t cy_rtos_deinit_semaphore(cy_semaphore_t *semaphore)
     return status;
 }
 
+
+/******************************************************
+*                 Events
+******************************************************/
 
 cy_rslt_t cy_rtos_init_event(cy_event_t *event)
 {
@@ -464,6 +493,10 @@ cy_rslt_t cy_rtos_deinit_event(cy_event_t *event)
     return status;
 }
 
+
+/******************************************************
+*                 Queues
+******************************************************/
 
 cy_rslt_t cy_rtos_init_queue(cy_queue_t *queue, size_t length, size_t itemsize)
 {
@@ -603,6 +636,11 @@ cy_rslt_t cy_rtos_deinit_queue(cy_queue_t *queue)
     return status;
 }
 
+
+/******************************************************
+*                 Timers
+******************************************************/
+
 cy_rslt_t cy_rtos_init_timer(cy_timer_t *timer, cy_timer_trigger_type_t type,
     cy_timer_callback_t fun, cy_timer_callback_arg_t arg)
 {
@@ -718,6 +756,10 @@ cy_rslt_t cy_rtos_deinit_timer(cy_timer_t *timer)
     return status;
 }
 
+
+/******************************************************
+*                 Time
+******************************************************/
 
 cy_rslt_t cy_rtos_get_time(cy_time_t *tval)
 {

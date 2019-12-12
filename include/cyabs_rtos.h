@@ -29,7 +29,7 @@
 #define INCLUDED_CY_RTOS_INTERFACE_H_
 
 #include "cyabs_rtos_impl.h"
-#include <cy_result.h>
+#include "cy_result.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -72,6 +72,8 @@ extern "C"
 #define CY_RTOS_GENERAL_ERROR               CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 2)
 /** A bad argument was passed into the APIs */
 #define CY_RTOS_BAD_PARAM                   CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 5)
+/** A memory alignment issue was detected. Ensure memory provided is aligned per CY_RTOS_ALIGNMENT */
+#define CY_RTOS_ALIGNMENT_ERROR             CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 6)
 
 /** \} group_abstraction_rtos_common */
 

@@ -29,6 +29,7 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+static const uint32_t TASK_IDENT = 0xABCDEF01;
 static cy_rtos_error_t last_error;
 
 typedef struct
@@ -61,33 +62,75 @@ cy_rtos_error_t cy_rtos_last_error()
 *                 Threads
 ******************************************************/
 
+typedef struct
+{
+    StaticTask_t task;
+    uint32_t magic;
+    void *memptr;
+} cy_task_wrapper_t;
+
 cy_rslt_t cy_rtos_create_thread(cy_thread_t *thread, cy_thread_entry_fn_t entry_function,
     const char *name, void *stack, uint32_t stack_size, cy_thread_priority_t priority, cy_thread_arg_t arg)
 {
     cy_rslt_t status;
-    CY_UNUSED_PARAMETER(stack);
     if (thread == NULL || stack_size < CY_RTOS_MIN_STACK_SIZE)
     {
         status = CY_RTOS_BAD_PARAM;
     }
+    else if (stack != NULL && (0 != (((uint32_t)stack) & CY_RTOS_ALIGNMENT_MASK)))
+    {
+        status = CY_RTOS_ALIGNMENT_ERROR;
+    }
     else
     {
-        uint32_t stack_deapth = ((stack_size + (sizeof(StackType_t) - 1)) / sizeof(StackType_t));
-        last_error = xTaskCreate((TaskFunction_t)entry_function, name, stack_deapth, (void *)arg, priority, thread);
-        if (last_error == errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY)
-        {
+        /* If the user provides a stack, we need to allocate memory for the StaticTask_t. If we 
+         * allocate memory we also need to clean it up. This is true when the task exits itself or 
+         * when it is killed. In the case it is killed is fairly straight forward. In the case 
+         * where it exits, we can't clean up any allocated memory since we can't free it before 
+         * calling vTaskDelete() and vTaskDelete() never returns. Thus we need to do it in join. 
+         * However, if the task exited itself it has also released any memory it allocated. Thus
+         * in order to be able to reliably free memory as part of join, we need to know that the
+         * data we are accessing (the StaticTask_t) has not been freed. We therefore need to always
+         * allocate that object ourselves. This means we also need to allocate the stack if the
+         * user did not provide one. */
+        uint32_t offset = (stack == NULL)
+            ? (stack_size & ~CY_RTOS_ALIGNMENT_MASK)
+            : 0;
+        uint32_t size = offset + sizeof(cy_task_wrapper_t);
+        uint8_t *ident = (uint8_t*)pvPortMalloc(size);
+
+        if (ident == NULL)
             status = CY_RTOS_NO_MEMORY;
-        }
-        else if (last_error != pdPASS)
-        {
-            status = CY_RTOS_GENERAL_ERROR;
-        }
         else
         {
+            StackType_t stack_size_rtos = ((stack_size & ~CY_RTOS_ALIGNMENT_MASK) / sizeof(StackType_t));
+            StackType_t *stack_rtos = (stack == NULL)
+                ? (StackType_t*)ident
+                : (StackType_t*)stack;
+
+            cy_task_wrapper_t *wrapper = (cy_task_wrapper_t*)(ident + offset);
+            wrapper->magic = TASK_IDENT;
+            wrapper->memptr = ident;
+            CY_ASSERT(((uint32_t)wrapper & CY_RTOS_ALIGNMENT_MASK) == 0UL);
+            *thread = xTaskCreateStatic((TaskFunction_t)entry_function, name, stack_size_rtos, arg, priority, stack_rtos, &(wrapper->task));
+            CY_ASSERT(((void*)*thread == (void*)&(wrapper->task)) || (*thread == NULL));
             status = CY_RSLT_SUCCESS;
         }
     }
     return status;
+}
+
+static void check_and_free_task(cy_thread_t thread)
+{
+    /* Check to see if we allocated the task and if so free it up. */
+    cy_task_wrapper_t *wrapper = ((cy_task_wrapper_t*)thread);
+    vTaskSuspendAll();
+    if (wrapper->magic == TASK_IDENT)
+    {
+        wrapper->magic = 0;
+        vPortFree(wrapper->memptr);
+    }
+    xTaskResumeAll();
 }
 
 cy_rslt_t cy_rtos_exit_thread()
@@ -106,6 +149,7 @@ cy_rslt_t cy_rtos_terminate_thread(cy_thread_t *thread)
     else
     {
         vTaskDelete(*thread);
+        check_and_free_task(*thread);
         status = CY_RSLT_SUCCESS;
     }
     return status;
@@ -176,10 +220,31 @@ cy_rslt_t cy_rtos_join_thread(cy_thread_t *thread)
     {
         TickType_t ticks = pdMS_TO_TICKS(1);
 
+        /* In order to join the thread, we must make sure it has finished running 
+         * (state == eDeleted). However, just because the state is eDeleted does
+         * not actually mean that the RTOS has stoped using it. It just means that
+         * vTaskDelete() was called on the thread. The idle task must still run
+         * to finish processing the deleted items and free up any memory that was
+         * allocated by the RTOS. So, we need to make sure the idle task has run
+         * before attempting to free up memory we allocated for it. To do this,we 
+         * lower our priority to that of the idle task, wait for the thread to be 
+         * deleted, and then delay again to ensure the idle task has run after 
+         * the thread changed state to eDeleted.
+         * NOTE: Each call to vTaskDelay() ensure that other threads at or above 
+         * our priority level have had a chance to run.
+         */
+        TaskHandle_t handle = xTaskGetCurrentTaskHandle();
+        UBaseType_t priority = uxTaskPriorityGet(handle);
+        vTaskPrioritySet(handle, tskIDLE_PRIORITY);
         while (eDeleted != eTaskGetState(*thread))
         {
             vTaskDelay(ticks);
         }
+        vTaskDelay(0);
+        vTaskPrioritySet(handle, priority);
+
+        check_and_free_task(*thread);
+        *thread = NULL;
 
         status = CY_RSLT_SUCCESS;
     }

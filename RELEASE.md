@@ -1,10 +1,9 @@
-### Cypress RTOS Abstraction Library 1.0.1
+### Cypress RTOS Abstraction Library 1.1
 The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.
  
 ### What's New In This Release?
-* Added a new function to get the ID of the currently running thread.
-* A few minor updates to avoid possible warnings depending on compiler.
-* Minor documentation updates
+* Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.
+* Removed usage of assert() and replaced with CY_ASSERT()
 
 ### What's Included?
 The this release of the RTOS Abstraction API includes support for the following:

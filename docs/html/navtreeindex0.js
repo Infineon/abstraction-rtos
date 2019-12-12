@@ -3,7 +3,8 @@ var NAVTREEINDEX0 =
 "group__group__abstraction__rtos__common.html":[1,0],
 "group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9":[1,0,4],
 "group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b":[1,0,2],
-"group__group__abstraction__rtos__common.html#ga52e77b28b8cf8f45a73fce92cf8bd379":[1,0,5],
+"group__group__abstraction__rtos__common.html#ga52e77b28b8cf8f45a73fce92cf8bd379":[1,0,6],
+"group__group__abstraction__rtos__common.html#ga7eac5e076f6f4b70e3478b507a9d90f2":[1,0,5],
 "group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647":[1,0,3],
 "group__group__abstraction__rtos__common.html#gab31d8535128df9506a4220c2b1f41a60":[1,0,0],
 "group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8":[1,0,1],
@@ -51,8 +52,8 @@ var NAVTREEINDEX0 =
 "group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1ace817780efe3765b840bc941c1c7fd64":[1,6,1,2],
 "group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af554aa26a56ebee9da223be7c1f9d0e1":[1,6,1,1],
 "group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839":[1,6,1,0],
-"index.html":[],
 "index.html":[0],
+"index.html":[],
 "modules.html":[1],
 "pages.html":[]
 };

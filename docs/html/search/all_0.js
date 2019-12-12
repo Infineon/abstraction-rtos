@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['cy_5frtos_5falignment_5ferror',['CY_RTOS_ALIGNMENT_ERROR',['../group__group__abstraction__rtos__common.html#ga7eac5e076f6f4b70e3478b507a9d90f2',1,'cyabs_rtos.h']]],
   ['cy_5frtos_5fbad_5fparam',['CY_RTOS_BAD_PARAM',['../group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9',1,'cyabs_rtos.h']]],
   ['cy_5frtos_5fcount_5fqueue',['cy_rtos_count_queue',['../group__group__abstraction__rtos__queue.html#gae5d590529ebef4941be60519655fadc0',1,'cyabs_rtos.h']]],
   ['cy_5frtos_5fdeinit_5fmutex',['cy_rtos_deinit_mutex',['../group__group__abstraction__rtos__mutex.html#ga8cd21b8a116a54ac397209054f35ee45',1,'cyabs_rtos.h']]],
@@ -41,9 +42,9 @@ var searchData=
   ['cy_5ftimer_5fcallback_5ft',['cy_timer_callback_t',['../group__group__abstraction__rtos__timer.html#ga92b29af1c848137e18dec1ae1cb5ffec',1,'cyabs_rtos.h']]],
   ['cy_5ftimer_5ftrigger_5ftype_5ft',['cy_timer_trigger_type_t',['../group__group__abstraction__rtos__timer.html#ga0606aecc2c90e9315f7da5e3daa3ffc1',1,'cyabs_rtos.h']]],
   ['cy_5ftimer_5ftype_5fonce',['cy_timer_type_once',['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1a184291ed50b432a85713085e3230fb69',1,'cy_timer_type_once():&#160;cyabs_rtos.h'],['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af554aa26a56ebee9da223be7c1f9d0e1',1,'CY_TIMER_TYPE_ONCE():&#160;cyabs_rtos.h']]],
-  ['cy_5ftimer_5ftype_5fperiodic',['cy_timer_type_periodic',['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1ace817780efe3765b840bc941c1c7fd64',1,'cy_timer_type_periodic():&#160;cyabs_rtos.h'],['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839',1,'CY_TIMER_TYPE_PERIODIC():&#160;cyabs_rtos.h']]],
+  ['cy_5ftimer_5ftype_5fperiodic',['CY_TIMER_TYPE_PERIODIC',['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839',1,'CY_TIMER_TYPE_PERIODIC():&#160;cyabs_rtos.h'],['../group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1ace817780efe3765b840bc941c1c7fd64',1,'cy_timer_type_periodic():&#160;cyabs_rtos.h']]],
   ['common',['Common',['../group__group__abstraction__rtos__common.html',1,'']]],
   ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../index.html',1,'']]],
   ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../md_abstraction_rtos_README.html',1,'']]],
-  ['cypress_20rtos_20abstraction_20library_201_2e0_2e1',['Cypress RTOS Abstraction Library 1.0.1',['../md_abstraction_rtos_RELEASE.html',1,'']]]
+  ['cypress_20rtos_20abstraction_20library_201_2e1',['Cypress RTOS Abstraction Library 1.1',['../md_abstraction_rtos_RELEASE.html',1,'']]]
 ];

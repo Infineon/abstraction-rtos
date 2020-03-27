@@ -87,15 +87,10 @@ $(document).ready(function(){initNavTree('md_abstraction_rtos_RELEASE.html','');
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Cypress RTOS Abstraction Library 1.1 </div>  </div>
+<div class="title">Cypress RTOS Abstraction Library </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.</p>
-<h3>What's New In This Release?</h3>
-<ul>
-<li>Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.</li>
-<li>Removed usage of assert() and replaced with CY_ASSERT()</li>
-</ul>
 <h3>What's Included?</h3>
 <p>The this release of the RTOS Abstraction API includes support for the following:</p><ul>
 <li>APIs for interacting with common RTOS Features including:<ul>
@@ -110,8 +105,29 @@ $(document).ready(function(){initNavTree('md_abstraction_rtos_RELEASE.html','');
 <li>Implementations are provided for<ul>
 <li>FreeRTOS</li>
 <li>RTX (CMSIS RTOS)</li>
+<li>ThreadX</li>
 </ul>
 </li>
+</ul>
+<h3>What Changed?</h3>
+<h4>v1.2.0</h4>
+<ul>
+<li>Added support for ThreadX <h4>v1.1.0</h4>
+</li>
+</ul>
+<ul>
+<li>Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.</li>
+<li>Removed usage of assert() and replaced with CY_ASSERT() <h4>v1.0.1</h4>
+</li>
+</ul>
+<ul>
+<li>Added a new function to get the ID of the currently running thread.</li>
+<li>A few minor updates to avoid possible warnings depending on compiler.</li>
+<li>Minor documentation updates <h4>v1.0.0</h4>
+</li>
+</ul>
+<ul>
+<li>Initial release supporting FreeRTOS &amp; RTX</li>
 </ul>
 <h3>Supported Software and Tools</h3>
 <p>This version of the RTOS Abstraction API was validated for compatibility with the following Software and Tools:</p>
@@ -133,7 +149,7 @@ $(document).ready(function(){initNavTree('md_abstraction_rtos_RELEASE.html','');
 <li><a href="http://www.cypress.com">Cypress Semiconductor</a></li>
 <li><a href="https://github.com/cypresssemiconductorco">Cypress Semiconductor GitHub</a></li>
 <li><a href="https://www.cypress.com/products/modustoolbox-software-environment">ModusToolbox</a> <hr/>
- © Cypress Semiconductor Corporation, 2019. </li>
+ © Cypress Semiconductor Corporation, 2019-2020. </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

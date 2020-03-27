@@ -1,33 +1,39 @@
 var indexSectionsWithContent =
 {
-  0: "cdmqst",
+  0: "cdemnpqstw",
   1: "c",
   2: "c",
-  3: "c",
+  3: "enpst",
   4: "c",
-  5: "cmqst",
-  6: "cd"
+  5: "c",
+  6: "c",
+  7: "cmqstw",
+  8: "cd"
 };
 
 var indexSectionNames =
 {
   0: "all",
-  1: "functions",
-  2: "typedefs",
-  3: "enums",
-  4: "enumvalues",
-  5: "groups",
-  6: "pages"
+  1: "classes",
+  2: "functions",
+  3: "variables",
+  4: "typedefs",
+  5: "enums",
+  6: "enumvalues",
+  7: "groups",
+  8: "pages"
 };
 
 var indexSectionLabels =
 {
   0: "All",
-  1: "Functions",
-  2: "Typedefs",
-  3: "Enumerations",
-  4: "Enumerator",
-  5: "Modules",
-  6: "Pages"
+  1: "Data Structures",
+  2: "Functions",
+  3: "Variables",
+  4: "Typedefs",
+  5: "Enumerations",
+  6: "Enumerator",
+  7: "Modules",
+  8: "Pages"
 };
 

@@ -97,44 +97,41 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__timer
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ga92b29af1c848137e18dec1ae1cb5ffec"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga92b29af1c848137e18dec1ae1cb5ffec">cy_timer_callback_t</a>) (cy_timer_callback_arg_t arg)</td></tr>
+<tr class="memitem:ga92b29af1c848137e18dec1ae1cb5ffec"><td class="memItemLeft" align="right" valign="top"><a id="ga92b29af1c848137e18dec1ae1cb5ffec"></a>
+typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga92b29af1c848137e18dec1ae1cb5ffec">cy_timer_callback_t</a>) (cy_timer_callback_arg_t arg)</td></tr>
+<tr class="memdesc:ga92b29af1c848137e18dec1ae1cb5ffec"><td class="mdescLeft">&#160;</td><td class="mdescRight">The callback function to be called by a timer. <br /></td></tr>
 <tr class="separator:ga92b29af1c848137e18dec1ae1cb5ffec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ga0606aecc2c90e9315f7da5e3daa3ffc1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga0606aecc2c90e9315f7da5e3daa3ffc1">cy_timer_trigger_type_t</a> { <a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839">CY_TIMER_TYPE_PERIODIC</a>, 
-<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af554aa26a56ebee9da223be7c1f9d0e1">CY_TIMER_TYPE_ONCE</a>, 
-<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1ace817780efe3765b840bc941c1c7fd64">cy_timer_type_periodic</a> = CY_TIMER_TYPE_PERIODIC, 
-<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1a184291ed50b432a85713085e3230fb69">cy_timer_type_once</a> = CY_TIMER_TYPE_ONCE
+<tr class="memitem:ga0606aecc2c90e9315f7da5e3daa3ffc1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga0606aecc2c90e9315f7da5e3daa3ffc1">cy_timer_trigger_type_t</a> { <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839">CY_TIMER_TYPE_PERIODIC</a>, 
+<br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af554aa26a56ebee9da223be7c1f9d0e1">CY_TIMER_TYPE_ONCE</a>, 
+<br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1ace817780efe3765b840bc941c1c7fd64">cy_timer_type_periodic</a> = CY_TIMER_TYPE_PERIODIC, 
+<br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1a184291ed50b432a85713085e3230fb69">cy_timer_type_once</a> = CY_TIMER_TYPE_ONCE
+<br />
  }</td></tr>
+<tr class="memdesc:ga0606aecc2c90e9315f7da5e3daa3ffc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of timer.  <a href="group__group__abstraction__rtos__timer.html#ga0606aecc2c90e9315f7da5e3daa3ffc1">More...</a><br /></td></tr>
 <tr class="separator:ga0606aecc2c90e9315f7da5e3daa3ffc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0fa10fe9a8589d185f27e238ee375bc8"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga0fa10fe9a8589d185f27e238ee375bc8">cy_rtos_init_timer</a> (cy_timer_t *timer, <a class="el" href="group__group__abstraction__rtos__timer.html#ga0606aecc2c90e9315f7da5e3daa3ffc1">cy_timer_trigger_type_t</a> type, <a class="el" href="group__group__abstraction__rtos__timer.html#ga92b29af1c848137e18dec1ae1cb5ffec">cy_timer_callback_t</a> fun, cy_timer_callback_arg_t arg)</td></tr>
+<tr class="memdesc:ga0fa10fe9a8589d185f27e238ee375bc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new timer.  <a href="#ga0fa10fe9a8589d185f27e238ee375bc8">More...</a><br /></td></tr>
 <tr class="separator:ga0fa10fe9a8589d185f27e238ee375bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8ec7a094161e4af7b0765e4e89dd4f21"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga8ec7a094161e4af7b0765e4e89dd4f21">cy_rtos_start_timer</a> (cy_timer_t *timer, cy_time_t num_ms)</td></tr>
+<tr class="memdesc:ga8ec7a094161e4af7b0765e4e89dd4f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a timer.  <a href="#ga8ec7a094161e4af7b0765e4e89dd4f21">More...</a><br /></td></tr>
 <tr class="separator:ga8ec7a094161e4af7b0765e4e89dd4f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga45f1cfa24d69049bd66ee8c41e089d01"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga45f1cfa24d69049bd66ee8c41e089d01">cy_rtos_stop_timer</a> (cy_timer_t *timer)</td></tr>
+<tr class="memdesc:ga45f1cfa24d69049bd66ee8c41e089d01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop a timer.  <a href="#ga45f1cfa24d69049bd66ee8c41e089d01">More...</a><br /></td></tr>
 <tr class="separator:ga45f1cfa24d69049bd66ee8c41e089d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga54237d816523d346c34ed6c1ff3882fe"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga54237d816523d346c34ed6c1ff3882fe">cy_rtos_is_running_timer</a> (cy_timer_t *timer, bool *state)</td></tr>
+<tr class="memdesc:ga54237d816523d346c34ed6c1ff3882fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns state of a timer.  <a href="#ga54237d816523d346c34ed6c1ff3882fe">More...</a><br /></td></tr>
 <tr class="separator:ga54237d816523d346c34ed6c1ff3882fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga050a503bed20e53055e20aec0c7a4d3e"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__timer.html#ga050a503bed20e53055e20aec0c7a4d3e">cy_rtos_deinit_timer</a> (cy_timer_t *timer)</td></tr>
+<tr class="memdesc:ga050a503bed20e53055e20aec0c7a4d3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinit the timer.  <a href="#ga050a503bed20e53055e20aec0c7a4d3e">More...</a><br /></td></tr>
 <tr class="separator:ga050a503bed20e53055e20aec0c7a4d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="ga92b29af1c848137e18dec1ae1cb5ffec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga92b29af1c848137e18dec1ae1cb5ffec">&#9670;&nbsp;</a></span>cy_timer_callback_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void(* cy_timer_callback_t) (cy_timer_callback_arg_t arg)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The callback function to be called by a timer </p>
-
-</div>
-</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ga0606aecc2c90e9315f7da5e3daa3ffc1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga0606aecc2c90e9315f7da5e3daa3ffc1">&#9670;&nbsp;</a></span>cy_timer_trigger_type_t</h2>
@@ -147,7 +144,8 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The type of timer </p>
+
+<p>The type of timer. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga0606aecc2c90e9315f7da5e3daa3ffc1af7a191ed0c1879be4d0840a166299839"></a>CY_TIMER_TYPE_PERIODIC&#160;</td><td class="fielddoc"><p>called periodically until stopped </p>
 </td></tr>
@@ -199,13 +197,16 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Create a new timer.</p>
-<p>This function intializes a timer object. </p><dl class="section note"><dt>Note</dt><dd>The timer is not active until start is called.</dd></dl>
+
+<p>Create a new timer. </p>
+<p>This function initializes a timer object. </p><dl class="section note"><dt>Note</dt><dd>The timer is not active until start is called. </dd>
+<dd>
+The callback may be (likely will be) called from a different thread.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">timer</td><td>Pointer to the timer handle to initalize </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">timer</td><td>Pointer to the timer handle to initialize </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of timer (periodic or once) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fun</td><td>The functiuon </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fun</td><td>The function </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>Argument to pass along to the callback function</td></tr>
   </table>
   </dd>
@@ -239,12 +240,12 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Start a timer.</p>
-<dl class="section note"><dt>Note</dt><dd>The callback may be (likely will be) called from a different thread.</dd></dl>
+
+<p>Start a timer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">timer</td><td>Pointer to the timer handle </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num_ms</td><td>The number of miliseconds to wait before the timer fires</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">num_ms</td><td>The number of milliseconds to wait before the timer fires</td></tr>
   </table>
   </dd>
 </dl>
@@ -267,7 +268,8 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Stop a timer.</p>
+
+<p>Stop a timer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">timer</td><td>Pointer to the timer handle</td></tr>
@@ -303,7 +305,8 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Returns state of a timer.</p>
+
+<p>Returns state of a timer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">timer</td><td>Pointer to the timer handle </td></tr>
@@ -330,8 +333,9 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Deinit the timer.</p>
-<p>This function de initializes the timer and frees all consumed resources.</p>
+
+<p>Deinit the timer. </p>
+<p>This function deinitializes the timer and frees all consumed resources.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">timer</td><td>Pointer to the timer handle</td></tr>

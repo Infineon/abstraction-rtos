@@ -97,18 +97,29 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__commo
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga52e77b28b8cf8f45a73fce92cf8bd379"><td class="memItemLeft" align="right" valign="top">cy_rtos_error_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga52e77b28b8cf8f45a73fce92cf8bd379">cy_rtos_last_error</a> ()</td></tr>
+<tr class="memdesc:ga52e77b28b8cf8f45a73fce92cf8bd379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last error from the RTOS.  <a href="#ga52e77b28b8cf8f45a73fce92cf8bd379">More...</a><br /></td></tr>
 <tr class="separator:ga52e77b28b8cf8f45a73fce92cf8bd379"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab31d8535128df9506a4220c2b1f41a60"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#gab31d8535128df9506a4220c2b1f41a60">CY_RTOS_NEVER_TIMEOUT</a>&#160;&#160;&#160;( (uint32_t)0xffffffffUL )</td></tr>
+<tr class="memdesc:gab31d8535128df9506a4220c2b1f41a60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used with RTOS calls that require a timeout.  <a href="#gab31d8535128df9506a4220c2b1f41a60">More...</a><br /></td></tr>
 <tr class="separator:gab31d8535128df9506a4220c2b1f41a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafc6a1c6f563521d6c5555027d5d7bde8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 0)</td></tr>
+<tr class="memitem:gafc6a1c6f563521d6c5555027d5d7bde8"><td class="memItemLeft" align="right" valign="top"><a id="gafc6a1c6f563521d6c5555027d5d7bde8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 0)</td></tr>
+<tr class="memdesc:gafc6a1c6f563521d6c5555027d5d7bde8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requested operation did not complete in the specified time. <br /></td></tr>
 <tr class="separator:gafc6a1c6f563521d6c5555027d5d7bde8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga516d500bef7d6e6291f08485d0bc003b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 1)</td></tr>
+<tr class="memitem:ga516d500bef7d6e6291f08485d0bc003b"><td class="memItemLeft" align="right" valign="top"><a id="ga516d500bef7d6e6291f08485d0bc003b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 1)</td></tr>
+<tr class="memdesc:ga516d500bef7d6e6291f08485d0bc003b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The RTOS could not allocate memory for the specified operation. <br /></td></tr>
 <tr class="separator:ga516d500bef7d6e6291f08485d0bc003b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga89a0a071bd7a41b5d1f3edb969ee1647"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 2)</td></tr>
+<tr class="memitem:ga89a0a071bd7a41b5d1f3edb969ee1647"><td class="memItemLeft" align="right" valign="top"><a id="ga89a0a071bd7a41b5d1f3edb969ee1647"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 2)</td></tr>
+<tr class="memdesc:ga89a0a071bd7a41b5d1f3edb969ee1647"><td class="mdescLeft">&#160;</td><td class="mdescRight">An error occured in the RTOS. <br /></td></tr>
 <tr class="separator:ga89a0a071bd7a41b5d1f3edb969ee1647"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3b106a6fcedd377b05769dbf2b6f97a9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 5)</td></tr>
+<tr class="memitem:ga3b106a6fcedd377b05769dbf2b6f97a9"><td class="memItemLeft" align="right" valign="top"><a id="ga3b106a6fcedd377b05769dbf2b6f97a9"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 5)</td></tr>
+<tr class="memdesc:ga3b106a6fcedd377b05769dbf2b6f97a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A bad argument was passed into the APIs. <br /></td></tr>
 <tr class="separator:ga3b106a6fcedd377b05769dbf2b6f97a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7eac5e076f6f4b70e3478b507a9d90f2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__common.html#ga7eac5e076f6f4b70e3478b507a9d90f2">CY_RTOS_ALIGNMENT_ERROR</a>&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 6)</td></tr>
+<tr class="memdesc:ga7eac5e076f6f4b70e3478b507a9d90f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">A memory alignment issue was detected.  <a href="#ga7eac5e076f6f4b70e3478b507a9d90f2">More...</a><br /></td></tr>
 <tr class="separator:ga7eac5e076f6f4b70e3478b507a9d90f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -123,67 +134,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Used with RTOS calls that require a timeout. This implies the call will never timeout. </p>
 
-</div>
-</div>
-<a id="gafc6a1c6f563521d6c5555027d5d7bde8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafc6a1c6f563521d6c5555027d5d7bde8">&#9670;&nbsp;</a></span>CY_RTOS_TIMEOUT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CY_RTOS_TIMEOUT&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 0)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Requested operation did not complete in the specified time </p>
-
-</div>
-</div>
-<a id="ga516d500bef7d6e6291f08485d0bc003b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga516d500bef7d6e6291f08485d0bc003b">&#9670;&nbsp;</a></span>CY_RTOS_NO_MEMORY</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CY_RTOS_NO_MEMORY&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 1)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The RTOS could not allocate memory for the specified operation </p>
-
-</div>
-</div>
-<a id="ga89a0a071bd7a41b5d1f3edb969ee1647"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga89a0a071bd7a41b5d1f3edb969ee1647">&#9670;&nbsp;</a></span>CY_RTOS_GENERAL_ERROR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CY_RTOS_GENERAL_ERROR&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 2)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>An error occured in the RTOS </p>
-
-</div>
-</div>
-<a id="ga3b106a6fcedd377b05769dbf2b6f97a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3b106a6fcedd377b05769dbf2b6f97a9">&#9670;&nbsp;</a></span>CY_RTOS_BAD_PARAM</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CY_RTOS_BAD_PARAM&#160;&#160;&#160;CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 5)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A bad argument was passed into the APIs </p>
+<p>Used with RTOS calls that require a timeout. </p>
+<p>This implies the call will never timeout. </p>
 
 </div>
 </div>
@@ -198,7 +151,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>A memory alignment issue was detected. Ensure memory provided is aligned per CY_RTOS_ALIGNMENT </p>
+
+<p>A memory alignment issue was detected. </p>
+<p>Ensure memory provided is aligned per CY_RTOS_ALIGNMENT </p>
 
 </div>
 </div>
@@ -217,7 +172,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Return the last error from the RTOS.</p>
+
+<p>Return the last error from the RTOS. </p>
 <p>The functions in the RTOS abstraction layer adhere to the Cypress return results calling convention. The underlying RTOS implementations will not but rather will have their own error code conventions. This function is provided as a service to the developer, mostly for debugging, and returns the underlying RTOS error code from the last RTOS abstraction layer that returned CY_RTOS_GENERAL_ERROR.</p>
 <dl class="section return"><dt>Returns</dt><dd>RTOS specific error code. </dd></dl>
 

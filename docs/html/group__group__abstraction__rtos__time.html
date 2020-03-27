@@ -93,8 +93,10 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__time.
 <a name="details" id="details"></a><h2 class="groupheader">General Description</h2>
 <table class="memberdecls">
 <tr class="memitem:gabd06aeecc3dfc78f92345c24d381733f"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__time.html#gabd06aeecc3dfc78f92345c24d381733f">cy_rtos_get_time</a> (cy_time_t *tval)</td></tr>
+<tr class="memdesc:gabd06aeecc3dfc78f92345c24d381733f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets time in milliseconds since RTOS start.  <a href="#gabd06aeecc3dfc78f92345c24d381733f">More...</a><br /></td></tr>
 <tr class="separator:gabd06aeecc3dfc78f92345c24d381733f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa33d9f3026f722ac92950c6215e4283a"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__time.html#gaa33d9f3026f722ac92950c6215e4283a">cy_rtos_delay_milliseconds</a> (cy_time_t num_ms)</td></tr>
+<tr class="memdesc:gaa33d9f3026f722ac92950c6215e4283a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay for a number of milliseconds.  <a href="#gaa33d9f3026f722ac92950c6215e4283a">More...</a><br /></td></tr>
 <tr class="separator:gaa33d9f3026f722ac92950c6215e4283a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -113,7 +115,8 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__time.
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Gets time in milliseconds since RTOS start.</p>
+
+<p>Gets time in milliseconds since RTOS start. </p>
 <dl class="section note"><dt>Note</dt><dd>Since this is only 32 bits, it will roll over every 49 days, 17 hours, 2 mins, 47.296 seconds</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -140,11 +143,12 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__time.
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Delay for a number of milliseconds.</p>
+
+<p>Delay for a number of milliseconds. </p>
 <p>Processing of this function depends on the minimum sleep time resolution of the RTOS. The current thread should sleep for the longest period possible which is less than the delay required, then makes up the difference with a tight loop.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">num_ms</td><td>The number of miliseconds to delay for</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">num_ms</td><td>The number of milliseconds to delay for</td></tr>
   </table>
   </dd>
 </dl>

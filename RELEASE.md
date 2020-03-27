@@ -1,9 +1,5 @@
-### Cypress RTOS Abstraction Library 1.1
+### Cypress RTOS Abstraction Library
 The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.
- 
-### What's New In This Release?
-* Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.
-* Removed usage of assert() and replaced with CY_ASSERT()
 
 ### What's Included?
 The this release of the RTOS Abstraction API includes support for the following:
@@ -17,6 +13,20 @@ The this release of the RTOS Abstraction API includes support for the following:
 * Implementations are provided for
     * FreeRTOS
     * RTX (CMSIS RTOS)
+    * ThreadX
+
+### What Changed?
+#### v1.2.0
+* Added support for ThreadX
+#### v1.1.0
+* Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.
+* Removed usage of assert() and replaced with CY_ASSERT()
+#### v1.0.1
+* Added a new function to get the ID of the currently running thread.
+* A few minor updates to avoid possible warnings depending on compiler.
+* Minor documentation updates
+#### v1.0.0
+* Initial release supporting FreeRTOS & RTX
 
 ### Supported Software and Tools
 This version of the RTOS Abstraction API was validated for compatibility with the following Software and Tools:
@@ -37,4 +47,4 @@ Use the following links for more information, as needed:
 * [ModusToolbox](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation, 2019.
+© Cypress Semiconductor Corporation, 2019-2020.

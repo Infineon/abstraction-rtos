@@ -6,5 +6,6 @@ var modules =
     [ "Semaphore", "group__group__abstraction__rtos__semaphore.html", "group__group__abstraction__rtos__semaphore" ],
     [ "Threading", "group__group__abstraction__rtos__threads.html", "group__group__abstraction__rtos__threads" ],
     [ "Time", "group__group__abstraction__rtos__time.html", "group__group__abstraction__rtos__time" ],
-    [ "Timer", "group__group__abstraction__rtos__timer.html", "group__group__abstraction__rtos__timer" ]
+    [ "Timer", "group__group__abstraction__rtos__timer.html", "group__group__abstraction__rtos__timer" ],
+    [ "Worker Thread Utility", "group__group__worker__thread__util.html", "group__group__worker__thread__util" ]
 ];

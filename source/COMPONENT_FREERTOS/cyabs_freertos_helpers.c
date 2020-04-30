@@ -98,7 +98,7 @@ __WEAK void vApplicationSleep( TickType_t xExpectedIdleTime )
 {
     static bool lp_timer_initialized = false;
     static cyhal_lptimer_t timer;
-    uint32_t actualSleep = 0;
+    uint32_t actual_sleep_ms = 0;
 
     if(!lp_timer_initialized)
     {
@@ -115,10 +115,21 @@ __WEAK void vApplicationSleep( TickType_t xExpectedIdleTime )
 
         if(sleep_status != eAbortSleep)
         {
-            cy_rslt_t result = cyhal_syspm_tickless_deepsleep(&timer, pdTICKS_TO_MS(xExpectedIdleTime), &actualSleep);
+            /* By default, the device will deep-sleep in the idle task unless if the device configurator
+            * overrides the behaviour to sleep in the System->Power->RTOS->System Idle Power Mode setting.
+            */
+            bool deep_sleep = true;
+        #if defined (CY_CFG_PWR_SYS_IDLE_MODE)
+            /* If the system needs to operate in active mode the tickless mode should not be used in FreeRTOS */
+            CY_ASSERT(CY_CFG_PWR_SYS_IDLE_MODE != CY_CFG_PWR_MODE_ACTIVE);
+            deep_sleep = (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP);
+        #endif
+            cy_rslt_t result = (deep_sleep)
+                            ? cyhal_syspm_tickless_deepsleep(&timer, pdTICKS_TO_MS(xExpectedIdleTime), &actual_sleep_ms)
+                            : cyhal_syspm_tickless_sleep(&timer, pdTICKS_TO_MS(xExpectedIdleTime), &actual_sleep_ms);
             if(result == CY_RSLT_SUCCESS)
             {
-                vTaskStepTick(actualSleep);
+                vTaskStepTick(pdMS_TO_TICKS(actual_sleep_ms));
             }
         }
     }

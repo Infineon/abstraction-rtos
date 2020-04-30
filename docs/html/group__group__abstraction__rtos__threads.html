@@ -90,14 +90,15 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__threa
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
-<div class="title">Threading</div>  </div>
+<div class="title">Threads</div>  </div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">General Description</h2>
+<p>APIs for creating and working with Threads. </p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ga1e3db7a2b7a64fe9838804f049612d43"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a>) (cy_thread_arg_t arg)</td></tr>
+<tr class="memitem:ga1e3db7a2b7a64fe9838804f049612d43"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a>) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
 <tr class="memdesc:ga1e3db7a2b7a64fe9838804f049612d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a function that is the entry point for a thread.  <a href="#ga1e3db7a2b7a64fe9838804f049612d43">More...</a><br /></td></tr>
 <tr class="separator:ga1e3db7a2b7a64fe9838804f049612d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -119,25 +120,25 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:gacc555d9fef9df1454dbcc8e3bd3e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The state a thread can be in.  <a href="group__group__abstraction__rtos__threads.html#gacc555d9fef9df1454dbcc8e3bd3e4ee6">More...</a><br /></td></tr>
 <tr class="separator:gacc555d9fef9df1454dbcc8e3bd3e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga002d529ea362c3e7670cc04de1bdb30e">cy_rtos_create_thread</a> (cy_thread_t *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a> entry_function, const char *name, void *stack, uint32_t stack_size, cy_thread_priority_t priority, cy_thread_arg_t arg)</td></tr>
+<tr class="memitem:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga002d529ea362c3e7670cc04de1bdb30e">cy_rtos_create_thread</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a> entry_function, const char *name, void *stack, uint32_t stack_size, <a class="el" href="group__group__abstraction__rtos__port.html#ga9f21bb78897c25df019b6e4286ecc7a0">cy_thread_priority_t</a> priority, <a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
 <tr class="memdesc:ga002d529ea362c3e7670cc04de1bdb30e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread with specific thread argument.  <a href="#ga002d529ea362c3e7670cc04de1bdb30e">More...</a><br /></td></tr>
 <tr class="separator:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2865c511e5f36874e1dc6cb6b0fc4f4b"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga2865c511e5f36874e1dc6cb6b0fc4f4b">cy_rtos_exit_thread</a> ()</td></tr>
 <tr class="memdesc:ga2865c511e5f36874e1dc6cb6b0fc4f4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit the current thread.  <a href="#ga2865c511e5f36874e1dc6cb6b0fc4f4b">More...</a><br /></td></tr>
 <tr class="separator:ga2865c511e5f36874e1dc6cb6b0fc4f4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga738c6b5b507480b4dcc735be14eeb804"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga738c6b5b507480b4dcc735be14eeb804">cy_rtos_terminate_thread</a> (cy_thread_t *thread)</td></tr>
+<tr class="memitem:ga738c6b5b507480b4dcc735be14eeb804"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga738c6b5b507480b4dcc735be14eeb804">cy_rtos_terminate_thread</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread)</td></tr>
 <tr class="memdesc:ga738c6b5b507480b4dcc735be14eeb804"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminates another thread.  <a href="#ga738c6b5b507480b4dcc735be14eeb804">More...</a><br /></td></tr>
 <tr class="separator:ga738c6b5b507480b4dcc735be14eeb804"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0baae5db6b3b3c342fee92af38d4da7b"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga0baae5db6b3b3c342fee92af38d4da7b">cy_rtos_join_thread</a> (cy_thread_t *thread)</td></tr>
+<tr class="memitem:ga0baae5db6b3b3c342fee92af38d4da7b"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga0baae5db6b3b3c342fee92af38d4da7b">cy_rtos_join_thread</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread)</td></tr>
 <tr class="memdesc:ga0baae5db6b3b3c342fee92af38d4da7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Waits for a thread to complete.  <a href="#ga0baae5db6b3b3c342fee92af38d4da7b">More...</a><br /></td></tr>
 <tr class="separator:ga0baae5db6b3b3c342fee92af38d4da7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4c65be97daa12d333854e1a79194b573"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga4c65be97daa12d333854e1a79194b573">cy_rtos_is_thread_running</a> (cy_thread_t *thread, bool *running)</td></tr>
+<tr class="memitem:ga4c65be97daa12d333854e1a79194b573"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga4c65be97daa12d333854e1a79194b573">cy_rtos_is_thread_running</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread, bool *running)</td></tr>
 <tr class="memdesc:ga4c65be97daa12d333854e1a79194b573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the thread is running.  <a href="#ga4c65be97daa12d333854e1a79194b573">More...</a><br /></td></tr>
 <tr class="separator:ga4c65be97daa12d333854e1a79194b573"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2a0ab5f6b16adadd4ea34365b4f73d58"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga2a0ab5f6b16adadd4ea34365b4f73d58">cy_rtos_get_thread_state</a> (cy_thread_t *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#gacc555d9fef9df1454dbcc8e3bd3e4ee6">cy_thread_state_t</a> *state)</td></tr>
+<tr class="memitem:ga2a0ab5f6b16adadd4ea34365b4f73d58"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga2a0ab5f6b16adadd4ea34365b4f73d58">cy_rtos_get_thread_state</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#gacc555d9fef9df1454dbcc8e3bd3e4ee6">cy_thread_state_t</a> *state)</td></tr>
 <tr class="memdesc:ga2a0ab5f6b16adadd4ea34365b4f73d58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the state the thread is currently in.  <a href="#ga2a0ab5f6b16adadd4ea34365b4f73d58">More...</a><br /></td></tr>
 <tr class="separator:ga2a0ab5f6b16adadd4ea34365b4f73d58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac0d712da15dd0ee02f9b53dbca584e29"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#gac0d712da15dd0ee02f9b53dbca584e29">cy_rtos_get_thread_handle</a> (cy_thread_t *thread)</td></tr>
+<tr class="memitem:gac0d712da15dd0ee02f9b53dbca584e29"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#gac0d712da15dd0ee02f9b53dbca584e29">cy_rtos_get_thread_handle</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread)</td></tr>
 <tr class="memdesc:gac0d712da15dd0ee02f9b53dbca584e29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current thread handle.  <a href="#gac0d712da15dd0ee02f9b53dbca584e29">More...</a><br /></td></tr>
 <tr class="separator:gac0d712da15dd0ee02f9b53dbca584e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -149,7 +150,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* cy_thread_entry_fn_t) (cy_thread_arg_t arg)</td>
+          <td class="memname">typedef void(* cy_thread_entry_fn_t) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -205,7 +206,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_create_thread </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em>, </td>
         </tr>
         <tr>
@@ -235,13 +236,13 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cy_thread_priority_t&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga9f21bb78897c25df019b6e4286ecc7a0">cy_thread_priority_t</a>&#160;</td>
           <td class="paramname"><em>priority</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cy_thread_arg_t&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a>&#160;</td>
           <td class="paramname"><em>arg</em>&#160;</td>
         </tr>
         <tr>
@@ -253,20 +254,20 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a thread with specific thread argument. </p>
-<p>This function is called to startup a new thread. If the thread can exit, it must call cy_rtos_finish_thread() just before doing so. All created threads that can terminate, either by themselves or forcefully by another thread MUST be joined in order to cleanup any resources that might have been allocated for them.</p>
+<p>This function is called to startup a new thread. If the thread can exit, it must call <a class="el" href="group__group__abstraction__rtos__threads.html#ga2865c511e5f36874e1dc6cb6b0fc4f4b">cy_rtos_exit_thread()</a> just before doing so. All created threads that can terminate, either by themselves or forcefully by another thread MUST be joined in order to cleanup any resources that might have been allocated for them.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">thread</td><td>Pointer to a variable which will receive the new thread handle </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">entry_function</td><td>Function pointer which points to the main function for the new thread </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>String thread name used for a debugger </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">stack</td><td>The buffer to use for the thread stack. This must be aligned to CY_RTOS_ALIGNMENT with a size of at least CY_RTOS_MIN_STACK_SIZE. If stack is null, cy_rtos_create_thread will allocate a stack from the heap. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">stack</td><td>The buffer to use for the thread stack. This must be aligned to <a class="el" href="group__group__abstraction__rtos__port.html#ga03f4b97a8323f791fe6b8113bac20610">CY_RTOS_ALIGNMENT_MASK</a> with a size of at least <a class="el" href="group__group__abstraction__rtos__port.html#ga8cb68f0797eec0941d819cb03dee3f8e">CY_RTOS_MIN_STACK_SIZE</a>. If stack is null, cy_rtos_create_thread will allocate a stack from the heap. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stack_size</td><td>The size of the thread stack in bytes </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">priority</td><td>The priority of the thread. Values are operating system specific, but some common priority levels are defined: CY_THREAD_PRIORITY_LOW CY_THREAD_PRIORITY_NORMAL CY_THREAD_PRIORITY_HIGH </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>The argument to pass to the new thread</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of thread create request. [CY_RSLT_SUCCESS, CY_RTOS_NO_MEMORY, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of thread create request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -286,8 +287,8 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Exit the current thread. </p>
-<p>This function is called just before a thread exits. In some cases it is sufficient for a thread to just return to exit, but in other cases, the RTOS must be explicitly signaled. In cases where a return is sufficient, this should be a null funcition. where the RTOS must be signaled, this function should perform that In cases operation. In code using RTOS services, this function should be placed at any at any location where the main thread function will return, exiting the thread. Threads that can exit must still be joined (cy_rtos_join_thread) to ensure their resources are fully cleaned up.</p>
-<dl class="section return"><dt>Returns</dt><dd>The status of thread exit request. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<p>This function is called just before a thread exits. In some cases it is sufficient for a thread to just return to exit, but in other cases, the RTOS must be explicitly signaled. In cases where a return is sufficient, this should be a null funcition. where the RTOS must be signaled, this function should perform that In cases operation. In code using RTOS services, this function should be placed at any at any location where the main thread function will return, exiting the thread. Threads that can exit must still be joined (<a class="el" href="group__group__abstraction__rtos__threads.html#ga0baae5db6b3b3c342fee92af38d4da7b">cy_rtos_join_thread</a>) to ensure their resources are fully cleaned up.</p>
+<dl class="section return"><dt>Returns</dt><dd>The status of thread exit request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -300,7 +301,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_terminate_thread </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em></td><td>)</td>
           <td></td>
         </tr>
@@ -308,14 +309,14 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Terminates another thread. </p>
-<p>This function is called to terminate another thread and reap the resources claimed by the thread. This should be called both when forcibly terminating another thread as well as any time a thread can exit on its own. For some RTOS implementations this is not required as the thread resources are claimed as soon as it exits. In other cases, this must be called to reclaim resources. Threads that are terminated must still be joined (cy_rtos_join_thread) to ensure their resources are fully cleaned up.</p>
+<p>This function is called to terminate another thread and reap the resources claimed by the thread. This should be called both when forcibly terminating another thread as well as any time a thread can exit on its own. For some RTOS implementations this is not required as the thread resources are claimed as soon as it exits. In other cases, this must be called to reclaim resources. Threads that are terminated must still be joined (<a class="el" href="group__group__abstraction__rtos__threads.html#ga0baae5db6b3b3c342fee92af38d4da7b">cy_rtos_join_thread</a>) to ensure their resources are fully cleaned up.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">thread</td><td>Handle of the thread to terminate</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the thread terminate. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the thread terminate. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -328,7 +329,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_join_thread </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em></td><td>)</td>
           <td></td>
         </tr>
@@ -343,7 +344,7 @@ Enumerations</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of thread join request. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of thread join request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -356,7 +357,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_is_thread_running </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em>, </td>
         </tr>
         <tr>
@@ -374,7 +375,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Checks if the thread is running. </p>
-<p>This function is called to determine if a thread is actively running or not. For information on the thread state, use the <a class="el" href="group__group__abstraction__rtos__threads.html#ga2a0ab5f6b16adadd4ea34365b4f73d58" title="Gets the state the thread is currently in. ">cy_rtos_get_thread_state()</a> function.</p>
+<p>This function is called to determine if a thread is actively running or not. For information on the thread state, use the <a class="el" href="group__group__abstraction__rtos__threads.html#ga2a0ab5f6b16adadd4ea34365b4f73d58">cy_rtos_get_thread_state()</a> function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">thread</td><td>Handle of the terminated thread to delete </td></tr>
@@ -382,7 +383,7 @@ Enumerations</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the thread running check. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the thread running check. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -395,7 +396,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_get_thread_state </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em>, </td>
         </tr>
         <tr>
@@ -421,7 +422,7 @@ Enumerations</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the thread state check. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the thread state check. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>
@@ -434,7 +435,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">cy_rslt_t cy_rtos_get_thread_handle </td>
           <td>(</td>
-          <td class="paramtype">cy_thread_t *&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *&#160;</td>
           <td class="paramname"><em>thread</em></td><td>)</td>
           <td></td>
         </tr>
@@ -449,7 +450,7 @@ Enumerations</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of thread join request. [CY_RSLT_SUCCESS, CY_RTOS_GENERAL_ERROR] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of thread join request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>

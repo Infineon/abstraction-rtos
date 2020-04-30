@@ -66,6 +66,7 @@ cy_rtos_error_t cy_rtos_last_error()
 typedef struct
 {
     StaticTask_t task;
+    SemaphoreHandle_t sema;
     uint32_t magic;
     void *memptr;
 } cy_task_wrapper_t;
@@ -110,6 +111,8 @@ cy_rslt_t cy_rtos_create_thread(cy_thread_t *thread, cy_thread_entry_fn_t entry_
                 : (StackType_t*)stack;
 
             cy_task_wrapper_t *wrapper = (cy_task_wrapper_t*)(ident + offset);
+            wrapper->sema = xSemaphoreCreateBinary();
+            CY_ASSERT(wrapper->sema != NULL);
             wrapper->magic = TASK_IDENT;
             wrapper->memptr = ident;
             CY_ASSERT(((uint32_t)wrapper & CY_RTOS_ALIGNMENT_MASK) == 0UL);
@@ -121,23 +124,50 @@ cy_rslt_t cy_rtos_create_thread(cy_thread_t *thread, cy_thread_entry_fn_t entry_
     return status;
 }
 
-static void check_and_free_task(cy_thread_t thread)
-{
-    /* Check to see if we allocated the task and if so free it up. */
-    cy_task_wrapper_t *wrapper = ((cy_task_wrapper_t*)thread);
-    vTaskSuspendAll();
-    if (wrapper->magic == TASK_IDENT)
-    {
-        wrapper->magic = 0;
-        vPortFree(wrapper->memptr);
-    }
-    xTaskResumeAll();
-}
-
 cy_rslt_t cy_rtos_exit_thread()
 {
-    vTaskDelete(NULL);
-    return CY_RSLT_SUCCESS;
+    TaskHandle_t handle = xTaskGetCurrentTaskHandle();
+    /* Ideally this would just call vTaskDelete(NULL); however FreeRTOS
+     * does not provide any way to know when the task is actually cleaned
+     * up. It will tell you that it has been deleted, but when delete is
+     * called from the thread itself it doesn't actually get deleted at
+     * that time. It just gets added to the list of items that will be
+     * deleted when the idle task runs, but there is no way of knowing
+     * that the idle task ran unless you add an application hook which is
+     * not something that can be done here. This means that
+     * cy_rtos_join_thread() has no way of knowing that it is actually
+     * save to cleanup memory. So, instad of deleting here, we use a
+     * semaphore to indicate that we can delete and then join waits on
+     * the semaphore.
+     */
+
+    /* This cast is ok because the handle internally represents the
+     * TCB that we created in the thread create function.
+     */
+    cy_task_wrapper_t *wrapper = ((cy_task_wrapper_t*)handle);
+    if(wrapper->magic == TASK_IDENT)
+    {
+        /* This signals to the thread deleting the current thread that it
+         * it is safe to delete the current thread.
+         */
+        xSemaphoreGive(wrapper->sema);
+    }
+    else
+    {
+        CY_ASSERT(false);
+    }
+
+    /* This function is not expected to return and calling cy_rtos_join_thread
+     * will call vTaskDelete on this thread and clean up.
+     */
+    while (1)
+    {
+    #if defined(INCLUDE_vTaskSuspend)
+        vTaskSuspend(handle);
+    #else
+        vTaskDelay(10000);
+    #endif
+    }
 }
 
 cy_rslt_t cy_rtos_terminate_thread(cy_thread_t *thread)
@@ -150,7 +180,16 @@ cy_rslt_t cy_rtos_terminate_thread(cy_thread_t *thread)
     else
     {
         vTaskDelete(*thread);
-        check_and_free_task(*thread);
+        /* Check to see if we allocated the task and if so free it up. */
+        cy_task_wrapper_t *wrapper = ((cy_task_wrapper_t*)*thread);
+        vTaskSuspendAll();
+        if (wrapper->magic == TASK_IDENT)
+        {
+            wrapper->magic = 0;
+            vSemaphoreDelete(wrapper->sema);
+            vPortFree(wrapper->memptr);
+        }
+        xTaskResumeAll();
         status = CY_RSLT_SUCCESS;
     }
     return status;
@@ -212,42 +251,23 @@ cy_rslt_t cy_rtos_get_thread_state(cy_thread_t *thread, cy_thread_state_t *state
 
 cy_rslt_t cy_rtos_join_thread(cy_thread_t *thread)
 {
-    cy_rslt_t status;
+    cy_rslt_t status = CY_RSLT_SUCCESS;
     if (thread == NULL)
     {
         status = CY_RTOS_BAD_PARAM;
     }
     else
     {
-        TickType_t ticks = pdMS_TO_TICKS(1);
-
-        /* In order to join the thread, we must make sure it has finished running
-         * (state == eDeleted). However, just because the state is eDeleted does
-         * not actually mean that the RTOS has stoped using it. It just means that
-         * vTaskDelete() was called on the thread. The idle task must still run
-         * to finish processing the deleted items and free up any memory that was
-         * allocated by the RTOS. So, we need to make sure the idle task has run
-         * before attempting to free up memory we allocated for it. To do this,we
-         * lower our priority to that of the idle task, wait for the thread to be
-         * deleted, and then delay again to ensure the idle task has run after
-         * the thread changed state to eDeleted.
-         * NOTE: Each call to vTaskDelay() ensure that other threads at or above
-         * our priority level have had a chance to run.
+        cy_task_wrapper_t *wrapper = ((cy_task_wrapper_t*)(*thread));
+        /* This makes sure that the thread to be deleted has completed.
+         * See cy_rtos_exit_thread() for description of why this is done.
          */
-        TaskHandle_t handle = xTaskGetCurrentTaskHandle();
-        UBaseType_t priority = uxTaskPriorityGet(handle);
-        vTaskPrioritySet(handle, tskIDLE_PRIORITY);
-        while (eDeleted != eTaskGetState(*thread))
+        if (wrapper->magic == TASK_IDENT)
         {
-            vTaskDelay(ticks);
+            xSemaphoreTake(wrapper->sema, portMAX_DELAY);
+            status = cy_rtos_terminate_thread(thread);
         }
-        vTaskDelay(0);
-        vTaskPrioritySet(handle, priority);
-
-        check_and_free_task(*thread);
         *thread = NULL;
-
-        status = CY_RSLT_SUCCESS;
     }
     return status;
 }

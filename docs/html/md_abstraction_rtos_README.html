@@ -96,9 +96,9 @@ $(document).ready(function(){initNavTree('md_abstraction_rtos_README.html','');}
 <p>All the RTOS abstraction layer functions generally all work the same way. The basic process is:</p><ol type="1">
 <li>Include the cyabs_rtos.h header file so that you have access to the RTOS functions.</li>
 <li>Declare a variable of the right type (e.g. cy_mutex_t)</li>
-<li>Call the appropriate create or initialize function (e.g. cy_rtos_init_mutex()). Provide it with a reference to the variable that was created in step 2.</li>
-<li>Access the RTOS object using one of the access functions. e.g. cy_rtos_set_mutex().</li>
-<li>If you don't need it anymore, free up the pointer with the appropriate de-init function (e.g. cy_rtos_deinit_mutex()).</li>
+<li>Call the appropriate create or initialize function (e.g. <a class="el" href="group__group__abstraction__rtos__mutex.html#ga79fbca5c574d2bc617af90d4bff6c902" title="Create a recursive mutex. ">cy_rtos_init_mutex()</a>). Provide it with a reference to the variable that was created in step 2.</li>
+<li>Access the RTOS object using one of the access functions. e.g. <a class="el" href="group__group__abstraction__rtos__mutex.html#ga7b6a9f5fc3910436675c00130399e06d" title="Set a mutex. ">cy_rtos_set_mutex()</a>.</li>
+<li>If you don't need it anymore, free up the pointer with the appropriate de-init function (e.g. <a class="el" href="group__group__abstraction__rtos__mutex.html#ga8cd21b8a116a54ac397209054f35ee45" title="Deletes a mutex. ">cy_rtos_deinit_mutex()</a>).</li>
 </ol>
 <p>NOTE: All these functions need a pointer, so it is generally best to declare these "shared" resources as static global variables within the file that they are used.</p>
 <h2>Getting Started</h2>

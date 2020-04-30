@@ -16,8 +16,16 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.2.1
+* Fixed possible race condition in cy_rtos_join_thread for FreeRTOS
+* Minor documentation updates
 #### v1.2.0
+* Added utility library for for creating background worker threads: cy_worker_thread.h
+* Added support for getting a semaphore's count: cy_rtos_get_count_semaphore()
+* Added support for non-recursive mutexes: cy_rtos_init_mutex2()
+* Added default implementations for FreeRTOS vApplicationGetIdleTaskMemory, vApplicationGetTimerTaskMemory, and vApplicationSleep
 * Added support for ThreadX
+NOTE: The vApplicationSleep implementation for FreeRTOS depends on the psoc6hal 1.2.0 or later.
 #### v1.1.0
 * Fixed an issue with the FreeRTOS implementation where it would always allocate memory for the thread stack, even if a pre-allocated buffer was provided.
 * Removed usage of assert() and replaced with CY_ASSERT()

@@ -152,18 +152,16 @@ cy_rslt_t cy_worker_thread_enqueue(cy_worker_thread_info_t *worker_info, cy_work
     CY_ASSERT(work_func != NULL);
 
     uint32_t state = cyhal_system_critical_section_enter();
-
     if(worker_info->state != CY_WORKER_THREAD_VALID)
     {
         cyhal_system_critical_section_exit(state);
         return CY_WORKER_THREAD_ERR_THREAD_INVALID;
     }
+    cyhal_system_critical_section_exit(state);
 
     cy_worker_dispatch_info_t dispatch_info = { work_func, arg };
     /* Queue an event to be run by the worker thread */
     cy_rslt_t result = cy_rtos_put_queue(&worker_info->event_queue, &dispatch_info, 0, false);
-
-    cyhal_system_critical_section_exit(state);
 
     return result;
 }

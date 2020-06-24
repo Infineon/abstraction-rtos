@@ -23,8 +23,8 @@ for the JavaScript code in this file
 */
 var NAVTREE =
 [
-  [ "Cypress RTOS Abstraction (abstraction-rtos)", "index.html", [
-    [ "Cypress RTOS Abstraction", "index.html", null ],
+  [ "RTOS Abstraction (abstraction-rtos)", "index.html", [
+    [ "RTOS Abstraction", "index.html", null ],
     [ "API Reference", "modules.html", "modules" ]
   ] ]
 ];

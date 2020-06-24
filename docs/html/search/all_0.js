@@ -88,8 +88,5 @@ var searchData=
   ['cy_5fworker_5fthread_5fstate_5ft',['cy_worker_thread_state_t',['../group__group__worker__thread__util.html#ga514bc54aa543a69ce1768903b9851473',1,'cy_worker_thread.h']]],
   ['cy_5fworker_5fthread_5fterminating',['CY_WORKER_THREAD_TERMINATING',['../group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a79db794eee56f8188a116ed31ae5b1d4',1,'cy_worker_thread.h']]],
   ['cy_5fworker_5fthread_5fvalid',['CY_WORKER_THREAD_VALID',['../group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473aec127b9642db106c61c3c32106fb69fb',1,'cy_worker_thread.h']]],
-  ['common',['Common',['../group__group__abstraction__rtos__common.html',1,'']]],
-  ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../index.html',1,'']]],
-  ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../md_abstraction_rtos_README.html',1,'']]],
-  ['cypress_20rtos_20abstraction_20library',['Cypress RTOS Abstraction Library',['../md_abstraction_rtos_RELEASE.html',1,'']]]
+  ['common',['Common',['../group__group__abstraction__rtos__common.html',1,'']]]
 ];

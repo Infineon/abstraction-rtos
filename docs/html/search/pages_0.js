@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../index.html',1,'']]],
-  ['cypress_20rtos_20abstraction',['Cypress RTOS Abstraction',['../md_abstraction_rtos_README.html',1,'']]],
-  ['cypress_20rtos_20abstraction_20library',['Cypress RTOS Abstraction Library',['../md_abstraction_rtos_RELEASE.html',1,'']]]
+  ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]]
 ];

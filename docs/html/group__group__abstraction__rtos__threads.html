@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cypress RTOS Abstraction (abstraction-rtos)</title>
+<title>RTOS Abstraction (abstraction-rtos)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -29,9 +29,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
-  <td id="projectlogo"><a href="http://www.cypress.com/"><img alt="Logo" src="cypress_logo.png"/></a></td>
+  <td id="projectlogo"><a href="http://www.cypress.com/"><img alt="Logo" src="logo.png"/></a></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Cypress RTOS Abstraction (abstraction-rtos)</div>
+   <div id="projectname">RTOS Abstraction (abstraction-rtos)</div>
   </td>
  </tr>
  </tbody>
@@ -254,7 +254,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a thread with specific thread argument. </p>
-<p>This function is called to startup a new thread. If the thread can exit, it must call <a class="el" href="group__group__abstraction__rtos__threads.html#ga2865c511e5f36874e1dc6cb6b0fc4f4b">cy_rtos_exit_thread()</a> just before doing so. All created threads that can terminate, either by themselves or forcefully by another thread MUST be joined in order to cleanup any resources that might have been allocated for them.</p>
+<p>This function is called to startup a new thread. If the thread can exit, it must call <a class="el" href="group__group__abstraction__rtos__threads.html#ga2865c511e5f36874e1dc6cb6b0fc4f4b">cy_rtos_exit_thread()</a> just before doing so. All created threads that can terminate, either by themselves or forcefully by another thread MUST have <a class="el" href="group__group__abstraction__rtos__threads.html#ga0baae5db6b3b3c342fee92af38d4da7b">cy_rtos_join_thread()</a> called on them by another thread in order to cleanup any resources that might have been allocated for them.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">thread</td><td>Pointer to a variable which will receive the new thread handle </td></tr>
@@ -460,7 +460,7 @@ Enumerations</h2></td></tr>
 <div id="nav-path" class="navpath">
     <ul>
         <li class="footer">
-            Generated for <b>Cypress RTOS Abstraction (abstraction-rtos)</b> by <b>Cypress Semiconductor Corporation</b>.
+            Generated for <b>RTOS Abstraction (abstraction-rtos)</b> by <b>Cypress Semiconductor Corporation</b>.
             All rights reserved.
         </li>
     </ul>

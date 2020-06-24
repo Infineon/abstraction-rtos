@@ -1,4 +1,4 @@
-# Cypress RTOS Abstraction
+# RTOS Abstraction
 
 ## Overview
 
@@ -92,7 +92,7 @@ Finally, the following macros need to be defined for memory allocations:
 
 ## More information
 * [API Reference Guide](https://cypresssemiconductorco.github.io/abstraction-rtos/html/modules.html)
-* [Cypress Semiconductor](http://www.cypress.com)
+* [Cypress Semiconductor, an Infineon Technologies Company](http://www.cypress.com)
 * [Cypress Semiconductor GitHub](https://github.com/cypresssemiconductorco)
 * [ModusToolbox](https://www.cypress.com/products/modustoolbox-software-environment)
 

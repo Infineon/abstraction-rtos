@@ -1,4 +1,4 @@
-### Cypress RTOS Abstraction Library
+# RTOS Abstraction Library
 The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.
 
 ### What's Included?
@@ -16,6 +16,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.2.2
+* Minor update for documentation & branding
 #### v1.2.1
 * Fixed possible race condition in cy_rtos_join_thread for FreeRTOS
 * Minor documentation updates
@@ -50,7 +52,7 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 ### More information
 Use the following links for more information, as needed:
 * [API Reference Guide](https://cypresssemiconductorco.github.io/abstraction-rtos/html/modules.html)
-* [Cypress Semiconductor](http://www.cypress.com)
+* [Cypress Semiconductor, an Infineon Technologies Company](http://www.cypress.com)
 * [Cypress Semiconductor GitHub](https://github.com/cypresssemiconductorco)
 * [ModusToolbox](https://www.cypress.com/products/modustoolbox-software-environment)
 

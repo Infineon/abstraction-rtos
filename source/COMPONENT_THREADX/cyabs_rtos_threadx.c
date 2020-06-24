@@ -352,6 +352,7 @@ cy_rslt_t cy_rtos_init_semaphore(cy_semaphore_t *semaphore, uint32_t maxcount, u
 
 cy_rslt_t cy_rtos_get_semaphore(cy_semaphore_t *semaphore, cy_time_t timeout_ms, bool in_isr)
 {
+    (void)in_isr; // Unused parameter in this implementation
     if (semaphore == NULL)
     {
         return CY_RTOS_BAD_PARAM;
@@ -369,6 +370,7 @@ cy_rslt_t cy_rtos_get_semaphore(cy_semaphore_t *semaphore, cy_time_t timeout_ms,
 
 cy_rslt_t cy_rtos_set_semaphore(cy_semaphore_t *semaphore, bool in_isr)
 {
+    (void)in_isr; // Unused parameter in this implementation
     if (semaphore == NULL)
     {
         return CY_RTOS_BAD_PARAM;
@@ -406,11 +408,13 @@ cy_rslt_t cy_rtos_init_event(cy_event_t *event)
 
 cy_rslt_t cy_rtos_setbits_event(cy_event_t *event, uint32_t bits, bool in_isr)
 {
+    (void)in_isr; // Unused parameter in this implementation
     return convert_error(tx_event_flags_set(event, bits, TX_OR));
 }
 
 cy_rslt_t cy_rtos_clearbits_event(cy_event_t *event, uint32_t bits, bool in_isr)
 {
+    (void)in_isr; // Unused parameter in this implementation
     return convert_error(tx_event_flags_set(event, ~bits, TX_AND));
 }
 

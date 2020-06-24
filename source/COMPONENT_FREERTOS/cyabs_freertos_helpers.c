@@ -26,6 +26,13 @@
 #include "task.h"
 #include "cyhal.h"
 
+/* This is included to allow the user to control the idle task behavior via the configurator
+ * System->Power->RTOS->System Idle Power Mode setting.
+ */
+#if defined(COMPONENT_BSP_DESIGN_MODUS) || defined(COMPONENT_CUSTOM_DESIGN_MODUS)
+#include "cycfg.h"
+#endif
+
 #define pdTICKS_TO_MS( xTicks )    ( ( ( TickType_t ) ( xTicks ) * 1000u ) / configTICK_RATE_HZ )
 
 /* The following implementations were sourced from https://www.freertos.org/a00110.html */
@@ -94,6 +101,7 @@ __WEAK void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer
  * @param[in] xExpectedIdleTime     Total number of tick periods before
  *                                  a task is due to be moved into the Ready state.
  */
+#if( configUSE_TICKLESS_IDLE != 0 )
 __WEAK void vApplicationSleep( TickType_t xExpectedIdleTime )
 {
     static bool lp_timer_initialized = false;
@@ -134,3 +142,4 @@ __WEAK void vApplicationSleep( TickType_t xExpectedIdleTime )
         }
     }
 }
+#endif /* configUSE_TICKLESS_IDLE != 0 */

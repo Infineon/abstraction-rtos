@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h2>Overview</h2>
-<p>The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full features RTOS interface, but the provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within Modus Toolbox. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. The abstraction layer provides access to all the standard RTOS resources listed in the feature section below.</p>
+<p>The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full features RTOS interface, but the provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within ModusToolbox. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. The abstraction layer provides access to all the standard RTOS resources listed in the feature section below.</p>
 <p>While the primary purpose of the library is for middleware, the abstraction layer can be used by the application code. However, since this API does not provide all RTOS features and the application generally knows what RTOS is being used, this is typically an unnecessary overhead.</p>
 <p>All the RTOS abstraction layer functions generally all work the same way. The basic process is:</p><ol type="1">
 <li>Include the cyabs_rtos.h header file so that you have access to the RTOS functions.</li>
@@ -128,12 +128,22 @@ $(document).ready(function(){initNavTree('index.html','');});
 <h2>RTOS Configuration Requirements</h2>
 <h3>FreeRTOS</h3>
 <p>To enable all functionality when using with FreeRTOS, the following configuration options must be enabled in FreeRTOSConfig.h:</p><ul>
-<li>configUSE_TRACE_FACILITY</li>
-<li>configUSE_MUTEXES</li>
-<li>configUSE_RECURSIVE_MUTEXES</li>
-<li>configUSE_COUNTING_SEMAPHORES</li>
 <li>configSUPPORT_DYNAMIC_ALLOCATION</li>
 <li>configSUPPORT_STATIC_ALLOCATION</li>
+<li>configUSE_COUNTING_SEMAPHORES</li>
+<li>configUSE_MUTEXES</li>
+<li>configUSE_NEWLIB_REENTRANT</li>
+<li>configUSE_RECURSIVE_MUTEXES</li>
+<li>configUSE_TASK_NOTIFICATIONS</li>
+<li>configUSE_TICKLESS_IDLE</li>
+<li>configUSE_TIMERS</li>
+<li>configUSE_TRACE_FACILITY</li>
+<li>INCLUDE_vTaskDelay</li>
+<li>INCLUDE_vTaskDelete</li>
+<li>INCLUDE_vTaskPrioritySet</li>
+<li>INCLUDE_uxTaskPriorityGet</li>
+<li>INCLUDE_xTimerPendFunctionCall</li>
+<li>INCLUDE_vTaskSuspend</li>
 </ul>
 <p>Enabling configSUPPORT_STATIC_ALLOCATION requires the application to provide implementations for <code>vApplicationGetIdleTaskMemory</code> and <code>vApplicationGetTimerTaskMemory</code>functions. Weak implementations for these functions are provided as a part of this library. These can be overridden by the application if custom implementations of these functions are desired.<br />
 </p>

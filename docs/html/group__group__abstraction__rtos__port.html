@@ -189,6 +189,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>RTOS thread priority. </p>
+<p>Note: Depending on the RTOS and interrupt options for the device, some of these priorities may end up being the same priority level in practice. Even if this happens, the relative ordering of priorities is still maintained. eg: MAX &gt;= REALTIME &gt;= HIGH &gt;= ABOVENORMAL &gt;= NORMAL &gt;= BELOWNORMAL &gt;= LOW &gt;= MIN </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga9f21bb78897c25df019b6e4286ecc7a0acc5a695124ae1d0da2abe6e8fb8bcc6e"></a>CY_RTOS_PRIORITY_MIN&#160;</td><td class="fielddoc"><p>Minumum allowable Thread priority. </p>
 </td></tr>

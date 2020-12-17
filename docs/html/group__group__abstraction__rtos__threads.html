@@ -98,9 +98,9 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__threa
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ga1e3db7a2b7a64fe9838804f049612d43"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a>) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
-<tr class="memdesc:ga1e3db7a2b7a64fe9838804f049612d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a function that is the entry point for a thread.  <a href="#ga1e3db7a2b7a64fe9838804f049612d43">More...</a><br /></td></tr>
-<tr class="separator:ga1e3db7a2b7a64fe9838804f049612d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4bae7aeb374fea7497371c5df7edc8d6"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga4bae7aeb374fea7497371c5df7edc8d6">cy_thread_entry_fn_t</a>) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
+<tr class="memdesc:ga4bae7aeb374fea7497371c5df7edc8d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of a function that is the entry point for a thread.  <a href="#ga4bae7aeb374fea7497371c5df7edc8d6">More...</a><br /></td></tr>
+<tr class="separator:ga4bae7aeb374fea7497371c5df7edc8d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -120,7 +120,7 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:gacc555d9fef9df1454dbcc8e3bd3e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The state a thread can be in.  <a href="group__group__abstraction__rtos__threads.html#gacc555d9fef9df1454dbcc8e3bd3e4ee6">More...</a><br /></td></tr>
 <tr class="separator:gacc555d9fef9df1454dbcc8e3bd3e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga002d529ea362c3e7670cc04de1bdb30e">cy_rtos_create_thread</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a> entry_function, const char *name, void *stack, uint32_t stack_size, <a class="el" href="group__group__abstraction__rtos__port.html#ga9f21bb78897c25df019b6e4286ecc7a0">cy_thread_priority_t</a> priority, <a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
+<tr class="memitem:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga002d529ea362c3e7670cc04de1bdb30e">cy_rtos_create_thread</a> (<a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a> *thread, <a class="el" href="group__group__abstraction__rtos__threads.html#ga4bae7aeb374fea7497371c5df7edc8d6">cy_thread_entry_fn_t</a> entry_function, const char *name, void *stack, uint32_t stack_size, <a class="el" href="group__group__abstraction__rtos__port.html#ga9f21bb78897c25df019b6e4286ecc7a0">cy_thread_priority_t</a> priority, <a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td></tr>
 <tr class="memdesc:ga002d529ea362c3e7670cc04de1bdb30e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread with specific thread argument.  <a href="#ga002d529ea362c3e7670cc04de1bdb30e">More...</a><br /></td></tr>
 <tr class="separator:ga002d529ea362c3e7670cc04de1bdb30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2865c511e5f36874e1dc6cb6b0fc4f4b"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__threads.html#ga2865c511e5f36874e1dc6cb6b0fc4f4b">cy_rtos_exit_thread</a> ()</td></tr>
@@ -143,14 +143,14 @@ Enumerations</h2></td></tr>
 <tr class="separator:gac0d712da15dd0ee02f9b53dbca584e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="ga1e3db7a2b7a64fe9838804f049612d43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1e3db7a2b7a64fe9838804f049612d43">&#9670;&nbsp;</a></span>cy_thread_entry_fn_t</h2>
+<a id="ga4bae7aeb374fea7497371c5df7edc8d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4bae7aeb374fea7497371c5df7edc8d6">&#9670;&nbsp;</a></span>cy_thread_entry_fn_t</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* cy_thread_entry_fn_t) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td>
+          <td class="memname">typedef void(*  cy_thread_entry_fn_t) (<a class="el" href="group__group__abstraction__rtos__port.html#ga38237cfc682f2212e1ae11eb81a594b4">cy_thread_arg_t</a> arg)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -212,7 +212,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__threads.html#ga1e3db7a2b7a64fe9838804f049612d43">cy_thread_entry_fn_t</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__threads.html#ga4bae7aeb374fea7497371c5df7edc8d6">cy_thread_entry_fn_t</a>&#160;</td>
           <td class="paramname"><em>entry_function</em>, </td>
         </tr>
         <tr>

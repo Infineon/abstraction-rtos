@@ -9,6 +9,7 @@ var group__group__worker__thread__util =
     ] ],
     [ "cy_worker_thread_info_t", "group__group__worker__thread__util.html#structcy__worker__thread__info__t", [
       [ "event_queue", "group__group__worker__thread__util.html#af921b846c4cdb4ee1b4de6267ae2c2a2", null ],
+      [ "enqueue_count", "group__group__worker__thread__util.html#ab2f74dcd0e41ac82b69e15317912dc56", null ],
       [ "thread", "group__group__worker__thread__util.html#a1efa83728c9763f3738676b959236347", null ],
       [ "state", "group__group__worker__thread__util.html#a684566a02021807ad40ebdddf3e38def", null ]
     ] ],
@@ -19,6 +20,7 @@ var group__group__worker__thread__util =
     [ "cy_worker_thread_state_t", "group__group__worker__thread__util.html#ga514bc54aa543a69ce1768903b9851473", [
       [ "CY_WORKER_THREAD_INVALID", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a0d938b2d088126d6d47c936040e843c2", null ],
       [ "CY_WORKER_THREAD_VALID", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473aec127b9642db106c61c3c32106fb69fb", null ],
+      [ "CY_WORKER_THREAD_ENQUEUING", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a5b1b5a7751c0460c908bfbb65cb7be08", null ],
       [ "CY_WORKER_THREAD_TERMINATING", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a79db794eee56f8188a116ed31ae5b1d4", null ],
       [ "CY_WORKER_THREAD_JOIN_COMPLETE", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a8685271e73d4fc9bc13e62a58a8431c8", null ]
     ] ],

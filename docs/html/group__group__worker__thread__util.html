@@ -137,6 +137,8 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473aec127b9642db106c61c3c32106fb69fb">CY_WORKER_THREAD_VALID</a>, 
 <br />
+&#160;&#160;<a class="el" href="group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a5b1b5a7751c0460c908bfbb65cb7be08">CY_WORKER_THREAD_ENQUEUING</a>, 
+<br />
 &#160;&#160;<a class="el" href="group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a79db794eee56f8188a116ed31ae5b1d4">CY_WORKER_THREAD_TERMINATING</a>, 
 <br />
 &#160;&#160;<a class="el" href="group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a8685271e73d4fc9bc13e62a58a8431c8">CY_WORKER_THREAD_JOIN_COMPLETE</a>
@@ -229,6 +231,12 @@ event_queue</td>
 <td class="fielddoc">
 Event Queue for this thread. </td></tr>
 <tr><td class="fieldtype">
+<a id="ab2f74dcd0e41ac82b69e15317912dc56"></a>uint32_t</td>
+<td class="fieldname">
+enqueue_count</td>
+<td class="fielddoc">
+Number of conccurent enqueue requests. </td></tr>
+<tr><td class="fieldtype">
 <a id="a1efa83728c9763f3738676b959236347"></a><a class="el" href="group__group__abstraction__rtos__port.html#ga27c9e935c4c4f200d86a8484d3db08d3">cy_thread_t</a></td>
 <td class="fieldname">
 thread</td>
@@ -280,6 +288,8 @@ State of the worker thread. </td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga514bc54aa543a69ce1768903b9851473a0d938b2d088126d6d47c936040e843c2"></a>CY_WORKER_THREAD_INVALID&#160;</td><td class="fielddoc"><p>Worker Thread is in invalid state. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga514bc54aa543a69ce1768903b9851473aec127b9642db106c61c3c32106fb69fb"></a>CY_WORKER_THREAD_VALID&#160;</td><td class="fielddoc"><p>Worker Thread is in valid state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga514bc54aa543a69ce1768903b9851473a5b1b5a7751c0460c908bfbb65cb7be08"></a>CY_WORKER_THREAD_ENQUEUING&#160;</td><td class="fielddoc"><p>Worker Thread is adding to the queue. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga514bc54aa543a69ce1768903b9851473a79db794eee56f8188a116ed31ae5b1d4"></a>CY_WORKER_THREAD_TERMINATING&#160;</td><td class="fielddoc"><p>Worker Thread is starting to terminate. </p>
 </td></tr>

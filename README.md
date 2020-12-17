@@ -2,7 +2,7 @@
 
 ## Overview
 
-The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full features RTOS interface, but the provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within Modus Toolbox. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. The abstraction layer provides access to all the standard RTOS resources listed in the feature section below.
+The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full features RTOS interface, but the provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within ModusToolbox. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. The abstraction layer provides access to all the standard RTOS resources listed in the feature section below.
 
 While the primary purpose of the library is for middleware, the abstraction layer can be used by the application code. However, since this API does not provide all RTOS features and the application generally knows what RTOS is being used, this is typically an unnecessary overhead.
 
@@ -39,12 +39,23 @@ To use the RTOS Abstraction, simply include a reference to `cyabs_rtos.h` and up
 ## RTOS Configuration Requirements
 ### FreeRTOS
 To enable all functionality when using with FreeRTOS, the following configuration options must be enabled in FreeRTOSConfig.h:
-* configUSE_TRACE_FACILITY
-* configUSE_MUTEXES
-* configUSE_RECURSIVE_MUTEXES
-* configUSE_COUNTING_SEMAPHORES
 * configSUPPORT_DYNAMIC_ALLOCATION
 * configSUPPORT_STATIC_ALLOCATION
+* configUSE_COUNTING_SEMAPHORES
+* configUSE_MUTEXES
+* configUSE_NEWLIB_REENTRANT
+* configUSE_RECURSIVE_MUTEXES
+* configUSE_TASK_NOTIFICATIONS
+* configUSE_TICKLESS_IDLE
+* configUSE_TIMERS
+* configUSE_TRACE_FACILITY
+
+* INCLUDE_vTaskDelay
+* INCLUDE_vTaskDelete
+* INCLUDE_vTaskPrioritySet
+* INCLUDE_uxTaskPriorityGet
+* INCLUDE_xTimerPendFunctionCall
+* INCLUDE_vTaskSuspend
 
 Enabling configSUPPORT_STATIC_ALLOCATION requires the application to provide implementations for `vApplicationGetIdleTaskMemory` and
 `vApplicationGetTimerTaskMemory`functions. Weak implementations for these functions are provided as a part of this library. These can

@@ -16,6 +16,11 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.3.0
+* Update to work with a wider range of MCUs
+* Fixed a race condition in the worker thread
+* Fixed possible issue with thread priorities
+* Minor documentation updates
 #### v1.2.2
 * Minor update for documentation & branding
 #### v1.2.1
@@ -43,11 +48,12 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox Software Environment         | 2.0     |
-| GCC Compiler                              | 7.4     |
-| IAR Compiler                              | 8.32    |
+| ModusToolbox Software Environment         | 2.1     |
+| GCC Compiler                              | 9.2     |
+| IAR Compiler                              | 8.4     |
 | ARM Compiler                              | 6.11    |
 
+Minimum required ModusToolbox Software Environment: v2.0
 
 ### More information
 Use the following links for more information, as needed:

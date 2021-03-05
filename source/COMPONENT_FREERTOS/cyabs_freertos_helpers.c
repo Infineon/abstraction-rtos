@@ -7,7 +7,7 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2020 Cypress Semiconductor Corporation
+ * Copyright 2018-2021 Cypress Semiconductor Corporation
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -133,9 +133,11 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
 
     if (lp_timer_initialized)
     {
+        /* Disable interrupts so that nothing can change the status of the RTOS while
+         * we try to go to sleep or deep-sleep.
+         */
         uint32_t         status       = cyhal_system_critical_section_enter();
         eSleepModeStatus sleep_status = eTaskConfirmSleepModeStatus();
-        cyhal_system_critical_section_exit(status);
 
         if (sleep_status != eAbortSleep)
         {
@@ -154,17 +156,19 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             if (deep_sleep)
             {
                 // Adjust the deep-sleep time by the sleep/wake latency if set.
+                #if defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
                 if (sleep_ms > CY_CFG_PWR_DEEPSLEEP_LATENCY)
                 {
-                    #if defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
                     sleep_ms -= CY_CFG_PWR_DEEPSLEEP_LATENCY;
-                    #endif
                     result = cyhal_syspm_tickless_deepsleep(&timer, sleep_ms, &actual_sleep_ms);
                 }
                 else
                 {
                     result = CY_RTOS_TIMEOUT;
                 }
+                #else // defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
+                result = cyhal_syspm_tickless_deepsleep(&timer, sleep_ms, &actual_sleep_ms);
+                #endif // defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
             }
             else
             {
@@ -180,6 +184,8 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 vTaskStepTick(pdMS_TO_TICKS(actual_sleep_ms));
             }
         }
+
+        cyhal_system_critical_section_exit(status);
     }
 }
 

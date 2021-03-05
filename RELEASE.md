@@ -16,6 +16,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.3.1
+* Fixed a couple bugs in the FreeRTOS port
 #### v1.3.0
 * Update to work with a wider range of MCUs
 * Fixed a race condition in the worker thread
@@ -48,8 +50,8 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox Software Environment         | 2.1     |
-| GCC Compiler                              | 9.2     |
+| ModusToolbox Software Environment         | 2.2     |
+| GCC Compiler                              | 9.3     |
 | IAR Compiler                              | 8.4     |
 | ARM Compiler                              | 6.11    |
 
@@ -63,4 +65,4 @@ Use the following links for more information, as needed:
 * [ModusToolbox](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation, 2019-2020.
+© Cypress Semiconductor Corporation, 2019-2021.

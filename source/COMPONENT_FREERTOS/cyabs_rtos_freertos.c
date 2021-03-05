@@ -6,7 +6,7 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2020 Cypress Semiconductor Corporation
+ * Copyright 2018-2021 Cypress Semiconductor Corporation
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -464,6 +464,7 @@ cy_rslt_t cy_rtos_init_semaphore(cy_semaphore_t* semaphore, uint32_t maxcount, u
 cy_rslt_t cy_rtos_get_semaphore(cy_semaphore_t* semaphore, uint32_t timeout_ms, bool in_isr)
 {
     cy_rslt_t status;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (semaphore == NULL)
     {
         status = CY_RTOS_BAD_PARAM;
@@ -475,10 +476,11 @@ cy_rslt_t cy_rtos_get_semaphore(cy_semaphore_t* semaphore, uint32_t timeout_ms, 
 
         if (in_isr)
         {
-            if (pdFALSE == xSemaphoreTakeFromISR(*semaphore, NULL))
+            if (pdFALSE == xSemaphoreTakeFromISR(*semaphore, &xHigherPriorityTaskWoken))
             {
                 status = CY_RTOS_TIMEOUT;
             }
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         }
         else
         {
@@ -499,6 +501,7 @@ cy_rslt_t cy_rtos_get_semaphore(cy_semaphore_t* semaphore, uint32_t timeout_ms, 
 cy_rslt_t cy_rtos_set_semaphore(cy_semaphore_t* semaphore, bool in_isr)
 {
     cy_rslt_t status;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     if (semaphore == NULL)
     {
         status = CY_RTOS_BAD_PARAM;
@@ -509,7 +512,8 @@ cy_rslt_t cy_rtos_set_semaphore(cy_semaphore_t* semaphore, bool in_isr)
 
         if (in_isr)
         {
-            ret = xSemaphoreGiveFromISR(*semaphore, NULL);
+            ret = xSemaphoreGiveFromISR(*semaphore, &xHigherPriorityTaskWoken);
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         }
         else
         {
@@ -525,6 +529,7 @@ cy_rslt_t cy_rtos_set_semaphore(cy_semaphore_t* semaphore, bool in_isr)
             status = CY_RSLT_SUCCESS;
         }
     }
+
     return status;
 }
 

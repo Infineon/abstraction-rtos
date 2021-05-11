@@ -16,6 +16,9 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.4.0
+* Added new thread functions: cy_rtos_wait_thread_notification and cy_rtos_set_thread_notification
+* Minor documentation updates for clarity
 #### v1.3.1
 * Fixed a couple bugs in the FreeRTOS port
 #### v1.3.0
@@ -50,8 +53,8 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox Software Environment         | 2.2     |
-| GCC Compiler                              | 9.3     |
+| ModusToolbox Software Environment         | 2.2.1   |
+| GCC Compiler                              | 9.3.1   |
 | IAR Compiler                              | 8.4     |
 | ARM Compiler                              | 6.11    |
 

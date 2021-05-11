@@ -327,6 +327,57 @@ cy_rslt_t cy_rtos_get_thread_handle(cy_thread_t* thread)
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// cy_rtos_wait_thread_notification
+//--------------------------------------------------------------------------------------------------
+cy_rslt_t cy_rtos_wait_thread_notification(cy_time_t num_ms)
+{
+    uint32_t ret;
+
+    ret = ulTaskNotifyTake(pdTRUE, num_ms == CY_RTOS_NEVER_TIMEOUT ?
+                           portMAX_DELAY : pdMS_TO_TICKS(num_ms));
+    if (0 != ret)
+    {
+        /* Received notify from another thread or ISR */
+        return CY_RSLT_SUCCESS;
+    }
+    else
+    {
+        return CY_RTOS_TIMEOUT;
+    }
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// cy_rtos_set_thread_notification
+//--------------------------------------------------------------------------------------------------
+cy_rslt_t cy_rtos_set_thread_notification(cy_thread_t* thread, bool in_isr)
+{
+    cy_rslt_t status;
+    if (thread == NULL)
+    {
+        status = CY_RTOS_BAD_PARAM;
+    }
+    else
+    {
+        if (in_isr)
+        {
+            BaseType_t taskWoken = pdFALSE;
+            /* No error checking as this function always returns pdPASS. */
+            vTaskNotifyGiveFromISR(*thread, &taskWoken);
+            portEND_SWITCHING_ISR(taskWoken);
+        }
+        else
+        {
+            /* No error checking as this function always returns pdPASS. */
+            xTaskNotifyGive(*thread);
+        }
+        status = CY_RSLT_SUCCESS;
+    }
+    return status;
+}
+
+
 //==================================================================================================
 // Mutexes
 //==================================================================================================
@@ -960,6 +1011,7 @@ cy_rslt_t cy_rtos_init_timer(cy_timer_t* timer, cy_timer_trigger_type_t type,
 
             if (*timer == NULL)
             {
+                free(cb_arg);
                 status = CY_RTOS_NO_MEMORY;
             }
             else
@@ -1110,6 +1162,6 @@ cy_rslt_t cy_rtos_get_time(cy_time_t* tval)
 //--------------------------------------------------------------------------------------------------
 cy_rslt_t cy_rtos_delay_milliseconds(uint32_t num_ms)
 {
-    vTaskDelay((TickType_t)(((uint64_t)num_ms * configTICK_RATE_HZ) / 1000));
+    vTaskDelay(pdMS_TO_TICKS(num_ms));
     return CY_RSLT_SUCCESS;
 }

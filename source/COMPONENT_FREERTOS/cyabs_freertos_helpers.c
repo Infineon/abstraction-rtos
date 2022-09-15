@@ -7,7 +7,7 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -61,6 +61,7 @@ cyhal_lptimer_t* cyabs_rtos_get_lptimer(void)
 
 
 #endif //defined(CY_USING_HAL)
+
 
 // The following implementations were sourced from https://www.freertos.org/a00110.html
 
@@ -213,9 +214,14 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 // be increased. This can be set though the Device Configurator, or by manually
                 // defining the variable.
                 CY_ASSERT(actual_sleep_ms <= pdTICKS_TO_MS(xExpectedIdleTime));
-                vTaskStepTick(pdMS_TO_TICKS(actual_sleep_ms));
+                vTaskStepTick(convert_ms_to_ticks(actual_sleep_ms));
             }
         }
+
+        #if defined(CY_USING_HAL)
+        /* Clear pending interrupt in NVIC if it's disabled */
+        _cyabs_rtos_clear_disabled_irq_in_pending();
+        #endif /* defined(CY_USING_HAL) */
 
         cyhal_system_critical_section_exit(status);
     }

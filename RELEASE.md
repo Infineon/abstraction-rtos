@@ -14,10 +14,16 @@ The this release of the RTOS Abstraction API includes support for the following:
     * FreeRTOS
     * RTX (CMSIS RTOS)
     * ThreadX
+    * WICED RTOS
 
 ### What Changed?
+#### v1.6.0
+* Added WICED RTOS support
 #### v1.5.0
 * Added additional parameter validation for ThreadX
+* Removed the explicit in_isr argument from all functions. CPU status registers are used to automatically determine whether a function is executing in an interrupt context.
+* Renamed all functions in order to make grouping more clear. The original function names are deprecated.
+* to make grouping more clear. The original function names are now considered deprecated.
 #### v1.4.0
 * Added new thread functions: cy_rtos_wait_thread_notification and cy_rtos_set_thread_notification
 * Minor documentation updates for clarity

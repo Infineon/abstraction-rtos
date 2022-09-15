@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['name',['name',['../group__group__worker__thread__util.html#a31710f19616d90ca7ccd2076287bb028',1,'cy_worker_thread_params_t']]],
-  ['num_5fentries',['num_entries',['../group__group__worker__thread__util.html#ae0bee3f6b0c9b3250e7b3bba2a6fb012',1,'cy_worker_thread_params_t']]]
+  ['enqueue_5fcount_0',['enqueue_count',['../group__group__worker__thread__util.html#ab2f74dcd0e41ac82b69e15317912dc56',1,'cy_worker_thread_info_t']]],
+  ['event_5fqueue_1',['event_queue',['../group__group__worker__thread__util.html#af921b846c4cdb4ee1b4de6267ae2c2a2',1,'cy_worker_thread_info_t']]]
 ];

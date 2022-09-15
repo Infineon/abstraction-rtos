@@ -21,6 +21,7 @@ To use the RTOS Abstraction, simply include a reference to `cyabs_rtos.h` and up
 * COMPONENTS+=RTX
 * COMPONENTS+=FREERTOS
 * COMPONENTS+=THREADX
+* COMPONENTS+=WICED_RTOS
 
 ## Features
 
@@ -35,6 +36,7 @@ To use the RTOS Abstraction, simply include a reference to `cyabs_rtos.h` and up
     * FreeRTOS
     * RTX (CMSIS RTOS)
     * ThreadX
+    * WICED RTOS
 
 ## RTOS Configuration Requirements
 ### FreeRTOS
@@ -108,4 +110,4 @@ Finally, the following macros need to be defined for memory allocations:
 * [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2021.
+© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.

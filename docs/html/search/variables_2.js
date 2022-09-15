@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['priority',['priority',['../group__group__worker__thread__util.html#ae02e3a16a65e7bb72e10647beceb1fac',1,'cy_worker_thread_params_t']]]
+  ['itemsize_0',['itemsize',['../group__group__abstraction__rtos__port.html#aef3af855433bddf5c884c4424e0cf0e1',1,'cy_queue_t']]]
 ];

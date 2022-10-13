@@ -7,7 +7,7 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -33,9 +33,7 @@
 
 // This is included to allow the user to control the idle task behavior via the configurator
 // System->Power->RTOS->System Idle Power Mode setting.
-#if defined(COMPONENT_BSP_DESIGN_MODUS) || defined(COMPONENT_CUSTOM_DESIGN_MODUS)
-#include "cycfg.h"
-#endif
+#include "cybsp.h"
 
 #define pdTICKS_TO_MS(xTicks)    ( ( ( TickType_t ) ( xTicks ) * 1000u ) / configTICK_RATE_HZ )
 
@@ -61,6 +59,7 @@ cyhal_lptimer_t* cyabs_rtos_get_lptimer(void)
 
 
 #endif //defined(CY_USING_HAL)
+
 
 // The following implementations were sourced from https://www.freertos.org/a00110.html
 
@@ -213,7 +212,7 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 // be increased. This can be set though the Device Configurator, or by manually
                 // defining the variable.
                 CY_ASSERT(actual_sleep_ms <= pdTICKS_TO_MS(xExpectedIdleTime));
-                vTaskStepTick(pdMS_TO_TICKS(actual_sleep_ms));
+                vTaskStepTick(convert_ms_to_ticks(actual_sleep_ms));
             }
         }
 

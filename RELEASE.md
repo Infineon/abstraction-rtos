@@ -14,8 +14,12 @@ The this release of the RTOS Abstraction API includes support for the following:
     * FreeRTOS
     * RTX (CMSIS RTOS)
     * ThreadX
+    * WICED RTOS
 
 ### What Changed?
+#### v1.6.0
+* Removed the explicit in_isr argument from all functions. CPU status registers are used to automatically determine whether a function is executing in an interrupt context.
+* Renamed all functions in order to make grouping more clear. The original function names are deprecated.
 #### v1.5.0
 * Added additional parameter validation for ThreadX
 #### v1.4.0
@@ -57,8 +61,8 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 | :---                                      | :----:  |
 | ModusToolbox™ Software Environment        | 2.4.0   |
 | GCC Compiler                              | 10.3.1  |
-| IAR Compiler                              | 8.4     |
-| ARM Compiler                              | 6.11    |
+| IAR Compiler                              | 9.30.1  |
+| ARM Compiler                              | 6.16    |
 
 Minimum required ModusToolbox™ Software Environment: v2.0
 

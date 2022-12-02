@@ -179,9 +179,13 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             // FreeRTOS
             CY_ASSERT(CY_CFG_PWR_SYS_IDLE_MODE != CY_CFG_PWR_MODE_ACTIVE);
             deep_sleep =
+                #if defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM)
+                ((CY_CFG_PWR_SYS_IDLE_MODE & CY_CFG_PWR_MODE_DEEPSLEEP_RAM) ==
+                 CY_CFG_PWR_MODE_DEEPSLEEP_RAM) ||
+                #endif
                 ((CY_CFG_PWR_SYS_IDLE_MODE & CY_CFG_PWR_MODE_DEEPSLEEP) ==
                  CY_CFG_PWR_MODE_DEEPSLEEP);
-            #endif
+            #endif // if defined (CY_CFG_PWR_SYS_IDLE_MODE)
             uint32_t sleep_ms = pdTICKS_TO_MS(xExpectedIdleTime);
             cy_rslt_t result;
             if (deep_sleep)
@@ -200,8 +204,16 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 #else // defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
                 result = cyhal_syspm_tickless_deepsleep(_timer, sleep_ms, &actual_sleep_ms);
                 #endif // defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
+                //maintain compatibility with older HAL versions that didn't define this error
+                #ifdef CYHAL_SYSPM_RSLT_DEEPSLEEP_LOCKED
+                //Deepsleep has been locked, continuing into normal sleep
+                if (result == CYHAL_SYSPM_RSLT_DEEPSLEEP_LOCKED)
+                {
+                    deep_sleep = false;
+                }
+                #endif
             }
-            else
+            if (!deep_sleep)
             {
                 result = cyhal_syspm_tickless_sleep(_timer, sleep_ms, &actual_sleep_ms);
             }

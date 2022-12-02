@@ -17,6 +17,9 @@ The this release of the RTOS Abstraction API includes support for the following:
     * WICED RTOS
 
 ### What Changed?
+#### v1.7.0
+* FreeRTOS: When DeepSleep is locked, the default idle loop will attempt to enter Sleep instead.
+* FreeRTOS: Add pre-production support for warm-boot after wake from DeepSleep-RAM power state (currently only present on CAT1B devices).
 #### v1.6.0
 * Removed the explicit in_isr argument from all functions. CPU status registers are used to automatically determine whether a function is executing in an interrupt context.
 * Renamed all functions in order to make grouping more clear. The original function names are deprecated.
@@ -74,4 +77,4 @@ Use the following links for more information, as needed:
 * [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2021.
+© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.

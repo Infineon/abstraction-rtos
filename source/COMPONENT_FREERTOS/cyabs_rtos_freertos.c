@@ -765,7 +765,12 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
         }
         else
         {
-            ret = xEventGroupSetBits(*event, (EventBits_t)bits);
+            // xEventGroupSetBits does not return pass/fail, but instead returns the value of the
+            // event bits at the time the function returns. There is potential to
+            // return 0 (value equal to pdFALSE), so instead treat it as successful after the call
+            // to xEventGroupSetBits to avoid false error.
+            xEventGroupSetBits(*event, (EventBits_t)bits);
+            ret = pdTRUE;
         }
 
         if (ret == pdFALSE)
@@ -800,7 +805,12 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
         }
         else
         {
-            ret = xEventGroupClearBits(*event, (EventBits_t)bits);
+            // xEventGroupClearBits does not return pass/fail, but instead returns the value of the
+            // event bits before the requested bits were cleared. There is potential to
+            // return 0 (value equal to pdFALSE), so instead treat it as successful after the call
+            // to xEventGroupClearBits to avoid false error.
+            xEventGroupClearBits(*event, (EventBits_t)bits);
+            ret = pdTRUE;
         }
 
         if (ret == pdFALSE)

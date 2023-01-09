@@ -17,6 +17,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * WICED RTOS
 
 ### What Changed?
+#### v1.7.1
+Explicitly include cmsis_compiler.h where required.
 #### v1.7.0
 * FreeRTOS: When DeepSleep is locked, the default idle loop will attempt to enter Sleep instead.
 * FreeRTOS: Add pre-production support for warm-boot after wake from DeepSleep-RAM power state (currently only present on CAT1B devices).

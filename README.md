@@ -21,7 +21,6 @@ To use the RTOS Abstraction, simply include a reference to `cyabs_rtos.h` and up
 * COMPONENTS+=RTX
 * COMPONENTS+=FREERTOS
 * COMPONENTS+=THREADX
-* COMPONENTS+=WICED_RTOS
 
 ## Features
 

@@ -27,10 +27,13 @@
 #include "FreeRTOS.h"
 #include "cyabs_rtos.h"
 #include "cyabs_rtos_dsram.h"
+#if defined(COMPONENT_CAT1B)
+#include "cy_syslib.h"
+#endif
 
 void vPortSetupTimerInterrupt(void);
 
-
+#if defined(COMPONENT_CAT1B)
 //--------------------------------------------------------------------------------------------------
 // vStoreDSRAMContextWithWFI
 //--------------------------------------------------------------------------------------------------
@@ -47,6 +50,7 @@ __WEAK void vRestoreDSRAMContext(void)
 }
 
 
+CY_RAMFUNC_BEGIN
 //--------------------------------------------------------------------------------------------------
 // cyabs_dsram_enter_dsram
 //--------------------------------------------------------------------------------------------------
@@ -54,6 +58,9 @@ __WEAK void cyabs_rtos_enter_dsram(void)
 {
     vStoreDSRAMContextWithWFI();
 }
+
+
+CY_RAMFUNC_END
 
 
 //--------------------------------------------------------------------------------------------------
@@ -65,3 +72,6 @@ __WEAK void cyabs_rtos_exit_dsram(void)
 
     vRestoreDSRAMContext();
 }
+
+
+#endif // if defined(COMPONENT_CAT1B)

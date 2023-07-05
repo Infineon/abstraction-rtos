@@ -14,9 +14,12 @@ The this release of the RTOS Abstraction API includes support for the following:
     * FreeRTOS
     * RTX (CMSIS RTOS)
     * ThreadX
-    * WICED RTOS
 
 ### What Changed?
+#### v1.7.3
+FreeRTOS: Improve context switching speed when an ISR unblocks a thread.
+#### v1.7.2
+Expanded FreeRTOS support for DS RAM
 #### v1.7.1
 Explicitly include cmsis_compiler.h where required.
 #### v1.7.0
@@ -79,4 +82,4 @@ Use the following links for more information, as needed:
 * [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.
+© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2023.

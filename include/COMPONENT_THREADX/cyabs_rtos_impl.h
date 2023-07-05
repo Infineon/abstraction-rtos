@@ -40,9 +40,9 @@ extern "C"
 /******************************************************
 *                 Constants
 ******************************************************/
-#define CY_RTOS_MIN_STACK_SIZE  TX_MINIMUM_STACK /** Minimum stack size in bytes */
-#define CY_RTOS_ALIGNMENT       0x00000008UL     /** Minimum alignment for RTOS objects */
-#define CY_RTOS_ALIGNMENT_MASK  0x00000007UL     /** Checks for 8-byte alignment */
+#define CY_RTOS_MIN_STACK_SIZE  TX_MINIMUM_STACK /**< Minimum stack size in bytes */
+#define CY_RTOS_ALIGNMENT       0x00000008UL     /**< Minimum alignment for RTOS objects */
+#define CY_RTOS_ALIGNMENT_MASK  0x00000007UL     /**< Checks for 8-byte alignment */
 
 
 /******************************************************

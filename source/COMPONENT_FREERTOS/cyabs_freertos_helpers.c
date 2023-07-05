@@ -222,7 +222,7 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             {
                 // If you hit this assert, the latency time (CY_CFG_PWR_DEEPSLEEP_LATENCY) should
                 // be increased. This can be set though the Device Configurator, or by manually
-                // defining the variable.
+                // defining the variable in cybsp.h for the TARGET platform.
                 CY_ASSERT(actual_sleep_ms <= pdTICKS_TO_MS(xExpectedIdleTime));
                 vTaskStepTick(convert_ms_to_ticks(actual_sleep_ms));
             }

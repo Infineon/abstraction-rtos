@@ -622,6 +622,10 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
             {
                 status = CY_RTOS_TIMEOUT;
             }
+            else
+            {
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
         {
@@ -654,9 +658,10 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
         if (is_in_isr())
         {
             ret = xSemaphoreGiveFromISR(*semaphore, &xHigherPriorityTaskWoken);
-            #if configUSE_PREEMPTION == 1
-            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-            #endif
+            if (ret == pdTRUE)
+            {
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
         {
@@ -760,8 +765,13 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
         BaseType_t ret;
         if (is_in_isr())
         {
-            BaseType_t bt = pdFALSE;
-            ret = xEventGroupSetBitsFromISR(*event, (EventBits_t)bits, &bt);
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+            ret = xEventGroupSetBitsFromISR(*event, (EventBits_t)bits, &xHigherPriorityTaskWoken);
+
+            if (ret == pdTRUE)
+            {
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
         {
@@ -932,10 +942,15 @@ cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t t
     }
     else
     {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         BaseType_t ret;
         if (is_in_isr())
         {
-            ret = xQueueSendToBackFromISR(*queue, item_ptr, NULL);
+            ret = xQueueSendToBackFromISR(*queue, item_ptr, &xHigherPriorityTaskWoken);
+            if (ret == pdTRUE)
+            {
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
         {
@@ -969,9 +984,14 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
     else
     {
         BaseType_t ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         if (is_in_isr())
         {
-            ret = xQueueReceiveFromISR(*queue, item_ptr, NULL);
+            ret = xQueueReceiveFromISR(*queue, item_ptr, &xHigherPriorityTaskWoken);
+            if (ret == pdTRUE)
+            {
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
         {

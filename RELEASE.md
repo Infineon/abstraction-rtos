@@ -16,6 +16,9 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.7.4
+* FreeRTOS: On devices that support DeepSleep-RAM, allow the application to specify a separate latency value for DeepSleep-RAM (vs. DeepSleep), by defining `CY_CFG_PWR_DEEPSLEEP_RAM_LATENCY`.
+* FreeRTOS: Simplify flow for storing and restoring context during entry/exit from DeepSleep-RAM.
 #### v1.7.3
 FreeRTOS: Improve context switching speed when an ISR unblocks a thread.
 #### v1.7.2

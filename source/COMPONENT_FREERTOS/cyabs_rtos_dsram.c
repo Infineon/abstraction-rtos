@@ -32,6 +32,7 @@
 #endif
 
 void vPortSetupTimerInterrupt(void);
+void Cy_SysPm_StoreDSContext_Wfi(void);
 
 #if defined(COMPONENT_CAT1B)
 //--------------------------------------------------------------------------------------------------
@@ -52,11 +53,18 @@ __WEAK void vRestoreDSRAMContext(void)
 
 CY_RAMFUNC_BEGIN
 //--------------------------------------------------------------------------------------------------
-// cyabs_dsram_enter_dsram
+// Cy_SysPm_StoreDSContext_Wfi
+// Cy_SysPm_StoreDSContext_Wfi is defined as a weak function in pdl.
+// This implementation under abstraction rtos implements FreeRTOS
+// specific context store required for deep sleep entry.
 //--------------------------------------------------------------------------------------------------
-__WEAK void cyabs_rtos_enter_dsram(void)
+void Cy_SysPm_StoreDSContext_Wfi(void)
 {
+    System_Store_NVIC_Reg();
+    /* Clear the Warm Boot Entry status Flag */
+    Cy_SysLib_ClearDSRAMWarmBootEntryStatus();
     vStoreDSRAMContextWithWFI();
+    System_Restore_NVIC_Reg();
 }
 
 

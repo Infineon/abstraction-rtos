@@ -32,14 +32,9 @@
 extern "C" {
 #endif
 
-
 /******************************************************
 *                 Function Declarations
 ******************************************************/
-/** Enters DS-RAM Low Power Mode.
- *
- */
-void cyabs_rtos_enter_dsram(void);
 
 /** Exits DS-RAM Low Power Mode.
  *

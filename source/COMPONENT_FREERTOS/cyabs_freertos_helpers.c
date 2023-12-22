@@ -242,8 +242,9 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 uint32_t deep_sleep_latency = cyabs_rtos_get_deepsleep_latency();
                 if (sleep_ms > deep_sleep_latency)
                 {
-                    sleep_ms -= deep_sleep_latency;
-                    result = cyhal_syspm_tickless_deepsleep(_lptimer, sleep_ms, &actual_sleep_ms);
+                    result = cyhal_syspm_tickless_deepsleep(_lptimer,
+                                                            (sleep_ms - deep_sleep_latency),
+                                                            &actual_sleep_ms);
                 }
                 else
                 {
@@ -267,7 +268,20 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             }
             if (!deep_sleep)
             {
-                result = cyhal_syspm_tickless_sleep(_lptimer, sleep_ms, &actual_sleep_ms);
+                uint32_t sleep_latency =
+                    #if defined (CY_CFG_PWR_SLEEP_LATENCY)
+                    CY_CFG_PWR_SLEEP_LATENCY +
+                    #endif
+                    0;
+                if (sleep_ms > sleep_latency)
+                {
+                    result = cyhal_syspm_tickless_sleep(_lptimer, (sleep_ms - sleep_latency),
+                                                        &actual_sleep_ms);
+                }
+                else
+                {
+                    result = CY_RTOS_TIMEOUT;
+                }
             }
             #else // if (defined(CY_CFG_PWR_MODE_DEEPSLEEP) &&
             // (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) ||

@@ -189,6 +189,12 @@ __WEAK void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
 //--------------------------------------------------------------------------------------------------
 __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
 {
+    #if (defined(CY_CFG_PWR_MODE_DEEPSLEEP) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) || \
+    (defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM))
+    #define DEEPSLEEP_ENABLE
+    #endif
     static cyhal_lptimer_t timer;
     uint32_t               actual_sleep_ms = 0;
     cy_rslt_t result = CY_RSLT_SUCCESS;
@@ -220,10 +226,8 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             // configurator overrides the behaviour to sleep in the System->Power->RTOS->System
             // Idle Power Mode setting.
             #if defined (CY_CFG_PWR_SYS_IDLE_MODE)
-            #if (defined(CY_CFG_PWR_MODE_DEEPSLEEP) && \
-            (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) || \
-            (defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
-            (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM))
+            uint32_t sleep_ms = pdTICKS_TO_MS(xExpectedIdleTime);
+            #if defined DEEPSLEEP_ENABLE
             bool deep_sleep = true;
             // If the system needs to operate in active mode the tickless mode should not be used in
             // FreeRTOS
@@ -233,7 +237,6 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM) ||
                 #endif
                 (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP);
-            uint32_t sleep_ms = pdTICKS_TO_MS(xExpectedIdleTime);
             if (deep_sleep)
             {
                 // Adjust the deep-sleep time by the sleep/wake latency if set.
@@ -268,30 +271,24 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             }
             if (!deep_sleep)
             {
-                uint32_t sleep_latency =
-                    #if defined (CY_CFG_PWR_SLEEP_LATENCY)
-                    CY_CFG_PWR_SLEEP_LATENCY +
-                    #endif
-                    0;
-                if (sleep_ms > sleep_latency)
-                {
-                    result = cyhal_syspm_tickless_sleep(_lptimer, (sleep_ms - sleep_latency),
-                                                        &actual_sleep_ms);
-                }
-                else
-                {
-                    result = CY_RTOS_TIMEOUT;
-                }
+            #endif // if defined DEEPSLEEP_ENABLE
+            uint32_t sleep_latency =
+                #if defined (CY_CFG_PWR_SLEEP_LATENCY)
+                CY_CFG_PWR_SLEEP_LATENCY +
+                #endif
+                0;
+            if (sleep_ms > sleep_latency)
+            {
+                result = cyhal_syspm_tickless_sleep(_lptimer, (sleep_ms - sleep_latency),
+                                                    &actual_sleep_ms);
             }
-            #else // if (defined(CY_CFG_PWR_MODE_DEEPSLEEP) &&
-            // (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) ||
-            // (defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) &&
-            // (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM))
-            CY_UNUSED_PARAMETER(xExpectedIdleTime);
-            #endif //(defined(CY_CFG_PWR_MODE_DEEPSLEEP) &&
-            //(CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) ||
-            //(defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) &&
-            //(CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM))
+            else
+            {
+                result = CY_RTOS_TIMEOUT;
+            }
+            #if defined DEEPSLEEP_ENABLE
+        }
+            #endif
             #else // if defined (CY_CFG_PWR_SYS_IDLE_MODE)
             CY_UNUSED_PARAMETER(xExpectedIdleTime);
             #endif // if defined (CY_CFG_PWR_SYS_IDLE_MODE)

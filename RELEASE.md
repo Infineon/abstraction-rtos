@@ -16,6 +16,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.7.6
+* FreeRTOS: vApplicationSleep issue fixed where sleep could not be entered in non-deeplseep idle mode.
 #### v1.7.5
 * FreeRTOS: On devices that support DeepSleep, allow the application to specify a separate latency value for DeepSleep and normal Sleep, by defining `CY_CFG_PWR_SLEEP_LATENCY`.
 #### v1.7.4
@@ -74,7 +76,7 @@ This version of the RTOS Abstraction API was validated for compatibility with th
 | :---                                      | :----:  |
 | ModusToolbox™ Software Environment        | 2.4.0   |
 | GCC Compiler                              | 10.3.1  |
-| IAR Compiler                              | 9.30.1  |
+| IAR Compiler                              | 9.40.2  |
 | ARM Compiler                              | 6.16    |
 
 Minimum required ModusToolbox™ Software Environment: v2.0

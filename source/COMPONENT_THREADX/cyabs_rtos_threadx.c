@@ -30,6 +30,9 @@
 #include <tx_api.h>
 #include <stdlib.h>
 #include "cyabs_rtos_internal.h"
+#if defined (COMPONENT_CAT5)
+#include "cyabs_rtos_impl_cat5.h"
+#endif
 
 #define WRAPPER_IDENT           (0xABCDEF01U)
 #define MAX_QUEUE_MESSAGE_SIZE  (16)
@@ -435,8 +438,14 @@ static uint16_t _cy_rtos_suspend_count = 0;
 cy_rslt_t cy_rtos_scheduler_suspend(void)
 {
     ++_cy_rtos_suspend_count;
+    #if defined (COMPONENT_CAT5)
+    if (_cy_rtos_suspend_count == 1)
+    {
+        tx_interrupt_control(TX_INT_DISABLE);
+    }
+    #else
     tx_interrupt_control(TX_INT_DISABLE);
-
+    #endif
     return CY_RSLT_SUCCESS;
 }
 

@@ -45,6 +45,9 @@ __WEAK void _cyhal_system_irq_clear_disabled_in_pending(void)
 #endif /* defined(CY_USING_HAL) */
 
 
+#if defined(FREERTOS_COMMON_SECTION_BEGIN)
+FREERTOS_COMMON_SECTION_BEGIN
+#endif
 //--------------------------------------------------------------------------------------------------
 // convert_ms_to_ticks
 //--------------------------------------------------------------------------------------------------
@@ -76,3 +79,8 @@ cy_time_t convert_ms_to_ticks(cy_time_t timeout_ms)
         return (cy_time_t)ticks;
     }
 }
+
+
+#if defined(FREERTOS_COMMON_SECTION_END)
+FREERTOS_COMMON_SECTION_END
+#endif

@@ -32,6 +32,9 @@
 #include <event_groups.h>
 #include <timers.h>
 #include "stdbool.h"
+#if !defined (COMPONENT_CAT5)
+#include <cmsis_compiler.h>
+#endif
 #if defined(CY_USING_HAL)
 #include "cyhal.h"
 #endif

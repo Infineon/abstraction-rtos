@@ -16,6 +16,10 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.8.1
+Extended full support on CAT5.
+#### v1.8.0
+Pre-production release for CAT5 only. Only one application thread is supported. The Scheduler API functions are not supported.
 #### v1.7.6
 * FreeRTOS: vApplicationSleep issue fixed where sleep could not be entered in non-deeplseep idle mode.
 #### v1.7.5

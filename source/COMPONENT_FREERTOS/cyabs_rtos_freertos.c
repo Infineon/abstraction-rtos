@@ -499,6 +499,9 @@ cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive)
 }
 
 
+#if defined(FREERTOS_COMMON_SECTION_BEGIN)
+FREERTOS_COMMON_SECTION_BEGIN
+#endif
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_get
 //--------------------------------------------------------------------------------------------------
@@ -524,6 +527,14 @@ cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
 }
 
 
+#if defined(FREERTOS_COMMON_SECTION_END)
+FREERTOS_COMMON_SECTION_END
+#endif
+
+
+#if defined(FREERTOS_COMMON_SECTION_BEGIN)
+FREERTOS_COMMON_SECTION_BEGIN
+#endif
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_set
 //--------------------------------------------------------------------------------------------------
@@ -547,6 +558,10 @@ cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
     return status;
 }
 
+
+#if defined(FREERTOS_COMMON_SECTION_END)
+FREERTOS_COMMON_SECTION_END
+#endif
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_deinit
@@ -930,6 +945,9 @@ cy_rslt_t cy_rtos_queue_init(cy_queue_t* queue, size_t length, size_t itemsize)
 }
 
 
+#if defined(FREERTOS_COMMON_SECTION_BEGIN)
+FREERTOS_COMMON_SECTION_BEGIN
+#endif
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_put
 //--------------------------------------------------------------------------------------------------
@@ -971,6 +989,14 @@ cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t t
 }
 
 
+#if defined(FREERTOS_COMMON_SECTION_END)
+FREERTOS_COMMON_SECTION_END
+#endif
+
+
+#if defined(FREERTOS_COMMON_SECTION_BEGIN)
+FREERTOS_COMMON_SECTION_BEGIN
+#endif
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_get
 //--------------------------------------------------------------------------------------------------
@@ -1010,6 +1036,11 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
     }
     return status;
 }
+
+
+#if defined(FREERTOS_COMMON_SECTION_END)
+FREERTOS_COMMON_SECTION_END
+#endif
 
 
 //--------------------------------------------------------------------------------------------------

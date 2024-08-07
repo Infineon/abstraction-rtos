@@ -16,6 +16,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.8.2
+FreeRTOS: Fix start and stop of timer from within an ISR
 #### v1.8.1
 Extended full support on CAT5.
 #### v1.8.0

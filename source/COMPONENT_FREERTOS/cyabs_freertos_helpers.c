@@ -27,14 +27,50 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cyabs_rtos.h"
+#include "cy_utils.h"
 #if defined(CY_USING_HAL)
 #include "cyhal.h"
-#include "cyhal_syspm.h"
+#elif defined(COMPONENT_MTB_HAL)
+#include "mtb_hal.h"
 #endif
 
 // This is included to allow the user to control the idle task behavior via the configurator
 // System->Power->RTOS->System Idle Power Mode setting.
 #include "cybsp.h"
+
+#if defined(COMPONENT_MTB_HAL) && (configUSE_TICKLESS_IDLE != 0)
+// By default, the device will deep-sleep in the idle task unless if the device
+// configurator overrides the behaviour to sleep in the System->Power->RTOS->System
+// Idle Power Mode setting.
+    #if defined(CY_CFG_PWR_MODE_DEEPSLEEP) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)
+        #define _ABS_RTOS_DEEPSLEEP_ENABLED
+    #elif defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM)
+// We don't care here about the difference between deep-sleep and deep-sleep RAM
+        #define _ABS_RTOS_DEEPSLEEP_ENABLED
+    #elif (defined(CY_CFG_PWR_MODE_SLEEP) && (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_SLEEP))
+        #define _ABS_RTOS_SLEEP_ENABLED
+    #endif
+// We can support sleep in a non-tickless fashion if there is no LPTimer.
+// But we must have it for DeepSleep because the overhead of entering and
+// exiting DeepSleep is too high to do so in a tickful fashion.
+    #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+// Deliberately not defined(); the HAL driver available macros are boolean values
+        #if !(MTB_HAL_DRIVER_AVAILABLE_SYSPM)
+            #error "Tickless idle depends on the SysPm HAL driver, but it is not available"
+        #endif
+        #if !(MTB_HAL_DRIVER_AVAILABLE_LPTIMER)
+            #error "Tickless idle depends on the LPTimer HAL driver, but it is not available"
+        #endif
+    #endif // defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+
+    #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED) || defined(_ABS_RTOS_SLEEP_ENABLED)
+        #if (MTB_HAL_DRIVER_AVAILABLE_LPTIMER) && (MTB_HAL_DRIVER_AVAILABLE_SYSPM)
+        #define _ABS_RTOS_TICKLESS_ENABLED
+        #endif // (MTB_HAL_DRIVER_AVAILABLE_LPTIMER) && (MTB_HAL_DRIVER_AVAILABLE_SYSPM)
+    #endif
+#endif // if defined(COMPONENT_MTB_HAL) && (configUSE_TICKLESS_IDLE != 0)
 
 #define pdTICKS_TO_MS(xTicks)    ( ( ( TickType_t ) ( xTicks ) * 1000u ) / configTICK_RATE_HZ )
 
@@ -171,7 +207,7 @@ __WEAK void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
 }
 
 
-#if defined(CY_USING_HAL) && (configUSE_TICKLESS_IDLE != 0)
+#if (defined(CY_USING_HAL) || defined(COMPONENT_MTB_HAL)) && (configUSE_TICKLESS_IDLE != 0)
 //--------------------------------------------------------------------------------------------------
 // vApplicationSleep
 //
@@ -189,6 +225,7 @@ __WEAK void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
 //--------------------------------------------------------------------------------------------------
 __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
 {
+    #if defined(CY_USING_HAL)
     #if (defined(CY_CFG_PWR_MODE_DEEPSLEEP) && \
     (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)) || \
     (defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
@@ -304,7 +341,16 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
 
         cyhal_system_critical_section_exit(status);
     }
+    #elif defined(COMPONENT_MTB_HAL)
+    // This release does not yet support the LPTimer functionality from HAL 3.0, so we cannot
+    // disable SysTick or enter DeepSleep, and instead we simply put the CPU to sleep until the
+    // next SysTick.
+    // There is a #error earlier in this file that will flag if the application attempts to
+    // configure tickless DeepSleep while it is not supported.
+    CY_UNUSED_PARAMETER(xExpectedIdleTime);
+    __WFI();
+    #endif // defined(CY_USING_HAL)
 }
 
 
-#endif // defined(CY_USING_HAL) && (configUSE_TICKLESS_IDLE != 0)
+#endif // (defined(CY_USING_HAL) || defined(COMPONENT_MTB_HAL)) && (configUSE_TICKLESS_IDLE != 0)

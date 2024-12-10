@@ -16,6 +16,10 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.9.0
+FreeRTOS:
+- Added compatibility with HAL 3.X API changes
+- In vApplicationSleep, enter basic CPU sleep (WFI) if it is not possible to enter tickless (Deep)Sleep.
 #### v1.8.2
 FreeRTOS: Fix start and stop of timer from within an ISR
 #### v1.8.1

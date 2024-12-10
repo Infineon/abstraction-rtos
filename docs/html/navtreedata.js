@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "RTOS Abstraction (abstraction-rtos)", "index.html", [
+  [ "(abstraction-rtos)", "index.html", [
     [ "RTOS Abstraction", "index.html", [
       [ "Overview", "index.html#autotoc_md1", null ],
       [ "Getting Started", "index.html#autotoc_md2", null ],

@@ -30,11 +30,14 @@ var NAVTREE =
       [ "Getting Started", "index.html#autotoc_md2", null ],
       [ "Features", "index.html#autotoc_md3", null ],
       [ "RTOS Configuration Requirements", "index.html#autotoc_md4", [
-        [ "FreeRTOS", "index.html#autotoc_md5", null ],
-        [ "RTX / ThreadX", "index.html#autotoc_md6", null ]
+        [ "FreeRTOS", "index.html#autotoc_md5", [
+          [ "Low Power Configuration", "index.html#autotoc_md6", null ],
+          [ "Known Limitations", "index.html#autotoc_md7", null ]
+        ] ],
+        [ "RTX / ThreadX", "index.html#autotoc_md8", null ]
       ] ],
-      [ "Porting Notes", "index.html#autotoc_md7", null ],
-      [ "More information", "index.html#autotoc_md8", null ]
+      [ "Porting Notes", "index.html#autotoc_md9", null ],
+      [ "More information", "index.html#autotoc_md10", null ]
     ] ],
     [ "API Reference", "modules.html", "modules" ]
   ] ]

@@ -16,6 +16,10 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.10.0
+FreeRTOS:
+- Enabled support for HAL interface 3.0 LPTimer to allow tickless (Deep)Sleep.
+- In vApplicationSleep, variables renamed to better describe actual idle times.
 #### v1.9.0
 FreeRTOS:
 - Added compatibility with HAL 3.X API changes

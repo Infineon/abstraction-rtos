@@ -150,18 +150,32 @@ FreeRTOS</h2>
 </ul>
 <p >Enabling configSUPPORT_STATIC_ALLOCATION requires the application to provide implementations for <code>vApplicationGetIdleTaskMemory</code> and <code>vApplicationGetTimerTaskMemory</code>functions. Weak implementations for these functions are provided as a part of this library. These can be overridden by the application if custom implementations of these functions are desired.<br  />
 </p>
+<h3><a class="anchor" id="autotoc_md6"></a>
+Low Power Configuration</h3>
 <p >This library provides an API <code>vApplicationSleep</code> which can be used to enable tickless support in FreeRTOS. In order to enable tickless mode with this API, the following changes need to be made in <code>FreeRTOSConfig.h</code>:</p><ul>
 <li>Enables tickless mode with user specified <code>portSUPPRESS_TICKS_AND_SLEEP</code> implementation.<br  />
  <code>#define</code> <code>configUSE_TICKLESS_IDLE 2</code></li>
 <li>Hook <code>portSUPPRESS_TICKS_AND_SLEEP</code> macro to <code>vApplicationSleep</code> implementation.<br  />
  <code>#define</code> <code>portSUPPRESS_TICKS_AND_SLEEP( xIdleTime ) vApplicationSleep( xIdleTime )</code></li>
 </ul>
+<p >In tickless mode <code>vApplicationSleep</code> updates the number of RTOS ticks that have passed since the tick interrupt was stopped using <code>vTaskStepTick</code>, taking into account the sleep/deepsleep latency.</p><ul>
+<li><p class="startli">The maximum tickless idle time can be calculated as follow:</p><ul>
+<li><code>MaxIdleTime = LPtimerDelay + latency</code> where: <code>latency = PreSleepLatency + PostSleepLatency</code>, <code>LPtimerDelay = xExpectedIdleTime - latency</code>.</li>
+</ul>
+<p class="startli"><b>Note</b>: The <code>LPtimerDelay</code> represents the duration in which the IP is configured to Wake-up the device. Wake-up can happen before its expiration if one other configured interrupt triggers during this time.</p>
+</li>
+<li>In case of <code>xExpectedIdleTime &lt;= latency</code> WFI is executed instead, and normal sleep is expected to be reached (SCR-&gt;SLEEPDEEP = 0).</li>
+<li>The actual Idle time for which the Systick timer is disabled, is always update in vTaskStepTick to keep the RTOS alwyas up to date, independently from if the tickless sleep is reached or not successfully. The reason for this is to find in the sequence of operations to reach the sleep, the Systick is disabled before the (deep)sleep callbacks are called, so if one of them will not allow (deep)sleep, the ticks for which the check is performed needs to be anyway counted in the RTOS.</li>
+</ul>
 <p >Functions cy_rtos_scheduler_suspend/cy_rtos_scheduler_resume can be called from ISR but calls need to be paired to restore the saved interrupt status correctly so a structure to save these values has been implemented. The size of this structure can be controlled with CY_RTOS_MAX_SUSPEND_NESTING. This macro is overridable and its default value is 3.</p>
 <p >For further details on Low power support in FreeRTOS please refer to documentation <a href="https://www.freertos.org/low-power-tickless-rtos.html">here</a></p>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h3><a class="anchor" id="autotoc_md7"></a>
+Known Limitations</h3>
+<p >The cy_rtos_event_* functions accept a 32-bit event as an argument. However, FreeRTOS requires 8-bits(<code>configUSE_16_BIT_TICKS</code> == 1) or 24-bits (<code>configUSE_16_BIT_TICKS</code> == 0) to run successfully. Hence the application should not reference these unsupported bits. Check the FreeRTOS implementation of <code>eventEVENT_BITS_CONTROL_BYTES</code> in event_group.c for internal details.</p>
+<h2><a class="anchor" id="autotoc_md8"></a>
 RTX / ThreadX</h2>
 <p >No specific requirements exist</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md9"></a>
 Porting Notes</h1>
 <p >In order to port to a new environment, the file cyabs_rtos_impl.h must be provided with definitions of some basic types for the abstraction layer. The types expected to be defined are:</p>
 <ul>
@@ -191,7 +205,7 @@ Porting Notes</h1>
 <li><code>CY_RTOS_ALIGNMENT</code></li>
 <li><code>CY_RTOS_ALIGNMENT_MASK</code></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md8"></a>
+<h1><a class="anchor" id="autotoc_md10"></a>
 More information</h1>
 <ul>
 <li><a href="https://infineon.github.io/abstraction-rtos/html/modules.html">API Reference Guide</a></li>

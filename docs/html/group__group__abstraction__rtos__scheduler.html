@@ -83,19 +83,77 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__sched
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle"><div class="title">Scheduler</div></div>
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">General Description</h2>
 <p >APIs for working with Scheduler. </p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gaae80bd02ca4ff97c131716f4237d1645"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__scheduler.html#gaae80bd02ca4ff97c131716f4237d1645">cy_scheduler_state_t</a> { <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645a84a073d2452b8ae5cca71e46bfc77242">CY_SCHEDULER_STATE_NOT_STARTED</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645a5801e4f5f63c70077b70c9a76be3f545">CY_SCHEDULER_STATE_INACTIVE</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645a6ed064567a0ccad21758150cb5567313">CY_SCHEDULER_STATE_LOCKED</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645ad1d31d8c4f4024294a34e583a93c7f5b">CY_SCHEDULER_STATE_READY</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645aa2f87b6561949bc85070993e56d3dc8d">CY_SCHEDULER_STATE_SUSPENDED</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645a30ff479458cd9efde31576feb31a680a">CY_SCHEDULER_STATE_RUNNING</a>
+, <br />
+&#160;&#160;<a class="el" href="group__group__abstraction__rtos__scheduler.html#ggaae80bd02ca4ff97c131716f4237d1645a2155088897bb9ebf86f72ac83fc87c4a">CY_SCHEDULER_STATE_UNKNOWN</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:gaae80bd02ca4ff97c131716f4237d1645"><td class="mdescLeft">&#160;</td><td class="mdescRight">The state a scheduler can be in.  <a href="group__group__abstraction__rtos__scheduler.html#gaae80bd02ca4ff97c131716f4237d1645">More...</a><br /></td></tr>
+<tr class="separator:gaae80bd02ca4ff97c131716f4237d1645"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga61f383c18398803438e76f280e2ba003"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__scheduler.html#ga61f383c18398803438e76f280e2ba003">cy_rtos_scheduler_suspend</a> (void)</td></tr>
 <tr class="memdesc:ga61f383c18398803438e76f280e2ba003"><td class="mdescLeft">&#160;</td><td class="mdescRight">Suspend the scheduler.  <a href="group__group__abstraction__rtos__scheduler.html#ga61f383c18398803438e76f280e2ba003">More...</a><br /></td></tr>
 <tr class="separator:ga61f383c18398803438e76f280e2ba003"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9e704925c79ff121e69f3f96b810b41f"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__scheduler.html#ga9e704925c79ff121e69f3f96b810b41f">cy_rtos_scheduler_resume</a> (void)</td></tr>
 <tr class="memdesc:ga9e704925c79ff121e69f3f96b810b41f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume the scheduler.  <a href="group__group__abstraction__rtos__scheduler.html#ga9e704925c79ff121e69f3f96b810b41f">More...</a><br /></td></tr>
 <tr class="separator:ga9e704925c79ff121e69f3f96b810b41f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5c4b8f8ce8f98d0bece44621fe194ac4"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__abstraction__rtos__scheduler.html#ga5c4b8f8ce8f98d0bece44621fe194ac4">cy_rtos_scheduler_get_state</a> (<a class="el" href="group__group__abstraction__rtos__scheduler.html#gaae80bd02ca4ff97c131716f4237d1645">cy_scheduler_state_t</a> *state)</td></tr>
+<tr class="memdesc:ga5c4b8f8ce8f98d0bece44621fe194ac4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the state the scheduler is currently in.  <a href="group__group__abstraction__rtos__scheduler.html#ga5c4b8f8ce8f98d0bece44621fe194ac4">More...</a><br /></td></tr>
+<tr class="separator:ga5c4b8f8ce8f98d0bece44621fe194ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="gaae80bd02ca4ff97c131716f4237d1645" name="gaae80bd02ca4ff97c131716f4237d1645"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaae80bd02ca4ff97c131716f4237d1645">&#9670;&nbsp;</a></span>cy_scheduler_state_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__group__abstraction__rtos__scheduler.html#gaae80bd02ca4ff97c131716f4237d1645">cy_scheduler_state_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The state a scheduler can be in. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645a84a073d2452b8ae5cca71e46bfc77242" name="ggaae80bd02ca4ff97c131716f4237d1645a84a073d2452b8ae5cca71e46bfc77242"></a>CY_SCHEDULER_STATE_NOT_STARTED&#160;</td><td class="fielddoc"><p >Scheduler has not started. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645a5801e4f5f63c70077b70c9a76be3f545" name="ggaae80bd02ca4ff97c131716f4237d1645a5801e4f5f63c70077b70c9a76be3f545"></a>CY_SCHEDULER_STATE_INACTIVE&#160;</td><td class="fielddoc"><p >Scheduler is not ready yet. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645a6ed064567a0ccad21758150cb5567313" name="ggaae80bd02ca4ff97c131716f4237d1645a6ed064567a0ccad21758150cb5567313"></a>CY_SCHEDULER_STATE_LOCKED&#160;</td><td class="fielddoc"><p >Scheduler is locked. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645ad1d31d8c4f4024294a34e583a93c7f5b" name="ggaae80bd02ca4ff97c131716f4237d1645ad1d31d8c4f4024294a34e583a93c7f5b"></a>CY_SCHEDULER_STATE_READY&#160;</td><td class="fielddoc"><p >Scheduler is ready but not running. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645aa2f87b6561949bc85070993e56d3dc8d" name="ggaae80bd02ca4ff97c131716f4237d1645aa2f87b6561949bc85070993e56d3dc8d"></a>CY_SCHEDULER_STATE_SUSPENDED&#160;</td><td class="fielddoc"><p >Scheduler has been suspended. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645a30ff479458cd9efde31576feb31a680a" name="ggaae80bd02ca4ff97c131716f4237d1645a30ff479458cd9efde31576feb31a680a"></a>CY_SCHEDULER_STATE_RUNNING&#160;</td><td class="fielddoc"><p >Scheduler is currently running. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaae80bd02ca4ff97c131716f4237d1645a2155088897bb9ebf86f72ac83fc87c4a" name="ggaae80bd02ca4ff97c131716f4237d1645a2155088897bb9ebf86f72ac83fc87c4a"></a>CY_SCHEDULER_STATE_UNKNOWN&#160;</td><td class="fielddoc"><p >An error occurred. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga61f383c18398803438e76f280e2ba003" name="ga61f383c18398803438e76f280e2ba003"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga61f383c18398803438e76f280e2ba003">&#9670;&nbsp;</a></span>cy_rtos_scheduler_suspend()</h2>
@@ -139,6 +197,34 @@ $(document).ready(function(){initNavTree('group__group__abstraction__rtos__sched
 <p>Resume the scheduler. </p>
 <p >This function resumes the scheduler after it was suspended. If incorrectly called (called more times than <a class="el" href="group__group__abstraction__rtos__scheduler.html#ga61f383c18398803438e76f280e2ba003">cy_rtos_scheduler_suspend</a>) it fails returning <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a></p>
 <dl class="section return"><dt>Returns</dt><dd>The status of scheduler resume request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>] </dd></dl>
+
+</div>
+</div>
+<a id="ga5c4b8f8ce8f98d0bece44621fe194ac4" name="ga5c4b8f8ce8f98d0bece44621fe194ac4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5c4b8f8ce8f98d0bece44621fe194ac4">&#9670;&nbsp;</a></span>cy_rtos_scheduler_get_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cy_rslt_t cy_rtos_scheduler_get_state </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__group__abstraction__rtos__scheduler.html#gaae80bd02ca4ff97c131716f4237d1645">cy_scheduler_state_t</a> *&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the state the scheduler is currently in. </p>
+<p >This function is called to determine if the scheduler is running/suspend/not started.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">state</td><td>Returns the state the scheduler is currently in</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the scheduler state check. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
 
 </div>
 </div>

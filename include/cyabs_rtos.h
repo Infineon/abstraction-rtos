@@ -137,6 +137,23 @@ typedef enum cy_thread_state
 } cy_thread_state_t;
 
 /**
+ * The state a scheduler can be in
+ *
+ * \ingroup group_abstraction_rtos_scheduler
+ */
+
+typedef enum cy_scheduler_state
+{
+    CY_SCHEDULER_STATE_NOT_STARTED, /**< Scheduler has not started */
+    CY_SCHEDULER_STATE_INACTIVE,    /**< Scheduler is not ready yet */
+    CY_SCHEDULER_STATE_LOCKED,      /**< Scheduler is locked */
+    CY_SCHEDULER_STATE_READY,       /**< Scheduler is ready but not running */
+    CY_SCHEDULER_STATE_SUSPENDED,   /**< Scheduler has been suspended */
+    CY_SCHEDULER_STATE_RUNNING,     /**< Scheduler is currently running */
+    CY_SCHEDULER_STATE_UNKNOWN      /**< An error occurred */
+} cy_scheduler_state_t;
+
+/**
  * The type of timer
  *
  * \ingroup group_abstraction_rtos_timer
@@ -377,6 +394,17 @@ cy_rslt_t cy_rtos_scheduler_suspend(void);
  * @return The status of scheduler resume request. [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM]
  */
 cy_rslt_t cy_rtos_scheduler_resume(void);
+
+/** Gets the state the scheduler is currently in
+ *
+ * This function is called to determine if the scheduler is running/suspend/not started.
+ *
+ * @param[out] state     Returns the state the scheduler is currently in
+ *
+ * @returns The status of the scheduler state check. [\ref CY_RSLT_SUCCESS, \ref
+ * CY_RTOS_GENERAL_ERROR]
+ */
+cy_rslt_t cy_rtos_scheduler_get_state(cy_scheduler_state_t* state);
 
 /** \} group_abstraction_rtos_scheduler */
 

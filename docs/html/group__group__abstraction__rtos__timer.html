@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>(abstraction-rtos)</title>
+<title>Abstraction RTOS</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -27,7 +27,7 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><a href="http://www.cypress.com/"><img alt="Logo" src="logo.png"/></a></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">(abstraction-rtos)</div>
+   <div id="projectname">Abstraction RTOS</div>
   </td>
  </tr>
  </tbody>
@@ -192,7 +192,13 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the init request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the init request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>]. <br  />
+ Specific for kernel: <ul>
+<li>FreeRTOS: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>]. </li>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+<li>TREADX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -231,7 +237,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the start request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the start request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -259,7 +269,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the stop request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the stop request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -297,7 +311,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the is_running request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the is_running request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>]. <br  />
+ Specific for kernel: <ul>
+<li>TREADEX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -325,7 +343,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the deinit request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the deinit request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -404,7 +426,13 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the init request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the init request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>]. <br  />
+ Specific for kernel: <ul>
+<li>FreeRTOS: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>]. </li>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+<li>TREADX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -443,7 +471,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the start request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the start request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -471,7 +503,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the stop request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the stop request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -509,7 +545,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the is_running request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the is_running request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>]. <br  />
+ Specific for kernel: <ul>
+<li>TREADEX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -537,7 +577,11 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The status of the deinit request. [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>] </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The status of the deinit request. Same across all RTOS kernels [<a class="el" href="group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e">CY_RSLT_SUCCESS</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga3b106a6fcedd377b05769dbf2b6f97a9">CY_RTOS_BAD_PARAM</a>, <a class="el" href="group__group__abstraction__rtos__common.html#ga89a0a071bd7a41b5d1f3edb969ee1647">CY_RTOS_GENERAL_ERROR</a>]. <br  />
+ Specific for kernel: <ul>
+<li>RTX: [<a class="el" href="group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b">CY_RTOS_NO_MEMORY</a>, <a class="el" href="group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8">CY_RTOS_TIMEOUT</a>]. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -547,7 +591,7 @@ The callback may be (likely will be) called from a different thread.</dd></dl>
 <div id="nav-path" class="navpath">
     <ul>
         <li class="footer">
-            Generated for <b>(abstraction-rtos)</b> by <b>Cypress Semiconductor Corporation</b>.
+            Generated for <b>Abstraction RTOS</b> by <b>Cypress Semiconductor Corporation</b>.
             All rights reserved.
         </li>
     </ul>

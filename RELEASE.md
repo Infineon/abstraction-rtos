@@ -16,6 +16,8 @@ The this release of the RTOS Abstraction API includes support for the following:
     * ThreadX
 
 ### What Changed?
+#### v1.12.0
+- Documentation updates
 #### v1.11.0
 FreeRTOS:
 - DSRAM Warmboot: added macro CYBSP_FREERTOS_DSRAM_WARMBOOT_SUPPORT support to avoid warmboot flag to be cleared.

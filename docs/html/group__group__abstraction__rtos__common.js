@@ -2,6 +2,8 @@ var group__group__abstraction__rtos__common =
 [
     [ "RTOS Specific Types, Defines and Statuses", "group__group__abstraction__rtos__port.html", "group__group__abstraction__rtos__port" ],
     [ "CY_RSLT_SUCCESS", "group__group__abstraction__rtos__common.html#gaf58fac450d9fff4472f03ad68f6e546e", null ],
+    [ "CY_RTOS_MIN_STACK_SIZE", "group__group__abstraction__rtos__common.html#ga8cb68f0797eec0941d819cb03dee3f8e", null ],
+    [ "CY_RTOS_ALIGNMENT_MASK", "group__group__abstraction__rtos__common.html#ga03f4b97a8323f791fe6b8113bac20610", null ],
     [ "CY_RTOS_NEVER_TIMEOUT", "group__group__abstraction__rtos__common.html#gab31d8535128df9506a4220c2b1f41a60", null ],
     [ "CY_RTOS_TIMEOUT", "group__group__abstraction__rtos__common.html#gafc6a1c6f563521d6c5555027d5d7bde8", null ],
     [ "CY_RTOS_NO_MEMORY", "group__group__abstraction__rtos__common.html#ga516d500bef7d6e6291f08485d0bc003b", null ],

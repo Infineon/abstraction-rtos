@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,8 +27,8 @@
 #include <tx_api.h>
 #include <stdlib.h>
 #include "cyabs_rtos_internal.h"
-#if defined (COMPONENT_CAT5)
-#include "cyabs_rtos_impl_cat5.h"
+#if defined (CY_RTOS_IS_H1_DEVICE)
+#include "cyabs_rtos_impl_h1.h"
 #endif
 
 #define WRAPPER_IDENT           (0xABCDEF01U)
@@ -130,7 +127,10 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
                                 const char* name, void* stack, uint32_t stack_size,
                                 cy_thread_priority_t priority, cy_thread_arg_t arg)
 {
-    stack_size &= ~CY_RTOS_ALIGNMENT_MASK; // make stack pointer 8-byte aligned
+    if (0 != (stack_size & CY_RTOS_ALIGNMENT_MASK))
+    {
+        return CY_RTOS_ALIGNMENT_ERROR;
+    }
     if ((thread == NULL) || (stack_size < CY_RTOS_MIN_STACK_SIZE))
     {
         return CY_RTOS_BAD_PARAM;
@@ -198,7 +198,7 @@ cy_rslt_t cy_rtos_thread_exit(void)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_terminate
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
+cy_rslt_t cy_rtos_thread_terminate(const cy_thread_t* thread)
 {
     if (thread == NULL)
     {
@@ -212,7 +212,7 @@ cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
+cy_rslt_t cy_rtos_thread_is_running(const cy_thread_t* thread, bool* running)
 {
     if ((thread == NULL) || (running == NULL))
     {
@@ -228,7 +228,7 @@ cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_state
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_state(cy_thread_t* thread, cy_thread_state_t* state)
+cy_rslt_t cy_rtos_thread_get_state(const cy_thread_t* thread, cy_thread_state_t* state)
 {
     if ((thread == NULL) || (state == NULL))
     {
@@ -396,7 +396,7 @@ cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_set_notification
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
+cy_rslt_t cy_rtos_thread_set_notification(const cy_thread_t* thread)
 {
     if (thread == NULL)
     {
@@ -412,7 +412,7 @@ cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_name
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name)
+cy_rslt_t cy_rtos_thread_get_name(const cy_thread_t* thread, const char** thread_name)
 {
     char* temp_name;
     cy_rtos_error_t tx_rslt = tx_thread_info_get(*thread, &temp_name, TX_NULL, TX_NULL, TX_NULL,
@@ -438,7 +438,7 @@ static uint16_t _cy_rtos_suspend_count = 0;
 cy_rslt_t cy_rtos_scheduler_suspend(void)
 {
     ++_cy_rtos_suspend_count;
-    #if defined (COMPONENT_CAT5)
+    #if defined (CY_RTOS_IS_H1_DEVICE)
     if (_cy_rtos_suspend_count == 1)
     {
         tx_interrupt_control(TX_INT_DISABLE);
@@ -527,14 +527,14 @@ cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_mutex_get(const cy_mutex_t* mutex, cy_time_t timeout_ms)
 {
     if (mutex == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
 
-    cy_rtos_error_t tx_rslt = tx_mutex_get(mutex, convert_ms_to_ticks(timeout_ms));
+    cy_rtos_error_t tx_rslt = tx_mutex_get((cy_mutex_t*)mutex, convert_ms_to_ticks(timeout_ms));
     if (TX_NOT_AVAILABLE == tx_rslt)
     {
         return CY_RTOS_TIMEOUT;
@@ -549,17 +549,19 @@ cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
+cy_rslt_t cy_rtos_mutex_set(const cy_mutex_t* mutex)
 {
     if (mutex == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
 
-    return convert_error(tx_mutex_put(mutex));
+    return convert_error(tx_mutex_put((cy_mutex_t*)mutex));
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels update handle state in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_deinit_mutex
 //--------------------------------------------------------------------------------------------------
@@ -572,6 +574,9 @@ cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex)
 
     return convert_error(tx_mutex_delete(mutex));
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -595,7 +600,7 @@ cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, u
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_semaphore_get(const cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 {
     // Based on documentation
     // http://www.ece.ualberta.ca/~cmpe490/documents/ghs/405/threadxug_g40c.pdf
@@ -605,7 +610,8 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
         return CY_RTOS_BAD_PARAM;
     }
     cy_rtos_error_t tx_rslt =
-        tx_semaphore_get(&(semaphore->tx_semaphore), convert_ms_to_ticks(timeout_ms));
+        tx_semaphore_get((TX_SEMAPHORE*)&(semaphore->tx_semaphore),
+                         convert_ms_to_ticks(timeout_ms));
     if (TX_NO_INSTANCE == tx_rslt)
     {
         return CY_RTOS_TIMEOUT;
@@ -620,30 +626,33 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
+cy_rslt_t cy_rtos_semaphore_set(const cy_semaphore_t* semaphore)
 {
     if (semaphore == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_semaphore_ceiling_put(&(semaphore->tx_semaphore), semaphore->maxcount));
+    return convert_error(tx_semaphore_ceiling_put((TX_SEMAPHORE*)&(semaphore->tx_semaphore),
+                                                  semaphore->maxcount));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count)
+cy_rslt_t cy_rtos_semaphore_get_count(const cy_semaphore_t* semaphore, size_t* count)
 {
     if ((semaphore == NULL) || (count == NULL))
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_semaphore_info_get(&(semaphore->tx_semaphore), TX_NULL, (ULONG*)count,
-                                               TX_NULL, TX_NULL, TX_NULL));
+    return convert_error(tx_semaphore_info_get((TX_SEMAPHORE*)&(semaphore->tx_semaphore), TX_NULL,
+                                               (ULONG*)count, TX_NULL, TX_NULL, TX_NULL));
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels update handle state in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_deinit
 //--------------------------------------------------------------------------------------------------
@@ -655,6 +664,9 @@ cy_rslt_t cy_rtos_semaphore_deinit(cy_semaphore_t* semaphore)
     }
     return convert_error(tx_semaphore_delete(&(semaphore->tx_semaphore)));
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -678,42 +690,42 @@ cy_rslt_t cy_rtos_event_init(cy_event_t* event)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_setbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_setbits(const cy_event_t* event, uint32_t bits)
 {
     if (event == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_event_flags_set(event, bits, TX_OR));
+    return convert_error(tx_event_flags_set((cy_event_t*)event, bits, TX_OR));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_clearbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_clearbits(const cy_event_t* event, uint32_t bits)
 {
     if (event == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
 
-    return convert_error(tx_event_flags_set(event, ~bits, TX_AND));
+    return convert_error(tx_event_flags_set((cy_event_t*)event, ~bits, TX_AND));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_getbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
+cy_rslt_t cy_rtos_event_getbits(const cy_event_t* event, uint32_t* bits)
 {
     if ((event == NULL) || (bits == NULL))
     {
         return CY_RTOS_BAD_PARAM;
     }
 
-    cy_rtos_error_t tx_rslt = tx_event_flags_get(event, ALL_EVENT_FLAGS, TX_OR, (ULONG*)bits,
-                                                 TX_NO_WAIT);
+    cy_rtos_error_t tx_rslt = tx_event_flags_get((cy_event_t*)event, ALL_EVENT_FLAGS, TX_OR,
+                                                 (ULONG*)bits, TX_NO_WAIT);
     if (TX_NO_EVENTS == tx_rslt) // If timeout error occur with ALL_EVENT_FLAGS and TX_OR, then no
                                  // flag is set
     {
@@ -730,7 +742,7 @@ cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_waitbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, bool all,
+cy_rslt_t cy_rtos_event_waitbits(const cy_event_t* event, uint32_t* bits, bool clear, bool all,
                                  cy_time_t timeout_ms)
 {
     UINT get_option;
@@ -750,7 +762,8 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
     }
 
     cy_rtos_error_t tx_rslt =
-        tx_event_flags_get(event, *bits, get_option, (ULONG*)bits, convert_ms_to_ticks(timeout_ms));
+        tx_event_flags_get((cy_event_t*)event, *bits, get_option, (ULONG*)bits,
+                           convert_ms_to_ticks(timeout_ms));
     if (TX_NO_EVENTS == tx_rslt)
     {
         return CY_RTOS_TIMEOUT;
@@ -762,6 +775,8 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels update handle state in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_deinit
 //--------------------------------------------------------------------------------------------------
@@ -774,6 +789,9 @@ cy_rslt_t cy_rtos_event_deinit(cy_event_t* event)
 
     return convert_error(tx_event_flags_delete(event));
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -825,15 +843,15 @@ cy_rslt_t cy_rtos_queue_init(cy_queue_t* queue, size_t length, size_t itemsize)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_put
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_put(const cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
 {
     if ((queue == NULL) || (item_ptr == NULL) || (is_in_isr() && (timeout_ms != 0)))
     {
         return CY_RTOS_BAD_PARAM;
     }
 
-    cy_rtos_error_t tx_rslt = tx_queue_send(&(queue->tx_queue), (void*)item_ptr, convert_ms_to_ticks(
-                                                timeout_ms));
+    cy_rtos_error_t tx_rslt = tx_queue_send((TX_QUEUE*)&(queue->tx_queue), (void*)item_ptr,
+                                            convert_ms_to_ticks(timeout_ms));
     if (TX_QUEUE_FULL == tx_rslt)
     {
         return CY_RTOS_NO_MEMORY;
@@ -848,7 +866,7 @@ cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t t
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_get(const cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
 {
     ULONG buffer[MAX_QUEUE_MESSAGE_SIZE];
     if ((queue == NULL) || (item_ptr == NULL) || (is_in_isr() && (timeout_ms != 0)))
@@ -857,7 +875,7 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
     }
 
     cy_rtos_error_t tx_rslt =
-        tx_queue_receive(&(queue->tx_queue), buffer, convert_ms_to_ticks(timeout_ms));
+        tx_queue_receive((TX_QUEUE*)&(queue->tx_queue), buffer, convert_ms_to_ticks(timeout_ms));
     if (TX_QUEUE_EMPTY == tx_rslt)
     {
         return CY_RTOS_TIMEOUT;
@@ -878,44 +896,47 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting)
+cy_rslt_t cy_rtos_queue_count(const cy_queue_t* queue, size_t* num_waiting)
 {
     if ((queue == NULL) || (num_waiting == NULL))
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_queue_info_get(&(queue->tx_queue), TX_NULL, (ULONG*)num_waiting,
-                                           TX_NULL, TX_NULL, TX_NULL, TX_NULL));
+    return convert_error(tx_queue_info_get((TX_QUEUE*)&(queue->tx_queue), TX_NULL,
+                                           (ULONG*)num_waiting, TX_NULL, TX_NULL, TX_NULL,
+                                           TX_NULL));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_space
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces)
+cy_rslt_t cy_rtos_queue_space(const cy_queue_t* queue, size_t* num_spaces)
 {
     if ((queue == NULL) || (num_spaces == NULL))
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_queue_info_get(&(queue->tx_queue), TX_NULL, TX_NULL, (ULONG*)num_spaces,
-                                           TX_NULL, TX_NULL, TX_NULL));
+    return convert_error(tx_queue_info_get((TX_QUEUE*)&(queue->tx_queue), TX_NULL, TX_NULL,
+                                           (ULONG*)num_spaces, TX_NULL, TX_NULL, TX_NULL));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_reset
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue)
+cy_rslt_t cy_rtos_queue_reset(const cy_queue_t* queue)
 {
     if (queue == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_queue_flush(&(queue->tx_queue)));
+    return convert_error(tx_queue_flush((TX_QUEUE*)&(queue->tx_queue)));
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels update handle state in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_deinit
 //--------------------------------------------------------------------------------------------------
@@ -932,6 +953,9 @@ cy_rslt_t cy_rtos_queue_deinit(cy_queue_t* queue)
     }
     return result;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -958,7 +982,7 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_start
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
+cy_rslt_t cy_rtos_timer_start(const cy_timer_t* timer, cy_time_t num_ms)
 {
     if (timer == NULL)
     {
@@ -966,33 +990,33 @@ cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
     }
     ULONG     timer_ticks = convert_ms_to_ticks(num_ms);
     cy_rslt_t rslt        =
-        convert_error(tx_timer_change(&(timer->tx_timer), timer_ticks,
+        convert_error(tx_timer_change((TX_TIMER*)&(timer->tx_timer), timer_ticks,
                                       timer->oneshot ? 0 : timer_ticks));
     if (CY_RSLT_SUCCESS != rslt)
     {
         return rslt;
     }
-    return convert_error(tx_timer_activate(&(timer->tx_timer)));
+    return convert_error(tx_timer_activate((TX_TIMER*)&(timer->tx_timer)));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_stop
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
+cy_rslt_t cy_rtos_timer_stop(const cy_timer_t* timer)
 {
     if (timer == NULL)
     {
         return CY_RTOS_BAD_PARAM;
     }
-    return convert_error(tx_timer_deactivate(&(timer->tx_timer)));
+    return convert_error(tx_timer_deactivate((TX_TIMER*)&(timer->tx_timer)));
 }
 
 
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
+cy_rslt_t cy_rtos_timer_is_running(const cy_timer_t* timer, bool* state)
 {
     if ((timer == NULL) || (state == NULL))
     {
@@ -1001,8 +1025,8 @@ cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
 
     UINT      active;
     cy_rslt_t rslt =
-        convert_error(tx_timer_info_get(&(timer->tx_timer), TX_NULL, &active, TX_NULL, TX_NULL,
-                                        TX_NULL));
+        convert_error(tx_timer_info_get((TX_TIMER*)&(timer->tx_timer), TX_NULL, &active, TX_NULL,
+                                        TX_NULL, TX_NULL));
     if (CY_RSLT_SUCCESS == rslt)
     {
         *state = (active == TX_TRUE);
@@ -1011,6 +1035,8 @@ cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels update handle state in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_deinit
 //--------------------------------------------------------------------------------------------------
@@ -1022,6 +1048,9 @@ cy_rslt_t cy_rtos_timer_deinit(cy_timer_t* timer)
     }
     return convert_error(tx_timer_delete(&(timer->tx_timer)));
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************

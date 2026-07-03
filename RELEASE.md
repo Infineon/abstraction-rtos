@@ -1,21 +1,12 @@
 # RTOS Abstraction Library
 The RTOS Abstraction APIs allow middleware to be written to be RTOS aware, but not need to care about what the actual RTOS is.
 
-### What's Included?
-The this release of the RTOS Abstraction API includes support for the following:
-* APIs for interacting with common RTOS Features including:
-    * Threads
-    * Mutexes
-    * Semaphores
-    * Timers
-    * Queues
-    * Events
-* Implementations are provided for
-    * FreeRTOS
-    * RTX (CMSIS RTOS)
-    * ThreadX
-
 ### What Changed?
+#### v1.13.0
+- Documentation: scheduler API reference updated to include `cy_rtos_scheduler_suspend`,
+  `cy_rtos_scheduler_resume`, and `cy_rtos_scheduler_get_state`.
+- Documentation: added Time management to the Features list in README.
+- Achieved MISRA C:2012 compliance.
 #### v1.12.0
 - Documentation updates
 #### v1.11.0
@@ -73,7 +64,7 @@ Explicitly include cmsis_compiler.h where required.
 * Fixed possible race condition in cy_rtos_join_thread for FreeRTOS
 * Minor documentation updates
 #### v1.2.0
-* Added utility library for for creating background worker threads: cy_worker_thread.h
+* Added utility library for creating background worker threads: cy_worker_thread.h
 * Added support for getting a semaphore's count: cy_rtos_get_count_semaphore()
 * Added support for non-recursive mutexes: cy_rtos_init_mutex2()
 * Added default implementations for FreeRTOS vApplicationGetIdleTaskMemory, vApplicationGetTimerTaskMemory, and vApplicationSleep
@@ -89,24 +80,6 @@ NOTE: The vApplicationSleep implementation for FreeRTOS depends on the psoc6hal 
 #### v1.0.0
 * Initial release supporting FreeRTOS & RTX
 
-### Supported Software and Tools
-This version of the RTOS Abstraction API was validated for compatibility with the following Software and Tools:
-
-| Software and Tools                        | Version |
-| :---                                      | :----:  |
-| ModusToolbox™ Software Environment        | 2.4.0   |
-| GCC Compiler                              | 10.3.1  |
-| IAR Compiler                              | 9.40.2  |
-| ARM Compiler                              | 6.16    |
-
-Minimum required ModusToolbox™ Software Environment: v2.0
-
-### More information
-Use the following links for more information, as needed:
-* [API Reference Guide](https://infineon.github.io/abstraction-rtos/html/modules.html)
-* [Cypress Semiconductor, an Infineon Technologies Company](http://www.cypress.com)
-* [Infineon GitHub](https://github.com/infineon)
-* [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
-
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2023.
+(c) Copyright 2019-2026, Infineon Technologies AG, or an affiliate of Infineon
+Technologies AG.  All rights reserved.

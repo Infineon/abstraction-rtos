@@ -7,11 +7,8 @@
  * a worker thread.
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +22,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CY_WORKER_THREAD_H
+#define CY_WORKER_THREAD_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,8 +45,10 @@ extern "C" {
 
 /**< Default worker thread name */
 #define CY_WORKER_THREAD_DEFAULT_NAME               "CYWorker"
-/** Default number of work items in the queue */
-#define CY_WORKER_DEFAULT_ENTRIES                   (16)
+/** Configurable number of work items in the queue */
+#ifndef CY_WORKER_DEFAULT_ENTRIES
+#define CY_WORKER_DEFAULT_ENTRIES                   (16U)
+#endif
 
 /** Additional work cannot be enqueued because the worker thread has been terminated.
  * This can occur if \ref cy_worker_thread_create was not called or \ref cy_worker_thread_delete was
@@ -75,12 +75,13 @@ typedef struct
 {
     cy_thread_priority_t priority;     /**< Requested thread priority. */
     uint32_t             stack_size;   /**< Size of stack for new thread.
-                                            Note that this must be atleast CY_RTOS_MIN_STACK_SIZE */
+                                            Note that this must be at least CY_RTOS_MIN_STACK_SIZE
+                                        */
     uint8_t*             stack;        /**< Pointer to stack. If this is NULL a stack of
                                             size \ref stack_size will be allocated. */
     const char*          name;         /**< Thread name. If set to NULL,
                                             \ref CY_WORKER_THREAD_DEFAULT_NAME will be used. */
-    uint32_t             num_entries;  /**< Maximum number of enteries the worker thread can queue.
+    uint32_t             num_entries;  /**< Maximum number of entries the worker thread can queue.
                                             If set to 0, \ref CY_WORKER_DEFAULT_ENTRIES
                                             will be used.       */
 } cy_worker_thread_params_t;
@@ -89,7 +90,7 @@ typedef struct
 typedef struct
 {
     cy_queue_t               event_queue;    /**< Event Queue for this thread */
-    uint32_t                 enqueue_count;  /**< Number of conccurent enqueue requests */
+    uint32_t                 enqueue_count;  /**< Number of concurrent enqueue requests */
     cy_thread_t              thread;         /**< Thread object               */
     cy_worker_thread_state_t state;          /**< State of the worker thread  */
 } cy_worker_thread_info_t;
@@ -141,3 +142,5 @@ cy_rslt_t cy_worker_thread_enqueue(cy_worker_thread_info_t* worker_info,
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* CY_WORKER_THREAD_H */

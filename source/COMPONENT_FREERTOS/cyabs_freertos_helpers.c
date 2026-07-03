@@ -7,11 +7,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,25 +37,32 @@
 // System->Power->RTOS->System Idle Power Mode setting.
 #include "cybsp.h"
 
+#if (configUSE_TICKLESS_IDLE != 0)
+uint32_t cyabs_rtos_get_deepsleep_latency(void);
+#endif
+uint32_t cyabs_rtos_get_sleep_latency(void);
 
 #if (configUSE_TICKLESS_IDLE != 0)
 // By default, the device will deep-sleep in the idle task unless if the device
-// configurator overrides the behaviour to sleep in the System->Power->RTOS->System
+// configurator overrides the behavior to sleep in the System->Power->RTOS->System
 // Idle Power Mode setting.
     #if defined(CY_CFG_PWR_MODE_DEEPSLEEP) && \
     (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP)
-        #define _ABS_RTOS_DEEPSLEEP_ENABLED
-    #elif defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
-    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM)
+        #define ABS_RTOS_DEEPSLEEP_ENABLED
+    #elif (defined(CY_CFG_PWR_MODE_DEEPSLEEP_RAM) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_DEEPSLEEP_RAM)) || \
+    (defined(CY_CFG_PWR_MODE_HIBERNATE_RAM) && \
+    (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_HIBERNATE_RAM))
 // We don't care here about the difference between deep-sleep and deep-sleep RAM
-        #define _ABS_RTOS_DEEPSLEEP_ENABLED
+        #define ABS_RTOS_DEEPSLEEP_ENABLED
     #elif (defined(CY_CFG_PWR_MODE_SLEEP) && (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_SLEEP))
-        #define _ABS_RTOS_SLEEP_ENABLED
-    #endif
+        #define ABS_RTOS_SLEEP_ENABLED
+    #endif // if defined(CY_CFG_PWR_MODE_DEEPSLEEP) && (CY_CFG_PWR_SYS_IDLE_MODE ==
+// CY_CFG_PWR_MODE_DEEPSLEEP)
 // We can support sleep in a non-tickless fashion if there is no LPTimer.
 // But we must have it for DeepSleep because the overhead of entering and
 // exiting DeepSleep is too high to do so in a tickful fashion.
-    #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+    #if defined(ABS_RTOS_DEEPSLEEP_ENABLED)
     #if defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
         #if !(defined(MTB_HAL_DRIVER_AVAILABLE_SYSPM)) || (MTB_HAL_DRIVER_AVAILABLE_SYSPM == 0)
             #error "Tickless idle depends on the SysPm HAL driver, but it is not available"
@@ -78,21 +82,21 @@
             #error "Tickless idle depends on the LPTimer HAL driver, but it is not available"
         #endif
     #endif // defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
-    #endif // defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+    #endif // defined(ABS_RTOS_DEEPSLEEP_ENABLED)
 
-    #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED) || defined(_ABS_RTOS_SLEEP_ENABLED)
+    #if defined(ABS_RTOS_DEEPSLEEP_ENABLED) || defined(ABS_RTOS_SLEEP_ENABLED)
     #if defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
         #if (defined(MTB_HAL_DRIVER_AVAILABLE_SYSPM) && (MTB_HAL_DRIVER_AVAILABLE_SYSPM)) && \
     (defined(MTB_HAL_DRIVER_AVAILABLE_LPTIMER) && (MTB_HAL_DRIVER_AVAILABLE_LPTIMER))
-            #define _ABS_RTOS_TICKLESS_ENABLED
+            #define ABS_RTOS_TICKLESS_ENABLED
         #endif
     #else
         #if (defined(CYHAL_DRIVER_AVAILABLE_SYSPM) && (CYHAL_DRIVER_AVAILABLE_SYSPM)) && \
     (defined(CYHAL_DRIVER_AVAILABLE_LPTIMER) && (CYHAL_DRIVER_AVAILABLE_LPTIMER))
-            #define _ABS_RTOS_TICKLESS_ENABLED
+            #define ABS_RTOS_TICKLESS_ENABLED
         #endif
     #endif // defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
-    #endif // if defined(_ABS_RTOS_DEEPSLEEP_ENABLED) || defined(_ABS_RTOS_SLEEP_ENABLED)
+    #endif // if defined(ABS_RTOS_DEEPSLEEP_ENABLED) || defined(ABS_RTOS_SLEEP_ENABLED)
 #endif // if (configUSE_TICKLESS_IDLE != 0)
 
 #ifndef pdTICKS_TO_MS
@@ -101,14 +105,59 @@
 
 #if defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
 #if defined(MTB_HAL_DRIVER_AVAILABLE_LPTIMER) && (MTB_HAL_DRIVER_AVAILABLE_LPTIMER)
-static mtb_hal_lptimer_t* _lptimer = NULL;
+static mtb_hal_lptimer_t* lptimer = NULL;
+
+#if defined(CY_CFG_PWR_MODE_HIBERNATE_RAM)
+static cy_en_syspm_hibernate_wakeup_source_t _hibernate_wakeup_source = CY_SYSPM_HIBERNATE_WDT0;
+
+//--------------------------------------------------------------------------------------------------
+// cyabs_rtos_set_hibernate_wakeup_source
+//--------------------------------------------------------------------------------------------------
+/** Sets the wakeup source for hibernate mode.
+ *
+ * Configures which wakeup source will be used to wake the device from hibernate mode.
+ * This setting is applied when the device enters hibernation through the RTOS idle task.
+ * The default wakeup source is the Watchdog Timer (CY_SYSPM_HIBERNATE_WDT0).
+ *
+ * @param[in] source    The wakeup source to use for hibernation. This should be one of the
+ *                      cy_en_syspm_hibernate_wakeup_source_t enumeration values.
+ *
+ *
+ * @see cyabs_rtos_get_hibernate_wakeup_source
+ */
+void cyabs_rtos_set_hibernate_wakeup_source(cy_en_syspm_hibernate_wakeup_source_t source)
+{
+    _hibernate_wakeup_source = source;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// cyabs_rtos_get_hibernate_wakeup_source
+//--------------------------------------------------------------------------------------------------
+/** Retrieves the currently configured wakeup source for hibernate mode.
+ *
+ * Returns the wakeup source that is currently set to wake the device from hibernation.
+ * This allows the application to verify the current hibernation configuration.
+ *
+ * @return The configured wakeup source as a cy_en_syspm_hibernate_wakeup_source_t value.
+ *
+ * @see cyabs_rtos_set_hibernate_wakeup_source
+ */
+cy_en_syspm_hibernate_wakeup_source_t cyabs_rtos_get_hibernate_wakeup_source(void)
+{
+    return _hibernate_wakeup_source;
+}
+
+
+#endif // defined(CY_CFG_PWR_MODE_HIBERNATE_RAM)
+
 
 //--------------------------------------------------------------------------------------------------
 // cyabs_rtos_set_lptimer
 //--------------------------------------------------------------------------------------------------
 void cyabs_rtos_set_lptimer(mtb_hal_lptimer_t* timer)
 {
-    _lptimer = timer;
+    lptimer = timer;
 }
 
 
@@ -117,7 +166,7 @@ void cyabs_rtos_set_lptimer(mtb_hal_lptimer_t* timer)
 //--------------------------------------------------------------------------------------------------
 mtb_hal_lptimer_t* cyabs_rtos_get_lptimer(void)
 {
-    return _lptimer;
+    return lptimer;
 }
 
 
@@ -127,7 +176,7 @@ mtb_hal_lptimer_t* cyabs_rtos_get_lptimer(void)
 //--------------------------------------------------------------------------------------------------
 uint32_t cyabs_rtos_get_deepsleep_latency(void)
 {
-    uint32_t latency = 0;
+    uint32_t latency = 0U;
 
     #if defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
     latency = CY_CFG_PWR_DEEPSLEEP_LATENCY;
@@ -167,14 +216,14 @@ uint32_t cyabs_rtos_get_deepsleep_latency(void)
 #endif // defined(MTB_HAL_DRIVER_AVAILABLE_LPTIMER) && (MTB_HAL_DRIVER_AVAILABLE_LPTIMER)
 #else // (HAL API <= 2.0)
 #if defined(CYHAL_DRIVER_AVAILABLE_LPTIMER) && (CYHAL_DRIVER_AVAILABLE_LPTIMER)
-static cyhal_lptimer_t* _lptimer = NULL;
+static cyhal_lptimer_t* lptimer = NULL;
 
 //--------------------------------------------------------------------------------------------------
 // cyabs_rtos_set_lptimer
 //--------------------------------------------------------------------------------------------------
 void cyabs_rtos_set_lptimer(cyhal_lptimer_t* timer)
 {
-    _lptimer = timer;
+    lptimer = timer;
 }
 
 
@@ -183,7 +232,7 @@ void cyabs_rtos_set_lptimer(cyhal_lptimer_t* timer)
 //--------------------------------------------------------------------------------------------------
 cyhal_lptimer_t* cyabs_rtos_get_lptimer(void)
 {
-    return _lptimer;
+    return lptimer;
 }
 
 
@@ -193,7 +242,7 @@ cyhal_lptimer_t* cyabs_rtos_get_lptimer(void)
 //--------------------------------------------------------------------------------------------------
 uint32_t cyabs_rtos_get_deepsleep_latency(void)
 {
-    uint32_t latency = 0;
+    uint32_t latency = 0U;
 
     #if defined(CY_CFG_PWR_DEEPSLEEP_LATENCY)
     latency = CY_CFG_PWR_DEEPSLEEP_LATENCY;
@@ -241,13 +290,13 @@ uint32_t cyabs_rtos_get_sleep_latency(void)
     #if defined(CY_CFG_PWR_SLEEP_LATENCY)
     return CY_CFG_PWR_SLEEP_LATENCY;
     #else
-    return 0;
+    return 0U;
     #endif
 }
 
 
-// The following implementations were sourced from https://www.freertos.org/a00110.html
-
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.4", 1,
+                             "vApplicationGetIdleTaskMemory is a FreeRTOS hook; prototype is in FreeRTOS internal headers not visible here.");
 //--------------------------------------------------------------------------------------------------
 // vApplicationGetIdleTaskMemory
 //
@@ -259,16 +308,19 @@ __WEAK void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer,
                                           uint32_t* pulIdleTaskStackSize)
 {
     // If the buffers to be provided to the Idle task are declared inside this function then they
-    // must be declared static – otherwise they will be allocated on the stack and so not exists
+    // must be declared static - otherwise they will be allocated on the stack and so not exists
     // after this function exits.
     static StaticTask_t xIdleTaskTCB;
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                                 "Idle task stack buffer must remain writable because FreeRTOS updates stack contents at runtime.");
     static StackType_t  uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
-    // Pass out a pointer to the StaticTask_t structure in which the Idle task’s state will be
+    // Pass out a pointer to the StaticTask_t structure in which the Idle task's state will be
     // stored.
     *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
 
-    // Pass out the array that will be used as the Idle task’s stack.
+    // Pass out the array that will be used as the Idle task's stack.
     *ppxIdleTaskStackBuffer = uxIdleTaskStack;
 
     // Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.  Note that, as the
@@ -278,8 +330,13 @@ __WEAK void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer,
 }
 
 
-/*———————————————————–*/
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.4");
 
+
+/*--------------------*/
+
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.4", 1,
+                             "vApplicationGetTimerTaskMemory is a FreeRTOS hook; prototype is in FreeRTOS internal headers not visible here.");
 //--------------------------------------------------------------------------------------------------
 // vApplicationGetTimerTaskMemory
 //
@@ -292,26 +349,38 @@ __WEAK void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
                                            uint32_t* pulTimerTaskStackSize)
 {
     // If the buffers to be provided to the Timer task are declared inside this function then they
-    // must be declared static – otherwise they will be allocated on the stack and so not exists
+    // must be declared static - otherwise they will be allocated on the stack and so not exists
     // after this function exits.
     static StaticTask_t xTimerTaskTCB;
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                                 "Timer task stack buffer must remain writable because FreeRTOS updates stack contents at runtime.");
     static StackType_t  uxTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
-    // Pass out a pointer to the StaticTask_t structure in which the Timer task’s state will be
+    // Pass out a pointer to the StaticTask_t structure in which the Timer task's state will be
     // stored.
     *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
 
-    // Pass out the array that will be used as the Timer task’s stack.
+    // Pass out the array that will be used as the Timer task's stack.
     *ppxTimerTaskStackBuffer = uxTimerTaskStack;
 
     // Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.  Note that, as the
     // array is necessarily of type StackType_t, configTIMER_TASK_STACK_DEPTH is specified in words,
     // not bytes.
-    *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 10.4", 1,
+                                 "configTIMER_TASK_STACK_DEPTH macro expansion mixes unsigned and signed operands.");
+    const uint32_t timer_task_stack_depth = configTIMER_TASK_STACK_DEPTH;
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 10.4");
+    *pulTimerTaskStackSize = timer_task_stack_depth;
 }
 
 
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.4");
+
+
 #if (configUSE_TICKLESS_IDLE != 0)
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.4", 1,
+                             "vApplicationSleep is a FreeRTOS hook; prototype is in FreeRTOS internal headers not visible here.");
 //--------------------------------------------------------------------------------------------------
 // vApplicationSleep
 //
@@ -329,8 +398,8 @@ __WEAK void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
 //--------------------------------------------------------------------------------------------------
 __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
 {
-    #if defined(_ABS_RTOS_TICKLESS_ENABLED)
-    uint32_t actual_idle_ms = 0;
+    #if defined(ABS_RTOS_TICKLESS_ENABLED)
+    uint32_t actual_idle_ms = 0U;
     cy_rslt_t result = CY_RSLT_SUCCESS;
     bool wfi_at_end = false;
     // The application is expected to populate this value by calling
@@ -342,7 +411,7 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
         result = cyhal_lptimer_init(&timer);
         if (result == CY_RSLT_SUCCESS)
         {
-            _lptimer = &timer;
+            lptimer = &timer;
         }
         else
         {
@@ -359,7 +428,7 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
         uint32_t interrupt_status = cyhal_system_critical_section_enter();
         eSleepModeStatus sleep_status = eTaskConfirmSleepModeStatus();
 
-        if (sleep_status != eAbortSleep)
+        if (sleep_status != (eSleepModeStatus)eAbortSleep)
         {
             // If the RTOS says we should sleep, we should WFI at the end of this function unless
             // something else attempts to enter a tickless sleep
@@ -373,16 +442,30 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             uint32_t requested_idle_ms = pdTICKS_TO_MS(xExpectedIdleTime);
             uint32_t sleep_latency = cyabs_rtos_get_sleep_latency();
 
-            #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+            #if defined(ABS_RTOS_DEEPSLEEP_ENABLED)
             uint32_t deep_sleep_latency = cyabs_rtos_get_deepsleep_latency();
             if (requested_idle_ms > deep_sleep_latency)
             {
                 wfi_at_end = false;
                 #if defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
-                result = mtb_hal_syspm_tickless_deepsleep(cyabs_rtos_get_lptimer(),
-                                                          (requested_idle_ms - deep_sleep_latency),
-                                                          &actual_idle_ms);
-                #else
+                #if defined(CY_CFG_PWR_MODE_HIBERNATE_RAM)
+                if (CY_CFG_PWR_SYS_IDLE_MODE == CY_CFG_PWR_MODE_HIBERNATE_RAM)
+                {
+                    result = mtb_hal_syspm_tickless_hibernate_ram(
+                        cyabs_rtos_get_lptimer(), cyabs_rtos_get_hibernate_wakeup_source(),
+                        (requested_idle_ms -
+                         deep_sleep_latency),
+                        &actual_idle_ms);
+                }
+                else
+                #endif // defined(CY_CFG_PWR_MODE_HIBERNATE_RAM)
+                {
+                    result = mtb_hal_syspm_tickless_deepsleep(cyabs_rtos_get_lptimer(),
+                                                              (requested_idle_ms -
+                                                               deep_sleep_latency),
+                                                              &actual_idle_ms);
+                }
+                #else // if defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
                 result = cyhal_syspm_tickless_deepsleep(cyabs_rtos_get_lptimer(),
                                                         (requested_idle_ms - deep_sleep_latency),
                                                         &actual_idle_ms);
@@ -419,9 +502,9 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                 CY_UNUSED_PARAMETER(sleep_latency);
                 #endif // defined(MTB_HAL_SYSPM_RSLT_DEEPSLEEP_LOCKED)
             }
-            #endif // defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
-            #if defined(_ABS_RTOS_SLEEP_ENABLED)
-            #if defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+            #endif // defined(ABS_RTOS_DEEPSLEEP_ENABLED)
+            #if defined(ABS_RTOS_SLEEP_ENABLED)
+            #if defined(ABS_RTOS_DEEPSLEEP_ENABLED)
             // If we tried to DeepSleep, we don't want to also try to sleep. Either we
             // went to DeepSleep and then were woken by an interrupt (possibly prematurely),
             // or we tried to DeepSleep and were rejected by hardware not being ready
@@ -429,7 +512,7 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
             // we should not also try to enter Sleep; we should return from this function
             // and let the RTOS scheduler sort out whether to call us again.
             else
-            #endif // defined(_ABS_RTOS_DEEPSLEEP_ENABLED)
+            #endif // defined(ABS_RTOS_DEEPSLEEP_ENABLED)
             if (requested_idle_ms > sleep_latency)
             {
                 wfi_at_end = false;
@@ -443,13 +526,13 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
                     &actual_idle_ms);
                 #endif // defined(MTB_HAL_API_VERSION) && ((MTB_HAL_API_VERSION) >= 3)
             }
-            #endif // if defined(_ABS_RTOS_SLEEP_ENABLED)
+            #endif // if defined(ABS_RTOS_SLEEP_ENABLED)
 
             CY_UNUSED_PARAMETER(result);
             // The return value of tickless sleep is disregarded since SysTick timer is stopped,
             // before sleep, regardless of the sleep's success or failure, therefore idle time
             // must be updated in any case.
-            if (actual_idle_ms > 0)
+            if (actual_idle_ms > 0U)
             {
                 // If you hit this assert, the latency time (CY_CFG_PWR_DEEPSLEEP_LATENCY) should
                 // be increased. This can be set though the Device Configurator, or by manually
@@ -467,13 +550,16 @@ __WEAK void vApplicationSleep(TickType_t xExpectedIdleTime)
     }
 
     if (true == wfi_at_end)
-    #else // defined(_ABS_RTOS_TICKLESS_ENABLED)
+    #else // defined(ABS_RTOS_TICKLESS_ENABLED)
     CY_UNUSED_PARAMETER(xExpectedIdleTime);
-    #endif // defined(_ABS_RTOS_TICKLESS_ENABLED)
+    #endif // defined(ABS_RTOS_TICKLESS_ENABLED)
     {
         __WFI();
     }
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.4");
 
 
 #endif // (configUSE_TICKLESS_IDLE != 0)

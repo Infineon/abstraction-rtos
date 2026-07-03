@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,9 +52,9 @@ cy_time_t convert_ms_to_ticks(cy_time_t timeout_ms)
     {
         return CY_RTOS_NEVER_TIMEOUT;
     }
-    else if (timeout_ms == 0)
+    else if (timeout_ms == 0U)
     {
-        return 0;
+        return 0U;
     }
     else
     {
@@ -70,7 +67,7 @@ cy_time_t convert_ms_to_ticks(cy_time_t timeout_ms)
         {
             // if ticks if more than 32 bits, change ticks to max possible value
             // that isn't CY_RTOS_NEVER_TIMEOUT.
-            ticks = UINT32_MAX - 1;
+            ticks = ((uint64_t)UINT32_MAX) - 1ULL;
         }
         return (cy_time_t)ticks;
     }

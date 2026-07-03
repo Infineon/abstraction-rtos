@@ -2,18 +2,15 @@
  * \file cyabs_rtos.h
  *
  * \brief
- * Defines the Cypress RTOS Interface. Provides prototypes for functions that
- * allow Cypress libraries to use RTOS resources such as threads, mutexes &
+ * Defines the Infineon RTOS Interface. Provides prototypes for functions that
+ * allow Infineon libraries to use RTOS resources such as threads, mutexes &
  * timing functions in an abstract way. The APIs are implemented in the Port
  * Layer RTOS interface which is specific to the RTOS in use.
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +24,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_H
+#define CYABS_RTOS_H
 
 #include "cyabs_rtos_impl.h"
 #include "cy_result.h"
@@ -71,6 +69,8 @@ extern "C"
 #if defined(DOXYGEN)
 /** Return value indicating success */
 #define CY_RSLT_SUCCESS ((cy_rslt_t)0x00000000U)
+#define CY_RTOS_MIN_STACK_SIZE      300U            /**< Minimum stack size in bytes */
+#define CY_RTOS_ALIGNMENT_MASK      0x00000007UL   /**< Mask for checking the alignment of */
 #endif
 
 /** Used with RTOS calls that require a timeout.  This implies the call will never timeout. */
@@ -79,7 +79,7 @@ extern "C"
 //
 // Note on error strategy.  If the error is a normal part of operation (timeouts, full queues, empty
 // queues), the these errors are listed here and the abstraction layer implementation must map from
-// the underlying errors to these.  If the errors are special cases, the the error \ref
+// the underlying errors to these.  If the errors are special cases, the error \ref
 // CY_RTOS_GENERAL_ERROR will be returned and \ref cy_rtos_last_error() can be used to retrieve the
 // RTOS specific error message.
 //
@@ -89,7 +89,7 @@ extern "C"
 /** The RTOS could not allocate memory for the specified operation */
 #define CY_RTOS_NO_MEMORY                   \
     CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 1)
-/** An error occured in the RTOS */
+/** An error occurred in the RTOS */
 #define CY_RTOS_GENERAL_ERROR               \
     CY_RSLT_CREATE(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_OS, 2)
 /** A bad argument was passed into the APIs */
@@ -234,7 +234,7 @@ cy_rtos_error_t cy_rtos_last_error(void);
  * @return The status of thread create request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_ALIGNMENT_ERROR].
  *         \n Specific for kernel:
- *         \li RTX and TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li RTX and THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_function,
                                 const char* name, void* stack, uint32_t stack_size,
@@ -244,9 +244,9 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
  *
  * This function is called just before a thread exits.  In some cases it is sufficient
  * for a thread to just return to exit, but in other cases, the RTOS must be explicitly
- * signaled. In cases where a return is sufficient, this should be a null funcition.
- * where the RTOS must be signaled, this function should perform that In cases operation.
- * In code using RTOS services, this function should be placed at any at any location
+ * signaled. In cases where a return is sufficient, this should be a null function.
+ * In cases where the RTOS must be signaled, this function should perform that operation.
+ * In code using RTOS services, this function should be placed at any location
  * where the main thread function will return, exiting the thread. Threads that can
  * exit must still be joined (\ref cy_rtos_thread_join) to ensure their resources are
  * fully cleaned up.
@@ -271,9 +271,9 @@ cy_rslt_t cy_rtos_thread_exit(void);
  *          \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
  *          \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread);
+cy_rslt_t cy_rtos_thread_terminate(const cy_thread_t* thread);
 
 /** Waits for a thread to complete.
  *
@@ -287,7 +287,7 @@ cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread);
  * CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
  *          \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_thread_join(cy_thread_t* thread);
 
@@ -302,7 +302,7 @@ cy_rslt_t cy_rtos_thread_join(cy_thread_t* thread);
  * @returns The status of the thread running check. Same across all RTOS kernels
  *          [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM].
  */
-cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running);
+cy_rslt_t cy_rtos_thread_is_running(const cy_thread_t* thread, bool* running);
 
 /** Gets the state the thread is currently in
  *
@@ -314,9 +314,9 @@ cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running);
  * @returns The status of the thread state check. Same across all RTOS kernels
  *          [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_thread_get_state(cy_thread_t* thread, cy_thread_state_t* state);
+cy_rslt_t cy_rtos_thread_get_state(const cy_thread_t* thread, cy_thread_state_t* state);
 
 /** Get current thread handle
  *
@@ -342,7 +342,7 @@ cy_rslt_t cy_rtos_thread_get_handle(cy_thread_t* thread);
  * @returns The status of thread wait. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *          \ref CY_RTOS_TIMEOUT].
  *          \n Specific for kernel:
- *          \li RTX and TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li RTX and THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms);
 
@@ -357,9 +357,9 @@ cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms);
  * @returns The status of thread wait. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *          \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
- *          \li RTX and TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li RTX and THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread);
+cy_rslt_t cy_rtos_thread_set_notification(const cy_thread_t* thread);
 
 
 /** Get the name of a thread
@@ -374,10 +374,10 @@ cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread);
  * @returns The status of getting the thread name. Same across all RTOS
  *          kernels [\ref CY_RSLT_SUCCESS].
  *          \n Specific for kernel:
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  *
  */
-cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name);
+cy_rslt_t cy_rtos_thread_get_name(const cy_thread_t* thread, const char** thread_name);
 
 
 /** \} group_abstraction_rtos_threads */
@@ -393,6 +393,8 @@ cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name)
  */
 
 /** Suspend the scheduler
+ *
+ * \ingroup group_abstraction_rtos_scheduler
  *
  * This function suspends the scheduler and makes sure that the code executed after the call does
  * not get interrupted by a task switch.
@@ -411,8 +413,10 @@ cy_rslt_t cy_rtos_scheduler_suspend(void);
 
 /** Resume the scheduler
  *
+ * \ingroup group_abstraction_rtos_scheduler
+ *
  * This function resumes the scheduler after it was suspended.
- * If incorrectly called (called more times than \ref cy_rtos_scheduler_suspend) it fails returning
+ * If incorrectly called (called more times than \c cy_rtos_scheduler_suspend) it fails returning
  * \ref CY_RTOS_BAD_PARAM
  *
  * @return The status of scheduler resume request. Same across all RTOS kernels
@@ -421,6 +425,8 @@ cy_rslt_t cy_rtos_scheduler_suspend(void);
 cy_rslt_t cy_rtos_scheduler_resume(void);
 
 /** Gets the state the scheduler is currently in
+ *
+ * \ingroup group_abstraction_rtos_scheduler
  *
  * This function is called to determine if the scheduler is running/suspend/not started.
  *
@@ -444,7 +450,7 @@ cy_rslt_t cy_rtos_scheduler_get_state(cy_scheduler_state_t* state);
 
 /** Create a mutex which can support recursion or not.
  *
- * Creates a binary mutex which can be used for mutual exclusion to prevent simulatenous
+ * Creates a binary mutex which can be used for mutual exclusion to prevent simultaneous
  * access of shared resources. Created mutexes can support priority inheritance if recursive.
  *
  * \note Not all RTOS implementations support non-recursive mutexes. In this case a recursive
@@ -458,7 +464,7 @@ cy_rslt_t cy_rtos_scheduler_get_state(cy_scheduler_state_t* state);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive);
 
@@ -478,10 +484,10 @@ cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive);
  *         before timeout_ms period. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
- *         \li RTX: [\ref CY_RTOS_NO_MEMORY. \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms);
+cy_rslt_t cy_rtos_mutex_get(const cy_mutex_t* mutex, cy_time_t timeout_ms);
 
 /** Set a mutex.
  *
@@ -495,11 +501,11 @@ cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex);
+cy_rslt_t cy_rtos_mutex_set(const cy_mutex_t* mutex);
 
 /** Deletes a mutex.
  *
- * This function frees the resources associated with a sempahore.
+ * This function frees the resources associated with a semaphore.
  *
  * @param[in] mutex Pointer to the mutex handle
  *
@@ -507,7 +513,7 @@ cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex);
 
@@ -535,7 +541,7 @@ cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, uint32_t initcount);
 
@@ -555,9 +561,9 @@ cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, u
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms);
+cy_rslt_t cy_rtos_semaphore_get(const cy_semaphore_t* semaphore, cy_time_t timeout_ms);
 
 /**
  * Set/Release a semaphore
@@ -571,7 +577,7 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore);
+cy_rslt_t cy_rtos_semaphore_set(const cy_semaphore_t* semaphore);
 
 /**
  * Get the count of a semaphore.
@@ -584,9 +590,9 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore);
  * CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count);
+cy_rslt_t cy_rtos_semaphore_get_count(const cy_semaphore_t* semaphore, size_t* count);
 
 /**
  * Deletes a semaphore
@@ -599,7 +605,7 @@ cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_semaphore_deinit(cy_semaphore_t* semaphore);
 
@@ -624,7 +630,7 @@ cy_rslt_t cy_rtos_semaphore_deinit(cy_semaphore_t* semaphore);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_event_init(cy_event_t* event);
 
@@ -641,7 +647,7 @@ cy_rslt_t cy_rtos_event_init(cy_event_t* event);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits);
+cy_rslt_t cy_rtos_event_setbits(const cy_event_t* event, uint32_t bits);
 
 /**
  * Clear the event flag bits
@@ -657,7 +663,7 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits);
+cy_rslt_t cy_rtos_event_clearbits(const cy_event_t* event, uint32_t bits);
 
 /** Get the event bits.
  *
@@ -669,9 +675,9 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits);
  * @return The status of the get request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits);
+cy_rslt_t cy_rtos_event_getbits(const cy_event_t* event, uint32_t* bits);
 
 /** Wait for the event and return bits.
  *
@@ -691,9 +697,9 @@ cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits);
  *         kernels [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, bool all,
+cy_rslt_t cy_rtos_event_waitbits(const cy_event_t* event, uint32_t* bits, bool clear, bool all,
                                  cy_time_t timeout_ms);
 
 /** Deinitialize a event.
@@ -706,7 +712,7 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_event_deinit(cy_event_t* event);
 
@@ -731,7 +737,7 @@ cy_rslt_t cy_rtos_event_deinit(cy_event_t* event);
  * @return The status of the init request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_NO_MEMORY].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_queue_init(cy_queue_t* queue, size_t length, size_t itemsize);
 
@@ -751,9 +757,9 @@ cy_rslt_t cy_rtos_queue_init(cy_queue_t* queue, size_t length, size_t itemsize);
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_GENERAL_ERROR].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
- *         \li TREADX: [\ref CY_RTOS_NO_MEMORY].
+ *         \li THREADX: [\ref CY_RTOS_NO_MEMORY].
  */
-cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms);
+cy_rslt_t cy_rtos_queue_put(const cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms);
 
 /** Gets an item in a queue.
  *
@@ -771,9 +777,9 @@ cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t t
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_GENERAL_ERROR].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
- *         \li TREADX: [\ref CY_RTOS_TIMEOUT].
+ *         \li THREADX: [\ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms);
+cy_rslt_t cy_rtos_queue_get(const cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms);
 
 /** Return the number of items in the queue.
  *
@@ -785,9 +791,9 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
  * @return The status of the count request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting);
+cy_rslt_t cy_rtos_queue_count(const cy_queue_t* queue, size_t* num_waiting);
 
 /** Return the amount of empty space in the queue.
  *
@@ -801,9 +807,9 @@ cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting);
  * @return The status of the space request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces);
+cy_rslt_t cy_rtos_queue_space(const cy_queue_t* queue, size_t* num_spaces);
 
 /** Reset the queue.
  *
@@ -816,7 +822,7 @@ cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue);
+cy_rslt_t cy_rtos_queue_reset(const cy_queue_t* queue);
 
 /** Deinitialize the queue handle.
  *
@@ -829,7 +835,7 @@ cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_queue_deinit(cy_queue_t* queue);
 
@@ -858,7 +864,7 @@ cy_rslt_t cy_rtos_queue_deinit(cy_queue_t* queue);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
                              cy_timer_callback_t fun, cy_timer_callback_arg_t arg);
@@ -874,7 +880,7 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms);
+cy_rslt_t cy_rtos_timer_start(const cy_timer_t* timer, cy_time_t num_ms);
 
 /** Sends a request to stop the timer. Depending on the priorities of threads in the system,
  * it may be necessary for high priority items to wait before the timer is actually stopped.
@@ -886,7 +892,7 @@ cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
  */
-cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer);
+cy_rslt_t cy_rtos_timer_stop(const cy_timer_t* timer);
 
 /** Returns state of a timer.
  *
@@ -896,9 +902,9 @@ cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer);
  * @return The status of the is_running request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADEX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
-cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state);
+cy_rslt_t cy_rtos_timer_is_running(const cy_timer_t* timer, bool* state);
 
 /** Deinit the timer.
  *
@@ -949,7 +955,7 @@ cy_rslt_t cy_rtos_time_get(cy_time_t* tval);
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY,
  *         \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
 
@@ -991,7 +997,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of thread create request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *          \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_ALIGNMENT_ERROR].
  *          \n Specific for kernel:
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_create_thread(thread, entry_function, name, stack, stack_size, priority, arg) \
     cy_rtos_thread_create(thread, entry_function, name, stack, stack_size, priority, arg)
@@ -1021,7 +1027,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @returns The status of thread wait. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *          \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
- *          \li RTX and TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li RTX and THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_set_thread_notification(thread, in_isr) \
     cy_rtos_thread_set_notification(thread)
@@ -1038,7 +1044,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @returns The status of thread wait. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *          \ref CY_RTOS_TIMEOUT].
  *          \n Specific for kernel:
- *          \li RTX and TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li RTX and THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_wait_thread_notification(timeout_ms)   cy_rtos_thread_wait_notification(timeout_ms)
 
@@ -1052,7 +1058,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @returns The status of the thread state check. Same across all RTOS kernels
  *          [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_get_thread_state(thread, state)   cy_rtos_thread_get_state(thread, state)
 
@@ -1068,7 +1074,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
  *          \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_join_thread(thread)               cy_rtos_thread_join(thread)
 
@@ -1099,7 +1105,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *          \ref CY_RTOS_BAD_PARAM].
  *          \n Specific for kernel:
  *          \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *          \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *          \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_terminate_thread(thread)          cy_rtos_thread_terminate(thread)
 
@@ -1107,9 +1113,9 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *
  * This function is called just before a thread exits.  In some cases it is sufficient
  * for a thread to just return to exit, but in other cases, the RTOS must be explicitly
- * signaled. In cases where a return is sufficient, this should be a null funcition.
- * where the RTOS must be signaled, this function should perform that In cases operation.
- * In code using RTOS services, this function should be placed at any at any location
+ * signaled. In cases where a return is sufficient, this should be a null function.
+ * In cases where the RTOS must be signaled, this function should perform that operation.
+ * In code using RTOS services, this function should be placed at any location
  * where the main thread function will return, exiting the thread. Threads that can
  * exit must still be joined (\ref cy_rtos_join_thread) to ensure their resources are
  * fully cleaned up.
@@ -1129,7 +1135,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
 
 /** Create a mutex which can support recursion or not.
  *
- * Creates a binary mutex which can be used for mutual exclusion to prevent simulatenous
+ * Creates a binary mutex which can be used for mutual exclusion to prevent simultaneous
  * access of shared resources. Created mutexes can support priority inheritance if recursive.
  *
  * \note Not all RTOS implementations support non-recursive mutexes. In this case a recursive
@@ -1143,14 +1149,14 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_mutex2(mutex, recursive) \
     cy_rtos_mutex_init(mutex, recursive)
 
 /** Create a mutex which can support recursion.
  *
- * Creates a binary mutex which can be used for mutual exclusion to prevent simulatenous
+ * Creates a binary mutex which can be used for mutual exclusion to prevent simultaneous
  * access of shared resources. Created mutexes can support priority inheritance if recursive.
  *
  * \note Not all RTOS implementations support non-recursive mutexes. In this case a recursive
@@ -1163,7 +1169,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_mutex(mutex) \
     cy_rtos_mutex_init(mutex, true)
@@ -1184,8 +1190,8 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         before timeout_ms period. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
- *         \li RTX: [\ref CY_RTOS_NO_MEMORY. \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_get_mutex(mutex, timeout_ms) \
     cy_rtos_mutex_get(mutex, timeout_ms)
@@ -1206,7 +1212,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
 
 /** Deletes a mutex.
  *
- * This function frees the resources associated with a sempahore.
+ * This function frees the resources associated with a semaphore.
  *
  * @param[in] mutex Pointer to the mutex handle
  *
@@ -1214,7 +1220,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_deinit_mutex(mutex)    cy_rtos_mutex_deinit(mutex)
 
@@ -1243,7 +1249,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_semaphore(semaphore, maxcount, initcount) \
     cy_rtos_semaphore_init(semaphore, maxcount, initcount)
@@ -1265,7 +1271,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_get_semaphore(semaphore, timeout_ms, \
                               in_isr) cy_rtos_semaphore_get(semaphore, timeout_ms)
@@ -1296,7 +1302,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_get_count_semaphore(semaphore, count) cy_rtos_semaphore_get_count(semaphore, count)
 
@@ -1311,7 +1317,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_TIMEOUT, \ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_deinit_semaphore(semaphore) cy_rtos_semaphore_deinit(semaphore)
 
@@ -1338,7 +1344,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_event(event)    cy_rtos_event_init(event)
 
@@ -1385,7 +1391,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of the get request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_getbits_event(event, bits) cy_rtos_event_getbits(event, bits)
 
@@ -1407,7 +1413,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         kernels [\ref CY_RSLT_SUCCESS, \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_TIMEOUT].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_waitbits_event(event, bits, clear, all, \
                                timeout_ms) \
@@ -1423,7 +1429,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_deinit_event(event)    cy_rtos_event_deinit(event)
 
@@ -1450,7 +1456,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of the init request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_NO_MEMORY].
  *         \n Specific for kernel:
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_queue(queue, length, itemsize) \
     cy_rtos_queue_init(queue, length, itemsize)
@@ -1472,7 +1478,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_GENERAL_ERROR].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
- *         \li TREADX: [\ref CY_RTOS_NO_MEMORY].
+ *         \li THREADX: [\ref CY_RTOS_NO_MEMORY].
  */
 #define cy_rtos_put_queue(queue, item_ptr, timeout_ms, in_isr) \
     cy_rtos_queue_put(queue, item_ptr, timeout_ms)
@@ -1496,7 +1502,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM, \ref CY_RTOS_GENERAL_ERROR].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT].
- *         \li TREADX: [\ref CY_RTOS_TIMEOUT].
+ *         \li THREADX: [\ref CY_RTOS_TIMEOUT].
  */
 #define cy_rtos_get_queue(queue, item_ptr, timeout_ms, in_isr) \
     cy_rtos_queue_get(queue, item_ptr, timeout_ms)
@@ -1511,7 +1517,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of the count request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_count_queue(queue, num_waiting) \
     cy_rtos_queue_count(queue, num_waiting)
@@ -1528,7 +1534,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of the space request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADX: [CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_space_queue(queue, num_spaces) \
     cy_rtos_queue_space(queue, num_spaces)
@@ -1558,7 +1564,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_TIMEOUT, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_deinit_queue(queue) \
     cy_rtos_queue_deinit(queue)
@@ -1590,7 +1596,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  *         \n Specific for kernel:
  *         \li FreeRTOS: [\ref CY_RTOS_NO_MEMORY].
  *         \li RTX: [\ref CY_RTOS_NO_MEMORY, \ref CY_RTOS_GENERAL_ERROR].
- *         \li TREADX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_init_timer(timer, type, fun, arg) \
     cy_rtos_timer_init(timer, type, fun, arg)
@@ -1629,7 +1635,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
  * @return The status of the is_running request. Same across all RTOS kernels [\ref CY_RSLT_SUCCESS,
  *         \ref CY_RTOS_BAD_PARAM].
  *         \n Specific for kernel:
- *         \li TREADEX: [\ref CY_RTOS_GENERAL_ERROR].
+ *         \li THREADX: [\ref CY_RTOS_GENERAL_ERROR].
  */
 #define cy_rtos_is_running_timer(timer, state) \
     cy_rtos_timer_is_running(timer, state)
@@ -1677,3 +1683,5 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* CYABS_RTOS_H */

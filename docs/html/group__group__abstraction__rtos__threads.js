@@ -20,12 +20,12 @@ var group__group__abstraction__rtos__threads =
     ] ],
     [ "cy_rtos_thread_create", "group__group__abstraction__rtos__threads.html#gaf0721c9708baff03b7ba01213e3693c5", null ],
     [ "cy_rtos_thread_exit", "group__group__abstraction__rtos__threads.html#gafdf08459efae892545782d13b2840ba6", null ],
-    [ "cy_rtos_thread_terminate", "group__group__abstraction__rtos__threads.html#ga68dc2ce563e9ac1f31e2c2a3ea1c2fa7", null ],
+    [ "cy_rtos_thread_terminate", "group__group__abstraction__rtos__threads.html#ga276ebbfec10de77f962117ba0c75cb0b", null ],
     [ "cy_rtos_thread_join", "group__group__abstraction__rtos__threads.html#gabb5be1db099f0c85ec1156670d34763c", null ],
-    [ "cy_rtos_thread_is_running", "group__group__abstraction__rtos__threads.html#ga88fcc6b322f83b515d4b049fca54a202", null ],
-    [ "cy_rtos_thread_get_state", "group__group__abstraction__rtos__threads.html#gab587210336d9a91d51686150577615dd", null ],
+    [ "cy_rtos_thread_is_running", "group__group__abstraction__rtos__threads.html#ga25f8a4ffa7741e03767edd84b8b6d9c6", null ],
+    [ "cy_rtos_thread_get_state", "group__group__abstraction__rtos__threads.html#ga1cf6cc77cad1aa1f188e77bd477fb3ee", null ],
     [ "cy_rtos_thread_get_handle", "group__group__abstraction__rtos__threads.html#ga2db2a0b5c73d1042313d229bf9fde18a", null ],
     [ "cy_rtos_thread_wait_notification", "group__group__abstraction__rtos__threads.html#ga48c657566a9d85d8003c8c8784907c0d", null ],
-    [ "cy_rtos_thread_set_notification", "group__group__abstraction__rtos__threads.html#gaa29bd111d0e71594887f83e8a2ef5874", null ],
-    [ "cy_rtos_thread_get_name", "group__group__abstraction__rtos__threads.html#ga69c4cc657945f9cc8aaf1ee3667fd004", null ]
+    [ "cy_rtos_thread_set_notification", "group__group__abstraction__rtos__threads.html#gab6e0d947e7b7447fbb0c21e50fbf8cc2", null ],
+    [ "cy_rtos_thread_get_name", "group__group__abstraction__rtos__threads.html#gac09db208f97dff634408eb1768fcd426", null ]
 ];

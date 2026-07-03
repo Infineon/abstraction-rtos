@@ -6,11 +6,8 @@
  * threads and deferring work to a worker thread.
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,6 +49,8 @@ typedef struct
 } cy_worker_dispatch_info_t;
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Thread entry signature is fixed by cy_thread_entry_fn_t via cy_thread_arg_t; argument is converted to a const worker context pointer and not modified.");
 //--------------------------------------------------------------------------------------------------
 // cy_worker_thread_func
 //
@@ -62,13 +61,17 @@ typedef struct
  * @param   arg : pointer to @ref cy_worker_thread_info_t
  */
 //--------------------------------------------------------------------------------------------------
+
 static void cy_worker_thread_func(cy_thread_arg_t arg)
 {
-    cy_rslt_t                 result;
+    cy_rslt_t result;
     cy_worker_dispatch_info_t dispatch_info;
-    cy_worker_thread_info_t*  worker = (cy_worker_thread_info_t*)arg;
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.5", 1,
+                                 "Worker thread argument carries user context as cy_thread_arg_t; conversion to cy_worker_thread_info_t* restores the original object pointer.");
+    const cy_worker_thread_info_t* worker = (const cy_worker_thread_info_t*)arg;
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.5");
 
-    while (1)
+    for (;;)
     {
         result = cy_rtos_queue_get(&worker->event_queue, &dispatch_info, CY_RTOS_NEVER_TIMEOUT);
         if (result == CY_RSLT_SUCCESS)
@@ -83,8 +86,11 @@ static void cy_worker_thread_func(cy_thread_arg_t arg)
             }
         }
     }
-    cy_rtos_thread_exit();
+    (void)cy_rtos_thread_exit();
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 //--------------------------------------------------------------------------------------------------
@@ -95,13 +101,13 @@ cy_rslt_t cy_worker_thread_create(cy_worker_thread_info_t* new_worker,
 {
     // Param check
     CY_ASSERT((params != NULL) && (new_worker != NULL));
-    CY_ASSERT((params->stack == NULL) || ((params->stack != NULL) && (params->stack_size != 0)));
+    CY_ASSERT((params->stack == NULL) || ((params->stack != NULL) && (params->stack_size != 0U)));
 
     // Start with a clean structure
-    memset(new_worker, 0, sizeof(cy_worker_thread_info_t));
+    (void)memset(new_worker, 0, sizeof(cy_worker_thread_info_t));
 
     cy_rslt_t result = cy_rtos_queue_init(&new_worker->event_queue,
-                                          (params->num_entries != 0)
+                                          (params->num_entries != 0U)
                                           ? params->num_entries
                                           : CY_WORKER_DEFAULT_ENTRIES,
                                           sizeof(cy_worker_dispatch_info_t));
@@ -121,7 +127,7 @@ cy_rslt_t cy_worker_thread_create(cy_worker_thread_info_t* new_worker,
         if (result != CY_RSLT_SUCCESS)
         {
             new_worker->state = CY_WORKER_THREAD_INVALID;
-            cy_rtos_queue_deinit(&new_worker->event_queue);
+            (void)cy_rtos_queue_deinit(&new_worker->event_queue);
         }
     }
     return result;
@@ -136,6 +142,8 @@ cy_rslt_t cy_worker_thread_delete(cy_worker_thread_info_t* old_worker)
     cy_rslt_t result = CY_RSLT_SUCCESS;
 
     uint32_t state = cyhal_system_critical_section_enter();
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA_CAST", 6,
+                                 "MISRA C-2012 Rule 10.3. The implicit signed-to-unsigned conversion is safe because all enum values (0..4) are non-negative and fit within uint32_t range without value change.");
     if (old_worker->state != CY_WORKER_THREAD_INVALID)
     {
         // Don't allow terminating while cy_rtos_put_queue is running
@@ -147,7 +155,7 @@ cy_rslt_t cy_worker_thread_delete(cy_worker_thread_info_t* old_worker)
             old_worker->state = CY_WORKER_THREAD_TERMINATING;
             cyhal_system_critical_section_exit(state);
             cy_worker_dispatch_info_t dispatch_info = { NULL, NULL };
-            result = cy_rtos_queue_put(&old_worker->event_queue, &dispatch_info, 0);
+            result = cy_rtos_queue_put(&old_worker->event_queue, &dispatch_info, 0U);
             if (result != CY_RSLT_SUCCESS)
             {
                 // Could not enqueue termination task, return to valid state
@@ -211,11 +219,11 @@ cy_rslt_t cy_worker_thread_enqueue(cy_worker_thread_info_t* worker_info,
 
     cy_worker_dispatch_info_t dispatch_info = { work_func, arg };
     // Queue an event to be run by the worker thread
-    cy_rslt_t result = cy_rtos_queue_put(&worker_info->event_queue, &dispatch_info, 0);
+    cy_rslt_t result = cy_rtos_queue_put(&worker_info->event_queue, &dispatch_info, 0U);
 
     state = cyhal_system_critical_section_enter();
     worker_info->enqueue_count--;
-    if (worker_info->enqueue_count == 0)
+    if (worker_info->enqueue_count == 0U)
     {
         worker_info->state = CY_WORKER_THREAD_VALID;
     }
@@ -228,5 +236,7 @@ cy_rslt_t cy_worker_thread_enqueue(cy_worker_thread_info_t* worker_info,
 #if defined(__cplusplus)
 }
 #endif
+
+CY_MISRA_BLOCK_END("MISRA_CAST");
 
 #endif // defined(CY_USING_HAL) || defined(COMPONENT_MTB_HAL)

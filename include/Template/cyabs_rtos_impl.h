@@ -8,11 +8,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2019-2021 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +23,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_IMPL_H
+#define CYABS_RTOS_IMPL_H
 
 /*
  * Exclude template files except for documentation purposes.
@@ -47,11 +45,11 @@ extern "C"
  * \{
  * The following defines, types and return statuses have values that are specific to each RTOS port.
  * The define values are specific to each RTOS. The types are simple aliases that
- * wrap RTOS specifc types. Code cannot assume anything about the values or internals
+ * wrap RTOS specific types. Code cannot assume anything about the values or internals
  * of any types.
  *
  * Due to the differences in RTOSes, the return statuses are not the same across all RTOSes.
- * We recomend to control only "CY_RSLT_SUCCESS" status.
+ * We recommend to control only "CY_RSLT_SUCCESS" status.
  * And only if status not "CY_RSLT_SUCCESS" use "cy_rtos_last_error()" to get the last error from
  * the RTOS.
  */
@@ -77,7 +75,7 @@ extern "C"
  */
 typedef enum
 {
-    CY_RTOS_PRIORITY_MIN         = 0,   /**< Minumum allowable Thread priority */
+    CY_RTOS_PRIORITY_MIN         = 0,   /**< Minimum allowable Thread priority */
     CY_RTOS_PRIORITY_LOW         = 1,   /**< A low priority Thread */
     CY_RTOS_PRIORITY_BELOWNORMAL = 2,   /**< A slightly below normal Thread priority */
     CY_RTOS_PRIORITY_NORMAL      = 3,   /**< The normal Thread priority */
@@ -115,3 +113,5 @@ typedef void* /* TODO: Replace with RTOS specific type*/ cy_rtos_error_t;
 #endif
 
 #endif // defined(DOXYGEN)
+
+#endif /* CYABS_RTOS_IMPL_H */

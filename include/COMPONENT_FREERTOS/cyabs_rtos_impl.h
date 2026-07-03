@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2019-2021 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +21,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_IMPL_H
+#define CYABS_RTOS_IMPL_H
 
 #include <FreeRTOS.h>
 #include <semphr.h>
@@ -32,7 +30,8 @@
 #include <event_groups.h>
 #include <timers.h>
 #include "stdbool.h"
-#if !defined (COMPONENT_CAT5)
+#include "cyabs_rtos_device_caps.h"
+#if !defined (CY_RTOS_IS_H1_DEVICE)
 #include <cmsis_compiler.h>
 #endif
 #include "cyabs_rtos_types.h"
@@ -45,12 +44,12 @@ extern "C" {
 /******************************************************
 *                 Constants
 ******************************************************/
-#define CY_RTOS_MIN_STACK_SIZE      300            /**< Minimum stack size in bytes */
+#define CY_RTOS_MIN_STACK_SIZE      300U           /**< Minimum stack size in bytes */
 #define CY_RTOS_ALIGNMENT           0x00000008UL   /**< Minimum alignment for RTOS objects */
 #define CY_RTOS_ALIGNMENT_MASK      0x00000007UL   /**< Mask for checking the alignment of
                                                         created RTOS objects */
 #if !defined(CY_RTOS_MAX_SUSPEND_NESTING)
-#define CY_RTOS_MAX_SUSPEND_NESTING 3              /**< Maximum nesting allowed for calls
+#define CY_RTOS_MAX_SUSPEND_NESTING 3U             /**< Maximum nesting allowed for calls
                                                         to scheduler suspend from ISR */
 #endif
 
@@ -59,3 +58,5 @@ cy_time_t convert_ms_to_ticks(cy_time_t timeout_ms);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* CYABS_RTOS_IMPL_H */

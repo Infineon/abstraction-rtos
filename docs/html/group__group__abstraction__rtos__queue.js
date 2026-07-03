@@ -10,10 +10,10 @@ var group__group__abstraction__rtos__queue =
     [ "cy_rtos_reset_queue", "group__group__abstraction__rtos__queue.html#ga577a15f469ab35e436eb928a5bafb242", null ],
     [ "cy_rtos_deinit_queue", "group__group__abstraction__rtos__queue.html#ga722817c669a90a1e0672b677e84244a4", null ],
     [ "cy_rtos_queue_init", "group__group__abstraction__rtos__queue.html#gab91ffe4236e50a9d38c8ee4f18d7d7c2", null ],
-    [ "cy_rtos_queue_put", "group__group__abstraction__rtos__queue.html#ga45e5fda9a449d0cf3a859b06ad8af989", null ],
-    [ "cy_rtos_queue_get", "group__group__abstraction__rtos__queue.html#ga799b29ec0a55325fe81c3fe0f4f61e33", null ],
-    [ "cy_rtos_queue_count", "group__group__abstraction__rtos__queue.html#gaa9e756a6c3d0884d89ab2c84ba82ddfa", null ],
-    [ "cy_rtos_queue_space", "group__group__abstraction__rtos__queue.html#ga43af25bb1f92654a59d7b724714a7345", null ],
-    [ "cy_rtos_queue_reset", "group__group__abstraction__rtos__queue.html#gac4f95128753f27b3c4ff56e6774a2ddb", null ],
+    [ "cy_rtos_queue_put", "group__group__abstraction__rtos__queue.html#ga013acdfe747e409d8a28172f9040bbf5", null ],
+    [ "cy_rtos_queue_get", "group__group__abstraction__rtos__queue.html#ga32b820305662a9f1b5bda3d2c9ec2f24", null ],
+    [ "cy_rtos_queue_count", "group__group__abstraction__rtos__queue.html#ga46c4fbd43d29b7f1c28b34091b6c9fb5", null ],
+    [ "cy_rtos_queue_space", "group__group__abstraction__rtos__queue.html#ga0a02adb7656c3448858cee46f8cd3234", null ],
+    [ "cy_rtos_queue_reset", "group__group__abstraction__rtos__queue.html#ga2e3a228aeffc115acbbc3b049c76cb33", null ],
     [ "cy_rtos_queue_deinit", "group__group__abstraction__rtos__queue.html#ga86a8db88e4fb3b3d671754ff7902952c", null ]
 ];

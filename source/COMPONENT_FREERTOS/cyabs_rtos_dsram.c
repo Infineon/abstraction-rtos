@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,20 +21,23 @@
  * limitations under the License.
  **************************************************************************************************/
 #include <cmsis_compiler.h> // For __WEAK
+#include <cy_utils.h>
 #include "FreeRTOS.h"
 #include "cyabs_rtos.h"
 #include "cyabs_rtos_dsram.h"
-#if defined(COMPONENT_CAT1B)
+#if defined(CY_RTOS_HAS_DEEPSLEEP_RAM)
 #include "cy_syslib.h"
 #endif
-#if defined(COMPONENT_CAT1E)
-#include "system_cat1e.h"
-#endif
 
+CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 2.2", 2,
+                        "Empty weak DSRAM hook implementations are intentional extension points that can be overridden by the application or BSP.");
+
+CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 8.6", 1,
+                        "vPortSetupTimerInterrupt is implemented in the FreeRTOS port layer; this extern declaration is required for cross-module linkage.");
 void vPortSetupTimerInterrupt(void);
-void Cy_SysPm_StoreDSContext_Wfi(void);
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.6");
 
-#if defined (COMPONENT_CAT1B) || defined (COMPONENT_CAT1E)
+#if defined(CY_RTOS_HAS_DEEPSLEEP_RAM)
 //--------------------------------------------------------------------------------------------------
 // vStoreDSRAMContextWithWFI
 //--------------------------------------------------------------------------------------------------
@@ -92,4 +92,7 @@ __WEAK void cyabs_rtos_exit_dsram(void)
 }
 
 
-#endif // if defined(COMPONENT_CAT1B)
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 2.2");
+
+#endif \
+    // if defined(CY_RTOS_HAS_DEEPSLEEP_RAM)

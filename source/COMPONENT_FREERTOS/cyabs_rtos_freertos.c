@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,14 +24,21 @@
 #include <cy_utils.h>
 #include <cy_result.h>
 #include <cyabs_rtos.h>
-#include <stdlib.h>
 #include <FreeRTOS.h>
 #include <task.h>
 #include "cyabs_rtos_internal.h"
 
+/* FreeRTOS pdTRUE/pdFALSE macros expand to boolean-essential literals but are assigned to/compared
+   with BaseType_t (signed 32-bit), which is inherent to the FreeRTOS API design. */
+CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 10.3", 13,
+                        "pdTRUE/pdFALSE are boolean-essential but used as BaseType_t per FreeRTOS API.");
+CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 10.4", 18,
+                        "Comparison of BaseType_t with pdTRUE/pdFALSE (boolean) is required by FreeRTOS API.");
+
 static const uint32_t  TASK_IDENT = 0xABCDEF01U;
 
 
+#if (configUSE_TIMERS == 1)
 typedef struct
 {
     cy_timer_callback_t     cb;
@@ -46,12 +50,18 @@ typedef struct
 // for our cyabs_rtos abstraction API.
 static void timer_callback(TimerHandle_t arg)
 {
-    callback_data_t* cb_arg = (callback_data_t*)pvTimerGetTimerID(arg);
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.5", 1,
+                                 "pvTimerGetTimerID returns void*; conversion to callback_data_t* is required to restore the callback context set during timer creation.");
+    const callback_data_t* cb_arg = (const callback_data_t*)pvTimerGetTimerID(arg);
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.5");
     if (NULL != cb_arg->cb)
     {
         cb_arg->cb(cb_arg->arg);
     }
 }
+
+
+#endif /* configUSE_TIMERS */
 
 
 //==================================================================================================
@@ -88,11 +98,14 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
                                 cy_thread_priority_t priority, cy_thread_arg_t arg)
 {
     cy_rslt_t status;
+
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.6", 1,
+                                 "Void-pointer-to-integer ((uint32_t)stack) cast validates stack alignment at system boundary.");
     if ((thread == NULL) || (stack_size < CY_RTOS_MIN_STACK_SIZE))
     {
         status = CY_RTOS_BAD_PARAM;
     }
-    else if ((stack != NULL) && (0 != (((uint32_t)stack) & CY_RTOS_ALIGNMENT_MASK)))
+    else if ((stack != NULL) && (0UL != (((uint32_t)stack) & CY_RTOS_ALIGNMENT_MASK)))
     {
         status = CY_RTOS_ALIGNMENT_ERROR;
     }
@@ -110,9 +123,12 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
         // user did not provide one.
         uint32_t offset = (stack == NULL)
             ? (stack_size & ~CY_RTOS_ALIGNMENT_MASK)
-            : 0;
+            : 0U;
         uint32_t size  = offset + sizeof(cy_task_wrapper_t);
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.5", 1,
+                                     "pvPortMalloc returns void*; conversion to uint8_t* is required for byte-wise offset computation within one allocated block.");
         uint8_t* ident = (uint8_t*)pvPortMalloc(size);
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.5");
 
         if (ident == NULL)
         {
@@ -122,22 +138,44 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
         {
             StackType_t stack_size_rtos =
                 ((stack_size & ~CY_RTOS_ALIGNMENT_MASK) / sizeof(StackType_t));
+            CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 11.3", 1,
+                                    "Cast from uint8_t* to StackType_t* within single allocated block with guaranteed alignment.");
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.5", 1,
+                                         "Stack storage is represented as void* or uint8_t*; conversion to StackType_t* is required by xTaskCreateStatic API and alignment is validated.");
             StackType_t* stack_rtos = (stack == NULL)
                 ? (StackType_t*)ident
                 : (StackType_t*)stack;
-
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.5");
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.3");
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.3", 1,
+                                         "Cast from uint8_t* to cy_task_wrapper_t* within single allocated block. Offset guarantees alignment.");
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 18.4", 1,
+                                         "Pointer arithmetic computes wrapper address within a single allocated memory block.");
             cy_task_wrapper_t* wrapper = (cy_task_wrapper_t*)(ident + offset);
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 18.4");
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.3");
             wrapper->sema = xSemaphoreCreateBinary();
             CY_ASSERT(wrapper->sema != NULL);
             wrapper->magic  = TASK_IDENT;
             wrapper->memptr = ident;
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.4", 1,
+                                         "Pointer-to-integer cast required to verify alignment at runtime.");
             CY_ASSERT(((uint32_t)wrapper & CY_RTOS_ALIGNMENT_MASK) == 0UL);
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.4");
+            CY_MISRA_FP_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                    "xTaskCreateStatic returns TaskHandle_t (incomplete struct pointer) assigned to cy_thread_t.");
             *thread = xTaskCreateStatic((TaskFunction_t)entry_function, name, stack_size_rtos, arg,
                                         (UBaseType_t)priority, stack_rtos, &(wrapper->task));
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                         "TaskHandle_t is an opaque FreeRTOS pointer type; debug-only assert compares returned handle identity with wrapper task storage.");
             CY_ASSERT(((void*)*thread == (void*)&(wrapper->task)) || (*thread == NULL));
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
             status = CY_RSLT_SUCCESS;
         }
     }
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.6");
+
     return status;
 }
 
@@ -163,21 +201,22 @@ cy_rslt_t cy_rtos_thread_exit(void)
 
     // This cast is ok because the handle internally represents the TCB that we created in the
     // thread create function.
-    cy_task_wrapper_t* wrapper = ((cy_task_wrapper_t*)handle);
+    CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                 "TaskHandle_t is an opaque incomplete-type pointer; cast to wrapper is safe by design.");
+    const cy_task_wrapper_t* wrapper = ((const cy_task_wrapper_t*)handle);
+    CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
+
+    CY_ASSERT(wrapper->magic == TASK_IDENT);
     if (wrapper->magic == TASK_IDENT)
     {
         // This signals to the thread deleting the current thread that it it is safe to delete the
         // current thread.
-        xSemaphoreGive(wrapper->sema);
-    }
-    else
-    {
-        CY_ASSERT(false);
+        (void)xSemaphoreGive(wrapper->sema);
     }
 
     // This function is not expected to return and calling cy_rtos_join_thread will call vTaskDelete
     // on this thread and clean up.
-    while (1)
+    for (;;)
     {
         #if defined(INCLUDE_vTaskSuspend)
         vTaskSuspend(handle);
@@ -191,7 +230,7 @@ cy_rslt_t cy_rtos_thread_exit(void)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_terminate
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
+cy_rslt_t cy_rtos_thread_terminate(const cy_thread_t* thread)
 {
     cy_rslt_t status;
     if (thread == NULL)
@@ -202,15 +241,18 @@ cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
     {
         vTaskDelete(*thread);
         // Check to see if we allocated the task and if so free it up.
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                     "TaskHandle_t is an opaque incomplete-type pointer; cast to wrapper is safe by design.");
         cy_task_wrapper_t* wrapper = ((cy_task_wrapper_t*)*thread);
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         vTaskSuspendAll();
         if (wrapper->magic == TASK_IDENT)
         {
-            wrapper->magic = 0;
+            wrapper->magic = 0U;
             vSemaphoreDelete(wrapper->sema);
             vPortFree(wrapper->memptr);
         }
-        xTaskResumeAll();
+        (void)xTaskResumeAll();
         status = CY_RSLT_SUCCESS;
     }
     return status;
@@ -220,7 +262,7 @@ cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
+cy_rslt_t cy_rtos_thread_is_running(const cy_thread_t* thread, bool* running)
 {
     cy_rslt_t status;
     if ((thread == NULL) || (running == NULL))
@@ -230,7 +272,7 @@ cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
     else
     {
         eTaskState st = eTaskGetState(*thread);
-        *running = (st == eRunning);
+        *running = (st == (eTaskState)eRunning);
         status   = CY_RSLT_SUCCESS;
     }
     return status;
@@ -240,7 +282,7 @@ cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_state
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_state(cy_thread_t* thread, cy_thread_state_t* state)
+cy_rslt_t cy_rtos_thread_get_state(const cy_thread_t* thread, cy_thread_state_t* state)
 {
     cy_rslt_t status;
     if ((thread == NULL) || (state == NULL))
@@ -296,12 +338,15 @@ cy_rslt_t cy_rtos_thread_join(cy_thread_t* thread)
     }
     else
     {
-        cy_task_wrapper_t* wrapper = ((cy_task_wrapper_t*)(*thread));
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                     "TaskHandle_t is an opaque incomplete-type pointer; cast to wrapper is safe by design.");
+        const cy_task_wrapper_t* wrapper = ((const cy_task_wrapper_t*)(*thread));
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         // This makes sure that the thread to be deleted has completed.  See cy_rtos_exit_thread()
         // for description of why this is done.
         if (wrapper->magic == TASK_IDENT)
         {
-            xSemaphoreTake(wrapper->sema, portMAX_DELAY);
+            (void)xSemaphoreTake(wrapper->sema, portMAX_DELAY);
             status = cy_rtos_terminate_thread(thread);
         }
         *thread = NULL;
@@ -333,13 +378,14 @@ cy_rslt_t cy_rtos_thread_get_handle(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_wait_notification
 //--------------------------------------------------------------------------------------------------
+#if (configUSE_TASK_NOTIFICATIONS != 0)
 cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms)
 {
     uint32_t ret;
 
     ret = ulTaskNotifyTake(pdTRUE, (timeout_ms == CY_RTOS_NEVER_TIMEOUT) ?
                            portMAX_DELAY : convert_ms_to_ticks(timeout_ms));
-    if (0 != ret)
+    if (0U != ret)
     {
         /* Received notify from another thread or ISR */
         return CY_RSLT_SUCCESS;
@@ -351,10 +397,14 @@ cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms)
 }
 
 
+#endif /* configUSE_TASK_NOTIFICATIONS */
+
+
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_set_notification
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
+#if (configUSE_TASK_NOTIFICATIONS != 0)
+cy_rslt_t cy_rtos_thread_set_notification(const cy_thread_t* thread)
 {
     cy_rslt_t status;
     if (thread == NULL)
@@ -373,7 +423,10 @@ cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
         else
         {
             /* No error checking as this function always returns pdPASS. */
-            xTaskNotifyGive(*thread);
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA_CAST", 1,
+                                         "Signedness conversion inside FreeRTOS macro expansion. Cannot modify third-party macro.");
+            (void)xTaskNotifyGive(*thread);
+            CY_MISRA_BLOCK_END("MISRA_CAST");
         }
         status = CY_RSLT_SUCCESS;
     }
@@ -381,10 +434,13 @@ cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
 }
 
 
+#endif /* configUSE_TASK_NOTIFICATIONS */
+
+
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_name
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name)
+cy_rslt_t cy_rtos_thread_get_name(const cy_thread_t* thread, const char** thread_name)
 {
     *thread_name = pcTaskGetName(*thread);
     return CY_RSLT_SUCCESS;
@@ -394,9 +450,9 @@ cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name)
 //==================================================================================================
 // Scheduler
 //==================================================================================================
-static uint16_t _cy_rtos_suspend_count = 0;
-static uint16_t _cy_rtos_suspend_count_from_ISR = 0;
-UBaseType_t uxSavedInterruptStatus[CY_RTOS_MAX_SUSPEND_NESTING];
+static uint16_t cy_rtos_suspend_count = 0;
+static uint16_t cy_rtos_suspend_count_from_ISR = 0;
+static UBaseType_t uxSavedInterruptStatus[CY_RTOS_MAX_SUSPEND_NESTING];
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_scheduler_suspend
 //--------------------------------------------------------------------------------------------------
@@ -405,12 +461,12 @@ cy_rslt_t cy_rtos_scheduler_suspend(void)
     cy_rslt_t status = CY_RSLT_SUCCESS;
     if (is_in_isr())
     {
-        if (_cy_rtos_suspend_count_from_ISR < (CY_RTOS_MAX_SUSPEND_NESTING -1))
+        if (cy_rtos_suspend_count_from_ISR < (CY_RTOS_MAX_SUSPEND_NESTING - 1U))
         {
             /* Suspend the Scheduler before interrupts are disabled */
             vTaskSuspendAll();
-            uxSavedInterruptStatus[_cy_rtos_suspend_count_from_ISR] = taskENTER_CRITICAL_FROM_ISR();
-            ++_cy_rtos_suspend_count_from_ISR;
+            uxSavedInterruptStatus[cy_rtos_suspend_count_from_ISR] = taskENTER_CRITICAL_FROM_ISR();
+            ++cy_rtos_suspend_count_from_ISR;
         }
         else
         {
@@ -426,7 +482,7 @@ cy_rslt_t cy_rtos_scheduler_suspend(void)
 
     if (status == CY_RSLT_SUCCESS)
     {
-        ++_cy_rtos_suspend_count;
+        ++cy_rtos_suspend_count;
     }
 
     return status;
@@ -439,15 +495,15 @@ cy_rslt_t cy_rtos_scheduler_suspend(void)
 cy_rslt_t cy_rtos_scheduler_resume(void)
 {
     cy_rslt_t status;
-    if (_cy_rtos_suspend_count > 0)
+    if (cy_rtos_suspend_count > 0U)
     {
         if (is_in_isr())
         {
-            if (_cy_rtos_suspend_count_from_ISR > 0) //We have at least one suspend from ISR call
+            if (cy_rtos_suspend_count_from_ISR > 0U) //We have at least one suspend from ISR call
             {
-                taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus[_cy_rtos_suspend_count_from_ISR -
-                                                                  1]);
-                --_cy_rtos_suspend_count_from_ISR;
+                taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus[cy_rtos_suspend_count_from_ISR -
+                                                                  1U]);
+                --cy_rtos_suspend_count_from_ISR;
                 status = CY_RSLT_SUCCESS;
             }
             else
@@ -460,9 +516,9 @@ cy_rslt_t cy_rtos_scheduler_resume(void)
             taskEXIT_CRITICAL();
             status = CY_RSLT_SUCCESS;
         }
-        --_cy_rtos_suspend_count;
+        --cy_rtos_suspend_count;
         /* Resume the Scheduler after interrupt are re-enabled */
-        xTaskResumeAll();
+        (void)xTaskResumeAll();
     }
     else
     {
@@ -514,6 +570,7 @@ cy_rslt_t cy_rtos_scheduler_get_state(cy_scheduler_state_t* state)
 // Mutexes
 //==================================================================================================
 
+#if (configUSE_MUTEXES == 1)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_init
 //--------------------------------------------------------------------------------------------------
@@ -524,12 +581,23 @@ cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive)
     {
         status = CY_RTOS_BAD_PARAM;
     }
+    #if (configUSE_RECURSIVE_MUTEXES != 1)
+    else if (recursive)
+    {
+        /* Recursive mutexes disabled in FreeRTOSConfig */
+        status = CY_RTOS_BAD_PARAM;
+    }
+    #endif /* configUSE_RECURSIVE_MUTEXES */
     else
     {
         mutex->is_recursive = recursive;
+        #if (configUSE_RECURSIVE_MUTEXES == 1)
         mutex->mutex_handle = recursive
             ? xSemaphoreCreateRecursiveMutex()
             : xSemaphoreCreateMutex();
+        #else
+        mutex->mutex_handle = xSemaphoreCreateMutex();
+        #endif /* configUSE_RECURSIVE_MUTEXES */
         if (mutex->mutex_handle == NULL)
         {
             status = CY_RTOS_NO_MEMORY;
@@ -549,7 +617,7 @@ FREERTOS_COMMON_SECTION_BEGIN
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_mutex_get(const cy_mutex_t* mutex, cy_time_t timeout_ms)
 {
     cy_rslt_t status;
     if (mutex == NULL)
@@ -559,9 +627,14 @@ cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
     else
     {
         TickType_t ticks  = convert_ms_to_ticks(timeout_ms);
-        BaseType_t result = (mutex->is_recursive)
+        BaseType_t result;
+        #if (configUSE_RECURSIVE_MUTEXES == 1)
+        result = (mutex->is_recursive)
                     ? xSemaphoreTakeRecursive(mutex->mutex_handle, ticks)
                     : xSemaphoreTake(mutex->mutex_handle, ticks);
+        #else
+        result = xSemaphoreTake(mutex->mutex_handle, ticks);
+        #endif /* configUSE_RECURSIVE_MUTEXES */
 
         status = (result == pdFALSE)
                 ? CY_RTOS_TIMEOUT
@@ -582,7 +655,7 @@ FREERTOS_COMMON_SECTION_BEGIN
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
+cy_rslt_t cy_rtos_mutex_set(const cy_mutex_t* mutex)
 {
     cy_rslt_t status;
     if (mutex == NULL)
@@ -591,9 +664,14 @@ cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
     }
     else
     {
-        BaseType_t result = (mutex->is_recursive)
+        BaseType_t result;
+        #if (configUSE_RECURSIVE_MUTEXES == 1)
+        result = (mutex->is_recursive)
                     ? xSemaphoreGiveRecursive(mutex->mutex_handle)
                     : xSemaphoreGive(mutex->mutex_handle);
+        #else
+        result = xSemaphoreGive(mutex->mutex_handle);
+        #endif /* configUSE_RECURSIVE_MUTEXES */
 
         status = (result == pdFALSE)
                 ? CY_RTOS_GENERAL_ERROR
@@ -607,6 +685,8 @@ cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
 FREERTOS_COMMON_SECTION_END
 #endif
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels modify the handle object in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_deinit
 //--------------------------------------------------------------------------------------------------
@@ -626,6 +706,12 @@ cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex)
 }
 
 
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
+
+
+#endif /* configUSE_MUTEXES */
+
+
 //==================================================================================================
 // Semaphores
 //==================================================================================================
@@ -633,6 +719,7 @@ cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_init
 //--------------------------------------------------------------------------------------------------
+#if (configUSE_COUNTING_SEMAPHORES == 1)
 cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, uint32_t initcount)
 {
     cy_rslt_t status;
@@ -656,17 +743,20 @@ cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, u
 }
 
 
+#endif /* configUSE_COUNTING_SEMAPHORES */
+
+
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_semaphore_get(const cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 {
     cy_rslt_t status;
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     // xSemaphoreTakeFromISR does not take timeout as a parameter
     // since it cannot block. Hence we return an error if the user
     // tries to set a timeout.
-    if ((semaphore == NULL) || (is_in_isr() && (timeout_ms != 0)))
+    if ((semaphore == NULL) || (is_in_isr() && (timeout_ms != 0U)))
     {
         status = CY_RTOS_BAD_PARAM;
     }
@@ -677,6 +767,8 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 
         if (is_in_isr())
         {
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                         "FreeRTOS ISR API uses opaque handle types; semaphore handle is passed through API as required by contract.");
             if (pdFALSE == xSemaphoreTakeFromISR(*semaphore, &xHigherPriorityTaskWoken))
             {
                 status = CY_RTOS_TIMEOUT;
@@ -685,6 +777,7 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
             {
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
             }
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         }
         else
         {
@@ -702,7 +795,7 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
+cy_rslt_t cy_rtos_semaphore_set(const cy_semaphore_t* semaphore)
 {
     cy_rslt_t status;
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -716,7 +809,11 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
 
         if (is_in_isr())
         {
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                         "FreeRTOS ISR API uses opaque handle types; semaphore handle is passed through API as required by contract.");
             ret = xSemaphoreGiveFromISR(*semaphore, &xHigherPriorityTaskWoken);
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
+
             if (ret == pdTRUE)
             {
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -724,7 +821,10 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
         }
         else
         {
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                         "FreeRTOS API uses opaque handle types; semaphore handle is passed through API as required by contract.");
             ret = xSemaphoreGive(*semaphore);
+            CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         }
 
         if (ret == pdFALSE)
@@ -744,7 +844,7 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count)
+cy_rslt_t cy_rtos_semaphore_get_count(const cy_semaphore_t* semaphore, size_t* count)
 {
     cy_rslt_t status;
     if (semaphore == NULL)
@@ -753,13 +853,19 @@ cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count)
     }
     else
     {
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                     "FreeRTOS API uses opaque handle types; semaphore handle is passed through API as required by contract.");
         *count = uxSemaphoreGetCount(*semaphore);
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         status = CY_RSLT_SUCCESS;
     }
     return status;
 }
 
 
+#if (configUSE_COUNTING_SEMAPHORES == 1)
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels modify the handle object in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_deinit
 //--------------------------------------------------------------------------------------------------
@@ -772,12 +878,20 @@ cy_rslt_t cy_rtos_semaphore_deinit(cy_semaphore_t* semaphore)
     }
     else
     {
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.2", 1,
+                                     "FreeRTOS API uses opaque handle types; semaphore handle is passed through API as required by contract.");
         vSemaphoreDelete(*semaphore);
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.2");
         status = CY_RSLT_SUCCESS;
     }
     return status;
 }
 
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
+
+
+#endif /* configUSE_COUNTING_SEMAPHORES */
 
 //==================================================================================================
 // Events
@@ -812,7 +926,7 @@ cy_rslt_t cy_rtos_event_init(cy_event_t* event)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_setbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_setbits(const cy_event_t* event, uint32_t bits)
 {
     cy_rslt_t status;
     if (event == NULL)
@@ -824,6 +938,7 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
         BaseType_t ret;
         if (is_in_isr())
         {
+            #if (configUSE_TIMERS == 1)
             BaseType_t xHigherPriorityTaskWoken = pdFALSE;
             ret = xEventGroupSetBitsFromISR(*event, (EventBits_t)bits, &xHigherPriorityTaskWoken);
 
@@ -831,6 +946,10 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
             {
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
             }
+            #else
+            /* xEventGroupSetBitsFromISR requires configUSE_TIMERS == 1 */
+            status = CY_RTOS_UNSUPPORTED;
+            #endif /* configUSE_TIMERS */
         }
         else
         {
@@ -838,7 +957,7 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
             // event bits at the time the function returns. There is potential to
             // return 0 (value equal to pdFALSE), so instead treat it as successful after the call
             // to xEventGroupSetBits to avoid false error.
-            xEventGroupSetBits(*event, (EventBits_t)bits);
+            (void)xEventGroupSetBits(*event, (EventBits_t)bits);
             ret = pdTRUE;
         }
 
@@ -858,7 +977,7 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_clearbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_clearbits(const cy_event_t* event, uint32_t bits)
 {
     cy_rslt_t status;
     if (event == NULL)
@@ -870,7 +989,12 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
         BaseType_t ret;
         if (is_in_isr())
         {
+            #if (configUSE_TIMERS == 1)
             ret = xEventGroupClearBitsFromISR(*event, (EventBits_t)bits);
+            #else
+            /* xEventGroupClearBitsFromISR requires configUSE_TIMERS == 1 */
+            status = CY_RTOS_UNSUPPORTED;
+            #endif /* configUSE_TIMERS */
         }
         else
         {
@@ -878,7 +1002,7 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
             // event bits before the requested bits were cleared. There is potential to
             // return 0 (value equal to pdFALSE), so instead treat it as successful after the call
             // to xEventGroupClearBits to avoid false error.
-            xEventGroupClearBits(*event, (EventBits_t)bits);
+            (void)xEventGroupClearBits(*event, (EventBits_t)bits);
             ret = pdTRUE;
         }
 
@@ -898,7 +1022,7 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_getbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
+cy_rslt_t cy_rtos_event_getbits(const cy_event_t* event, uint32_t* bits)
 {
     cy_rslt_t status;
     if ((event == NULL) || (bits == NULL))
@@ -907,7 +1031,7 @@ cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
     }
     else
     {
-        *bits  = xEventGroupGetBits(*event);
+        *bits  = xEventGroupClearBits(*event, 0U);
         status = CY_RSLT_SUCCESS;
     }
     return status;
@@ -917,7 +1041,7 @@ cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_waitbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, bool all,
+cy_rslt_t cy_rtos_event_waitbits(const cy_event_t* event, uint32_t* bits, bool clear, bool all,
                                  cy_time_t timeout_ms)
 {
     cy_rslt_t status;
@@ -932,7 +1056,7 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
 
         *bits = xEventGroupWaitBits(*event, (EventBits_t)bitsVal, (BaseType_t)clear,
                                     (BaseType_t)all, ticks);
-        status   = (((bitsVal & *bits) == bitsVal) || (((bitsVal & *bits) > 0) & !all))
+        status   = (((bitsVal & *bits) == bitsVal) || (((bitsVal & *bits) != 0U) && (!all)))
             ? CY_RSLT_SUCCESS
             : CY_RTOS_TIMEOUT;
     }
@@ -940,6 +1064,8 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels modify the handle object in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_deinit
 //--------------------------------------------------------------------------------------------------
@@ -957,6 +1083,9 @@ cy_rslt_t cy_rtos_event_deinit(cy_event_t* event)
     }
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 //==================================================================================================
@@ -995,7 +1124,7 @@ FREERTOS_COMMON_SECTION_BEGIN
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_put
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_put(const cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
 {
     cy_rslt_t status;
     if ((queue == NULL) || (item_ptr == NULL))
@@ -1044,7 +1173,7 @@ FREERTOS_COMMON_SECTION_BEGIN
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_get(const cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
 {
     cy_rslt_t status;
     if ((queue == NULL) || (item_ptr == NULL))
@@ -1090,7 +1219,7 @@ FREERTOS_COMMON_SECTION_END
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting)
+cy_rslt_t cy_rtos_queue_count(const cy_queue_t* queue, size_t* num_waiting)
 {
     cy_rslt_t status;
     if ((queue == NULL) || (num_waiting == NULL))
@@ -1111,7 +1240,7 @@ cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_space
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces)
+cy_rslt_t cy_rtos_queue_space(const cy_queue_t* queue, size_t* num_spaces)
 {
     cy_rslt_t status;
     if ((queue == NULL) || (num_spaces == NULL))
@@ -1130,7 +1259,7 @@ cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_reset
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue)
+cy_rslt_t cy_rtos_queue_reset(const cy_queue_t* queue)
 {
     cy_rslt_t status;
     if (queue == NULL)
@@ -1154,6 +1283,8 @@ cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels modify the handle object in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_deinit
 //--------------------------------------------------------------------------------------------------
@@ -1173,10 +1304,14 @@ cy_rslt_t cy_rtos_queue_deinit(cy_queue_t* queue)
 }
 
 
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
+
+
 //==================================================================================================
 // Timers
 //==================================================================================================
 
+#if (configUSE_TIMERS == 1)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_init
 //--------------------------------------------------------------------------------------------------
@@ -1192,7 +1327,10 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
     {
         // Create a wrapper callback to make sure to call fun() with arg as opposed
         // to providing the timer reference as FreeRTOS does by default.
-        callback_data_t* cb_arg = (callback_data_t*)malloc(sizeof(callback_data_t));
+        CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 11.5", 1,
+                                     "pvPortMalloc returns void* aligned to portBYTE_ALIGNMENT (>= sizeof(callback_data_t) alignment); conversion to callback_data_t* is safe - no alignment violation.");
+        callback_data_t* cb_arg = (callback_data_t*)pvPortMalloc(sizeof(callback_data_t));
+        CY_MISRA_BLOCK_END("MISRA C-2012 Rule 11.5");
         if (NULL == cb_arg)
         {
             status = CY_RTOS_NO_MEMORY;
@@ -1202,12 +1340,13 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
             cb_arg->cb  = fun;
             cb_arg->arg = arg;
 
-            BaseType_t reload = (type == CY_TIMER_TYPE_PERIODIC) ? pdTRUE : pdFALSE;
-            *timer = xTimerCreate("", 1, (UBaseType_t)reload, cb_arg, &timer_callback);
+            BaseType_t reload =
+                (type == (cy_timer_trigger_type_t)CY_TIMER_TYPE_PERIODIC) ? pdTRUE : pdFALSE;
+            *timer = xTimerCreate("", 1UL, (UBaseType_t)reload, cb_arg, &timer_callback);
 
             if (*timer == NULL)
             {
-                free(cb_arg);
+                vPortFree(cb_arg);
                 status = CY_RTOS_NO_MEMORY;
             }
             else
@@ -1223,7 +1362,7 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_start
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
+cy_rslt_t cy_rtos_timer_start(const cy_timer_t* timer, cy_time_t num_ms)
 {
     cy_rslt_t status;
     if (timer == NULL)
@@ -1252,10 +1391,10 @@ cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
         }
         else
         {
-            ret = xTimerChangePeriod(*timer, ticks, 0);
+            ret = xTimerChangePeriod(*timer, ticks, 0UL);
             if (ret == pdPASS)
             {
-                ret = xTimerStart(*timer, 0);
+                ret = xTimerStart(*timer, 0UL);
             }
         }
         if (ret == pdFALSE)
@@ -1274,7 +1413,7 @@ cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_stop
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
+cy_rslt_t cy_rtos_timer_stop(const cy_timer_t* timer)
 {
     cy_rslt_t status;
     if (timer == NULL)
@@ -1287,7 +1426,10 @@ cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
         if (is_in_isr())
         {
             BaseType_t taskWoken = pdFALSE;
+            CY_MISRA_DEVIATE_BLOCK_START("MISRA_CAST", 1,
+                                         "Signedness conversion inside FreeRTOS macro expansion. Cannot modify third-party macro.");
             ret = xTimerStopFromISR(*timer, &taskWoken);
+            CY_MISRA_BLOCK_END("MISRA_CAST");
             if (pdPASS == ret)
             {
                 portYIELD_FROM_ISR(taskWoken);
@@ -1295,7 +1437,7 @@ cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
         }
         else
         {
-            ret = xTimerStop(*timer, 0);
+            ret = xTimerStop(*timer, 0UL);
         }
         if (ret == pdFALSE)
         {
@@ -1314,7 +1456,7 @@ cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
+cy_rslt_t cy_rtos_timer_is_running(const cy_timer_t* timer, bool* state)
 {
     cy_rslt_t status;
     if ((timer == NULL) || (state == NULL))
@@ -1332,6 +1474,8 @@ cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; some kernels modify the handle object in deinit paths.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_deinit
 //--------------------------------------------------------------------------------------------------
@@ -1345,7 +1489,7 @@ cy_rslt_t cy_rtos_timer_deinit(cy_timer_t* timer)
     else
     {
         void*      cb  = pvTimerGetTimerID(*timer);
-        BaseType_t ret = xTimerDelete(*timer, 0);
+        BaseType_t ret = xTimerDelete(*timer, 0UL);
 
         if (ret == pdFALSE)
         {
@@ -1353,12 +1497,18 @@ cy_rslt_t cy_rtos_timer_deinit(cy_timer_t* timer)
         }
         else
         {
-            free(cb);
+            vPortFree(cb);
             status = CY_RSLT_SUCCESS;
         }
     }
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
+
+
+#endif /* configUSE_TIMERS */
 
 
 //==================================================================================================
@@ -1377,7 +1527,8 @@ cy_rslt_t cy_rtos_time_get(cy_time_t* tval)
     }
     else
     {
-        *tval  = (cy_time_t)((xTaskGetTickCount() * 1000LL) / configTICK_RATE_HZ);
+        *tval  =
+            (cy_time_t)(((uint64_t)xTaskGetTickCount() * 1000ULL) / (uint64_t)configTICK_RATE_HZ);
         status = CY_RSLT_SUCCESS;
     }
     return status;
@@ -1392,3 +1543,7 @@ cy_rslt_t cy_rtos_delay_milliseconds(cy_time_t num_ms)
     vTaskDelay(convert_ms_to_ticks(num_ms));
     return CY_RSLT_SUCCESS;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 10.4");
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 10.3");

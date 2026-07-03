@@ -16,7 +16,7 @@ var group__group__worker__thread__util =
     [ "CY_WORKER_THREAD_DEFAULT_NAME", "group__group__worker__thread__util.html#gae45bcc8cd62f58eb236ef486b4d5558c", null ],
     [ "CY_WORKER_DEFAULT_ENTRIES", "group__group__worker__thread__util.html#gae442fac806ebf74e3ba623a2c2e2ae1b", null ],
     [ "CY_WORKER_THREAD_ERR_THREAD_INVALID", "group__group__worker__thread__util.html#gaad1bf39d72a75351866a1871779dcaf8", null ],
-    [ "cy_worker_thread_func_t", "group__group__worker__thread__util.html#gaeb4fb0e41f7d0092cc135f7cc5e41250", null ],
+    [ "cy_worker_thread_func_t", "group__group__worker__thread__util.html#ga5a35ac09429933764aa8f8d0af2b9bcf", null ],
     [ "cy_worker_thread_state_t", "group__group__worker__thread__util.html#ga514bc54aa543a69ce1768903b9851473", [
       [ "CY_WORKER_THREAD_INVALID", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473a0d938b2d088126d6d47c936040e843c2", null ],
       [ "CY_WORKER_THREAD_VALID", "group__group__worker__thread__util.html#gga514bc54aa543a69ce1768903b9851473aec127b9642db106c61c3c32106fb69fb", null ],

@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2019-2025 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +21,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_TYPES_H
+#define CYABS_RTOS_TYPES_H
 
 #include <FreeRTOS.h>
 #include <semphr.h>
@@ -32,7 +30,8 @@
 #include <event_groups.h>
 #include <timers.h>
 #include "stdbool.h"
-#if !defined (COMPONENT_CAT5)
+#include "cyabs_rtos_device_caps.h"
+#if !defined (CY_RTOS_IS_H1_DEVICE)
 #include <cmsis_compiler.h>
 #endif
 
@@ -79,3 +78,5 @@ typedef BaseType_t         cy_rtos_error_t;
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* CYABS_RTOS_TYPES_H */

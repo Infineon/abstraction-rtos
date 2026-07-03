@@ -25,21 +25,8 @@
 var NAVTREE =
 [
   [ "Abstraction RTOS", "index.html", [
-    [ "RTOS Abstraction", "index.html", [
-      [ "Overview", "index.html#autotoc_md1", null ],
-      [ "Getting Started", "index.html#autotoc_md2", null ],
-      [ "Features", "index.html#autotoc_md3", null ],
-      [ "RTOS Configuration Requirements", "index.html#autotoc_md4", [
-        [ "FreeRTOS", "index.html#autotoc_md5", [
-          [ "Low Power Configuration", "index.html#autotoc_md6", null ],
-          [ "Known Limitations", "index.html#autotoc_md7", null ]
-        ] ],
-        [ "RTX / ThreadX", "index.html#autotoc_md8", null ]
-      ] ],
-      [ "Porting Notes", "index.html#autotoc_md9", null ],
-      [ "More information", "index.html#autotoc_md10", null ]
-    ] ],
-    [ "API Reference", "modules.html", "modules" ]
+    [ "Abstraction-RTOS layer Middleware", "index.html", "index" ],
+    [ "API Reference", "topics.html", "topics" ]
   ] ]
 ];
 
@@ -48,5 +35,6 @@ var NAVTREEINDEX =
 "group__group__abstraction__rtos__common.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';

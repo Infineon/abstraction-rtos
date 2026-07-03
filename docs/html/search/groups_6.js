@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['threads_0',['Threads',['../group__group__abstraction__rtos__threads.html',1,'']]],
-  ['time_1',['Time',['../group__group__abstraction__rtos__time.html',1,'']]],
-  ['timer_2',['Timer',['../group__group__abstraction__rtos__timer.html',1,'']]]
+  ['rtos_20specific_20types_20defines_20and_20statuses_0',['RTOS Specific Types, Defines and Statuses',['../group__group__abstraction__rtos__port.html',1,'']]]
 ];

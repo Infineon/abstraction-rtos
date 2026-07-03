@@ -5,11 +5,8 @@
  * Internal interface used for RTOS abstraction utilities.
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,14 +20,16 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_INTERNAL_H
+#define CYABS_RTOS_INTERNAL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdbool.h>
-#if !defined (COMPONENT_CAT5)
+#include "cyabs_rtos_device_caps.h"
+#if !defined (CY_RTOS_IS_H1_DEVICE)
 #include <cmsis_compiler.h>
 #endif
 
@@ -44,11 +43,11 @@ static inline bool is_in_isr(void)
     uint32_t mode = __get_mode();
     return (mode == 0x11U /*FIQ*/) || (mode == 0x12U /*IRQ*/) || (mode == 0x13U /*SVC*/) ||
            (mode == 0x17U /*ABT*/) || (mode == 0x1BU /*UND*/);
-    #elif defined(COMPONENT_CAT5)
+    #elif defined (CY_RTOS_IS_H1_DEVICE)
     // This device does not allow calling from interrupt context.
     return false;
     #else // Cortex-M
-    return (__get_IPSR() != 0);
+    return (__get_IPSR() != 0U);
     #endif
 }
 
@@ -56,3 +55,5 @@ static inline bool is_in_isr(void)
 #if defined(__cplusplus)
 }
 #endif
+
+#endif /* CYABS_RTOS_INTERNAL_H */

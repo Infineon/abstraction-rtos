@@ -11,8 +11,8 @@ var group__group__abstraction__rtos__timer =
       [ "CY_TIMER_TYPE_ONCE", "group__group__abstraction__rtos__timer.html#gga0606aecc2c90e9315f7da5e3daa3ffc1af554aa26a56ebee9da223be7c1f9d0e1", null ]
     ] ],
     [ "cy_rtos_timer_init", "group__group__abstraction__rtos__timer.html#ga4d679d61e091ef8abf70d95bc1496c91", null ],
-    [ "cy_rtos_timer_start", "group__group__abstraction__rtos__timer.html#ga978c045f4f7bd1bc2dda5039426b2475", null ],
-    [ "cy_rtos_timer_stop", "group__group__abstraction__rtos__timer.html#gab7aac5b6be6876806aed8e18f43ccc7f", null ],
-    [ "cy_rtos_timer_is_running", "group__group__abstraction__rtos__timer.html#ga7bf456853b8b353bf19977381377322b", null ],
+    [ "cy_rtos_timer_start", "group__group__abstraction__rtos__timer.html#gaf3da161d9607146d651545fd422d3369", null ],
+    [ "cy_rtos_timer_stop", "group__group__abstraction__rtos__timer.html#gae8661153c2bbb53ad49fdabb4b43609c", null ],
+    [ "cy_rtos_timer_is_running", "group__group__abstraction__rtos__timer.html#ga7271276bda05445380f7ae433731a9fa", null ],
     [ "cy_rtos_timer_deinit", "group__group__abstraction__rtos__timer.html#ga1c9db37ed530cce390d282e224d3b1bf", null ]
 ];

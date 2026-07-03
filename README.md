@@ -1,41 +1,131 @@
-# RTOS Abstraction
 
-## Overview
+# Abstraction-RTOS layer Middleware
 
-The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full features RTOS interface, but the provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within ModusToolbox™. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. The abstraction layer provides access to all the standard RTOS resources listed in the feature section below.
+# Overview
 
-While the primary purpose of the library is for middleware, the abstraction layer can be used by the application code. However, since this API does not provide all RTOS features and the application generally knows what RTOS is being used, this is typically an unnecessary overhead.
+The RTOS abstraction layer provides simple RTOS services like threads, semaphores, mutexes, queues, and timers. It is not intended to be a full-featured RTOS interface, but to provide just enough support to allow for RTOS independent drivers and middleware. This allows middleware applications to be as portable as possible within ModusToolbox™. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application. While the primary purpose of the library is for middleware, the abstraction layer can be used by the application code. However, since this API does not provide all RTOS features and the application generally knows what RTOS is being used, this is typically an unnecessary overhead. 
 
-All the RTOS abstraction layer functions generally all work the same way. The basic process is:
-1. Include the cyabs_rtos.h header file so that you have access to the RTOS functions.
-2. Declare a variable of the right type (e.g. cy_mutex_t)
-3. Call the appropriate create or initialize function (e.g. cy_rtos_init_mutex()). Provide it with a reference to the variable that was created in step 2.
-4. Access the RTOS object using one of the access functions. e.g. cy_rtos_set_mutex().
-5. If you don't need it anymore, free up the pointer with the appropriate de-init function (e.g. cy_rtos_deinit_mutex()).
 
-NOTE: All these functions need a pointer, so it is generally best to declare these "shared" resources as static global variables within the file that they are used.
+# Features
 
-## Getting Started
-
-To use the RTOS Abstraction, simply include a reference to `cyabs_rtos.h` and update the application's makefile to include the appropriate component. e.g. one of:
-* COMPONENTS+=RTX
-* COMPONENTS+=FREERTOS
-* COMPONENTS+=THREADX
-
-## Features
-
-* APIs for interacting with common RTOS Features including:
+The Abstraction-RTOS middleware allows other middleware applications to be as portable as possible within ModusToolbox™. This library provides a unified API around the actual RTOS. This allows middleware libraries to be written once independent of the RTOS actually selected for the application.   
+* APIs for interacting with common RTOS features including:
     * Threads
     * Mutexes
     * Semaphores
     * Timers
     * Queues
     * Events
+    * Time management
+    * Scheduler
+* Worker Thread utility for running callbacks in a dedicated thread
 * Implementations are provided for
-    * FreeRTOS
-    * RTX (CMSIS RTOS)
-    * ThreadX
-    * WICED RTOS
+    * FreeRTOS (FreeRTOS Kernel)
+    * RTX (CMSIS-RTX)
+    * ThreadX (Eclipse ThreadX)
+
+# When to Use
+
+Use Abstraction-RTOS middleware if you want to allow other middleware applications to be as portable as possible within ModusToolbox™, without dependency on a particular RTOS.
+
+## Use Cases
+
+* **Portable middleware development**: This is the primary use case of Abstraction-RTOS. The main idea is to give dependent middleware libraries maximum portability and independence from any specific RTOS. A middleware library that uses this abstraction can be integrated into any application regardless of which RTOS is selected, with no changes to the middleware source code. 
+
+* **RTOS migration**: Using Abstraction-RTOS allows building an application that is independent of any specific RTOS. This makes it possible to switch from one RTOS to another with minimal effort — only the `COMPONENTS` makefile variable needs to be updated, while the application and middleware code remain unchanged.
+
+# How to use
+
+## Prerequisites
+### Software Requirements
+Abstraction-RTOS supports three popular kernels, but does not include them inside the asset.
+Those kernels need to be downloaded separately into the APP folder.
+Download links:
+* [RTX (CMSIS-RTX)](https://github.com/ARM-software/CMSIS-RTX)
+* [ThreadX (Eclipse ThreadX)](https://github.com/eclipse-threadx/threadx)
+
+Note: No need to download FreeRTOS separately. It exists as an Infineon® library asset and can be added via Library Manager.  
+
+
+### Configure Makefile
+To connect any RTOS to the APP, add the chosen RTOS to the `COMPONENTS` parameter in the APP's main `Makefile`. For example:
+```makefile
+# Select one of the following:
+COMPONENTS+=RTX
+# or
+COMPONENTS+=FREERTOS
+# or
+COMPONENTS+=THREADX
+```
+
+### Add Headers
+You also need to include `cyabs_rtos.h` in your APP to use the Abstraction-RTOS APIs.
+
+## Getting Started
+
+
+**Step 1:** Create an empty project for your device.
+
+**Step 2:** In Library Manager, select Abstraction-RTOS to add it to your APP. Wait until the update is finished.
+
+**Step 3:** Also select FreeRTOS in Library Manager, or add another RTOS kernel to the project.
+
+**Step 4:** Add the code below. Build and program.
+
+
+```c
+#include "cybsp.h"
+#include "cyabs_rtos.h"
+
+/* USER LED toggle period in milliseconds */
+#define USER_LED_TOGGLE_PERIOD_MS   1000u
+
+static cy_thread_t my_thread;
+
+static void my_thread_func(cy_thread_arg_t arg)
+{
+    (void)arg;
+
+    for (;;)
+    {
+        /* Toggle the USER LED state */
+        Cy_GPIO_Inv(CYBSP_USER_LED_PORT, CYBSP_USER_LED_PIN);
+
+        /* Thread body: add application logic here */
+        cy_rtos_delay_milliseconds(USER_LED_TOGGLE_PERIOD_MS);
+    }
+}
+
+int main(void)
+{
+    cy_rslt_t result;
+
+    /* Initialize the device and board peripherals */
+    result = cybsp_init();
+    CY_ASSERT(result == CY_RSLT_SUCCESS);
+
+    __enable_irq();
+
+    /* Create the task. Let Abstraction-RTOS allocate an aligned stack. */
+    result = cy_rtos_thread_create(&my_thread,
+                                   my_thread_func,
+                                   "MyThread",
+                                   NULL,
+                                   1024u,
+                                   CY_RTOS_PRIORITY_NORMAL,
+                                   0u);
+    CY_ASSERT(result == CY_RSLT_SUCCESS);
+
+    /* Start the RTOS scheduler - does not return. */
+    vTaskStartScheduler();
+
+    return 0;
+}
+```
+
+**Step 5:** The LED starts blinking.
+
+
 
 ## RTOS Configuration Requirements
 ### FreeRTOS
@@ -59,7 +149,7 @@ To enable all functionality when using with FreeRTOS, the following configuratio
 * INCLUDE_vTaskSuspend
 
 Enabling configSUPPORT_STATIC_ALLOCATION requires the application to provide implementations for `vApplicationGetIdleTaskMemory` and
-`vApplicationGetTimerTaskMemory`functions. Weak implementations for these functions are provided as a part of this library. These can
+`vApplicationGetTimerTaskMemory` functions. Weak implementations for these functions are provided as a part of this library. These can
 be overridden by the application if custom implementations of these functions are desired.<br>
 
 #### Low Power Configuration
@@ -70,14 +160,14 @@ This library provides an API `vApplicationSleep` which can be used to enable tic
 \c \#define `portSUPPRESS_TICKS_AND_SLEEP( xIdleTime )    vApplicationSleep( xIdleTime )`
 
 In tickless mode `vApplicationSleep` updates the number of RTOS ticks that have passed since the tick interrupt was stopped using `vTaskStepTick`, taking into account the sleep/deepsleep latency.
-* The maximum tickless idle time can be calculated as follow:
+* The maximum tickless idle time can be calculated as follows:
     * `MaxIdleTime = LPtimerDelay + latency` where: `latency = PreSleepLatency + PostSleepLatency`, `LPtimerDelay = xExpectedIdleTime - latency`. 
 
     **Note**: The `LPtimerDelay` represents the duration in which the IP is configured to Wake-up the device. Wake-up can happen before its expiration if one other configured interrupt triggers during this time.
 
 * In case of `xExpectedIdleTime <= latency` WFI is executed instead, and normal sleep is expected to be reached (SCR->SLEEPDEEP = 0).
 
-* The actual Idle time for which the Systick timer is disabled, is always update in vTaskStepTick to keep the RTOS alwyas up to date, independently from if the tickless sleep is reached or not successfully. The reason for this is to find in the sequence of operations to reach the sleep, the Systick is disabled before the (deep)sleep callbacks are called, so if one of them will not allow (deep)sleep, the ticks for which the check is performed needs to be anyway counted in the RTOS.
+* The actual idle time for which the SysTick timer is disabled is always updated in vTaskStepTick to keep the RTOS always up to date, independently of whether the tickless sleep is reached successfully or not. The reason for this is that in the sequence of operations to reach sleep, the SysTick is disabled before the (deep)sleep callbacks are called, so if one of them does not allow (deep)sleep, the ticks for which the check is performed still need to be counted in the RTOS.
 
 Functions cy_rtos_scheduler_suspend/cy_rtos_scheduler_resume can be called from ISR but calls need to be paired to restore the saved interrupt status correctly so a structure to save these values has been implemented.
 The size of this structure can be controlled with CY_RTOS_MAX_SUSPEND_NESTING. This macro is overridable and its default value is 3.
@@ -119,11 +209,62 @@ Finally, the following macros need to be defined for memory allocations:
 - `CY_RTOS_ALIGNMENT`
 - `CY_RTOS_ALIGNMENT_MASK`
 
-## More information
-* [API Reference Guide](https://infineon.github.io/abstraction-rtos/html/modules.html)
-* [Cypress Semiconductor, an Infineon Technologies Company](http://www.cypress.com)
-* [Infineon GitHub](https://github.com/infineon)
-* [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
+# Industry Standards and Compliance
+
+Coding Standards:
+
+* MISRA C:2012
+
+## MISRA-C:2012 Compliance
+
+This section describes MISRA-C:2012 compliance and deviations for the Abstraction-RTOS.
+
+MISRA stands for Motor Industry Software Reliability Association. The MISRA specification covers a set of 10 mandatory rules, 110 required rules and 39 advisory rules that apply to firmware design and has been put together by the Automotive Industry to enhance the quality and robustness of the firmware code embedded in automotive devices.
+
+The MISRA specification defines two categories of deviations (see section 5.4 of the MISRA-C:2012 specification):
+
+* Project Deviations - deviations that are applicable for particular class of circumstances.
+* Specific Deviations - deviations that are applicable for a single instance in a single file.
+
+Project Deviations are documented in this section.
+Specific deviations are documented in the source code, close to the deviation occurrence. For each deviation a special macro identifies the relevant rule or directive number, and reason.
+
+### Verification Environment
+
+This section provides MISRA compliance analysis environment description.
+
+| Item | Description | Version |
+| ---- | ----------- | ------- |
+| Test Specification | MISRA-C:2012 Guidelines for the use of the C language in critical systems | March 2013 |
+| MISRA Checking Tool | Coverity Static Analysis Tool | 2022.12.0 |
+
+### Project Deviation
+
+| MISRA Rule | Rule Description | Rationale |
+| ---------- | ---------------- | --------- |
+| Rule 3.1 | The character sequences /* and // shall not be used within a comment. | Using of the special comment symbols is need for Doxygen comment support, it does not have any impact. |
+
+### Specific Deviation
+
+Specific deviations for the following required rules are documented inline in the source code using `CY_MISRA_DEVIATE_*` macroses.
+
+# Release Notes and Changelog
+- RELEASE.md - Detailed release notes for all versions
+
+# More information
+* [Reference Guide](https://infineon.github.io/abstraction-rtos/html/modules.html)
+* [FreeRTOS Kernel Page](https://github.com/FreeRTOS/FreeRTOS-Kernel)
+* [RTX Page](https://github.com/ARM-software/CMSIS-RTX)
+* [ThreadX Page](https://github.com/eclipse-threadx/threadx)
+* [ModusToolbox Software Environment, Quick Start Guide, Documentation, and Videos](https://www.infineon.com/cms/en/design-support/tools/sdk/modustoolbox-software/)
+* [ModusToolbox Introduction](https://documentation.infineon.com/modustoolbox/docs/zhf1731521206417/index.html)
+* [Code Examples for ModusToolbox Software](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software)
+* [Infineon Technologies AG](https://www.infineon.com)
+
+# License
+This library is released under the Apache License, Version 2.0. See the individual source files for the SPDX-License-Identifier or visit https://www.apache.org/licenses/LICENSE-2.0 for the full license text.
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.
+
+## Copyright
+(c) Copyright 2019-2026, Infineon Technologies AG, or an affiliate of Infineon Technologies AG.  All rights reserved.

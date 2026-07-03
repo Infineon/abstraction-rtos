@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2019-2025 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +21,8 @@
  * limitations under the License.
  **************************************************************************************************/
 
-#pragma once
+#ifndef CYABS_RTOS_TYPES_H
+#define CYABS_RTOS_TYPES_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -35,22 +33,23 @@ extern "C"
 {
 #endif
 
-#if !defined (COMPONENT_CAT5)
+#include "cyabs_rtos_device_caps.h"
+#if !defined (CY_RTOS_IS_H1_DEVICE)
 #include <cmsis_compiler.h>
 #else
-#include "cyabs_rtos_impl_cat5.h"
+#include "cyabs_rtos_impl_h1.h"
 #endif
 
 /******************************************************
 *                 Type Definitions
 ******************************************************/
 
-#if !defined (COMPONENT_CAT5)
+#if !defined (CY_RTOS_IS_H1_DEVICE)
 // RTOS thread priority. See /ref cy_thread_priority_t in the
-// cyabs_rtos_impl_cat5.h for the CAT5 thread priority definitions
+// cyabs_rtos_impl_h1.h for the Hatchet 1 thread priority definitions
 typedef enum
 {
-    CY_RTOS_PRIORITY_MIN         = TX_MAX_PRIORITIES - 1,         /**< Minumum allowable Thread
+    CY_RTOS_PRIORITY_MIN         = TX_MAX_PRIORITIES - 1,         /**< Minimum allowable Thread
                                                                      priority */
     CY_RTOS_PRIORITY_LOW         = (TX_MAX_PRIORITIES * 6 / 7),   /**< A low priority Thread */
     CY_RTOS_PRIORITY_BELOWNORMAL = (TX_MAX_PRIORITIES * 5 / 7),   /**< A slightly below normal
@@ -63,7 +62,7 @@ typedef enum
     CY_RTOS_PRIORITY_MAX         = 0                              /**< Maximum allowable Thread
                                                                      priority */
 } cy_thread_priority_t;
-#endif // if !defined (COMPONENT_CAT5)
+#endif // if !defined (CY_RTOS_IS_H1_DEVICE)
 
 typedef struct
 {
@@ -97,3 +96,5 @@ typedef UINT                    cy_rtos_error_t;
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* CYABS_RTOS_TYPES_H */

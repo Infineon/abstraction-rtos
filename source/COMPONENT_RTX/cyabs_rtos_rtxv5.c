@@ -6,11 +6,8 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
- * an affiliate of Cypress Semiconductor Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- *
+ * (c) 2019-2025, Infineon Technologies AG, or an affiliate of Infineon
+ * Technologies AG.  SPDX-License-Identifier: Apache-2.0
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,7 +133,6 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
                                 cy_thread_priority_t priority, cy_thread_arg_t arg)
 {
     cy_rslt_t      status = CY_RSLT_SUCCESS;
-    osThreadAttr_t attr;
 
     if ((thread == NULL) || (stack_size < CY_RTOS_MIN_STACK_SIZE))
     {
@@ -148,13 +144,15 @@ cy_rslt_t cy_rtos_thread_create(cy_thread_t* thread, cy_thread_entry_fn_t entry_
     }
     else
     {
-        attr.name       = name;
-        attr.attr_bits  = osThreadJoinable;
-        attr.cb_size    = osRtxThreadCbSize;
-        attr.stack_size = stack_size;
-        attr.priority   = (osPriority_t)priority;
-        attr.tz_module  = 0;
-        attr.reserved   = 0;
+        osThreadAttr_t attr =
+        {
+            .name       = name,
+            .attr_bits  = osThreadJoinable,
+            .cb_size    = osRtxThreadCbSize,
+            .stack_size = stack_size,
+            .priority   = (osPriority_t)priority,
+            .tz_module  = 0,
+        };
 
         // Allocate stack if NULL was passed
         if ((uint32_t*)stack == NULL)
@@ -206,7 +204,7 @@ cy_rslt_t cy_rtos_thread_exit(void)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_terminate
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
+cy_rslt_t cy_rtos_thread_terminate(const cy_thread_t* thread)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -228,7 +226,7 @@ cy_rslt_t cy_rtos_thread_terminate(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
+cy_rslt_t cy_rtos_thread_is_running(const cy_thread_t* thread, bool* running)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -248,7 +246,7 @@ cy_rslt_t cy_rtos_thread_is_running(cy_thread_t* thread, bool* running)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_state
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_state(cy_thread_t* thread, cy_thread_state_t* state)
+cy_rslt_t cy_rtos_thread_get_state(const cy_thread_t* thread, cy_thread_state_t* state)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -361,7 +359,7 @@ cy_rslt_t cy_rtos_thread_wait_notification(cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_set_notification
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
+cy_rslt_t cy_rtos_thread_set_notification(const cy_thread_t* thread)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
     uint32_t ret;
@@ -390,7 +388,7 @@ cy_rslt_t cy_rtos_thread_set_notification(cy_thread_t* thread)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_thread_get_name
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_thread_get_name(cy_thread_t* thread, const char** thread_name)
+cy_rslt_t cy_rtos_thread_get_name(const cy_thread_t* thread, const char** thread_name)
 {
     *thread_name = osThreadGetName(*thread);
     return CY_RSLT_SUCCESS;
@@ -408,9 +406,12 @@ static uint32_t _cy_rtos_suspend_ticks = 0;
 //--------------------------------------------------------------------------------------------------
 cy_rslt_t cy_rtos_scheduler_suspend(void)
 {
+    if (_cy_rtos_suspend_count == 0)
+    {
+        _cy_rtos_suspend_ticks = osKernelSuspend();
+        osKernelLock();
+    }
     ++_cy_rtos_suspend_count;
-    _cy_rtos_suspend_ticks = osKernelSuspend();
-    osKernelLock();
 
     return CY_RSLT_SUCCESS;
 }
@@ -425,8 +426,11 @@ cy_rslt_t cy_rtos_scheduler_resume(void)
     if (_cy_rtos_suspend_count > 0)
     {
         --_cy_rtos_suspend_count;
-        osKernelUnlock();
-        osKernelResume(_cy_rtos_suspend_ticks);
+        if (_cy_rtos_suspend_count == 0)
+        {
+            osKernelUnlock();
+            osKernelResume(_cy_rtos_suspend_ticks);
+        }
         status = CY_RSLT_SUCCESS;
     }
     else
@@ -530,7 +534,7 @@ cy_rslt_t cy_rtos_mutex_init(cy_mutex_t* mutex, bool recursive)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_mutex_get(const cy_mutex_t* mutex, cy_time_t timeout_ms)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -552,7 +556,7 @@ cy_rslt_t cy_rtos_mutex_get(cy_mutex_t* mutex, cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
+cy_rslt_t cy_rtos_mutex_set(const cy_mutex_t* mutex)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -571,6 +575,8 @@ cy_rslt_t cy_rtos_mutex_set(cy_mutex_t* mutex)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; this backend deinit updates handle state.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_mutex_deinit
 //--------------------------------------------------------------------------------------------------
@@ -597,6 +603,9 @@ cy_rslt_t cy_rtos_mutex_deinit(cy_mutex_t* mutex)
 
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -639,7 +648,7 @@ cy_rslt_t cy_rtos_semaphore_init(cy_semaphore_t* semaphore, uint32_t maxcount, u
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_semaphore_get(const cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 {
     cy_rslt_t       status = CY_RSLT_SUCCESS;
     cy_rtos_error_t statusInternal;
@@ -663,7 +672,7 @@ cy_rslt_t cy_rtos_semaphore_get(cy_semaphore_t* semaphore, cy_time_t timeout_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_set
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
+cy_rslt_t cy_rtos_semaphore_set(const cy_semaphore_t* semaphore)
 {
     cy_rslt_t       status = CY_RSLT_SUCCESS;
     cy_rtos_error_t statusInternal;
@@ -685,7 +694,7 @@ cy_rslt_t cy_rtos_semaphore_set(cy_semaphore_t* semaphore)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_get_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count)
+cy_rslt_t cy_rtos_semaphore_get_count(const cy_semaphore_t* semaphore, size_t* count)
 {
     cy_rslt_t status;
     if ((semaphore == NULL) || (count == NULL))
@@ -701,10 +710,12 @@ cy_rslt_t cy_rtos_semaphore_get_count(cy_semaphore_t* semaphore, size_t* count)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; this backend deinit updates handle state.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_semaphore_deinit
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_deinit_semaphore(cy_semaphore_t* semaphore)
+cy_rslt_t cy_rtos_semaphore_deinit(cy_semaphore_t* semaphore)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -726,6 +737,9 @@ cy_rslt_t cy_rtos_deinit_semaphore(cy_semaphore_t* semaphore)
 
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -774,7 +788,7 @@ cy_rslt_t cy_rtos_event_init(cy_event_t* event)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_setbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_setbits(const cy_event_t* event, uint32_t bits)
 {
     cy_rslt_t       status = CY_RSLT_SUCCESS;
     cy_rtos_error_t statusInternal;
@@ -799,7 +813,7 @@ cy_rslt_t cy_rtos_event_setbits(cy_event_t* event, uint32_t bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_clearbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
+cy_rslt_t cy_rtos_event_clearbits(const cy_event_t* event, uint32_t bits)
 {
     cy_rslt_t       status = CY_RSLT_SUCCESS;
     cy_rtos_error_t statusInternal;
@@ -824,7 +838,7 @@ cy_rslt_t cy_rtos_event_clearbits(cy_event_t* event, uint32_t bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_getbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
+cy_rslt_t cy_rtos_event_getbits(const cy_event_t* event, uint32_t* bits)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -844,7 +858,7 @@ cy_rslt_t cy_rtos_event_getbits(cy_event_t* event, uint32_t* bits)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_waitbits
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, bool all,
+cy_rslt_t cy_rtos_event_waitbits(const cy_event_t* event, uint32_t* bits, bool clear, bool all,
                                  cy_time_t timeout_ms)
 {
     cy_rslt_t       status = CY_RSLT_SUCCESS;
@@ -878,6 +892,8 @@ cy_rslt_t cy_rtos_event_waitbits(cy_event_t* event, uint32_t* bits, bool clear, 
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; this backend deinit updates handle state.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_event_deinit
 //--------------------------------------------------------------------------------------------------
@@ -903,6 +919,9 @@ cy_rslt_t cy_rtos_event_deinit(cy_event_t* event)
 
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -955,7 +974,7 @@ cy_rslt_t cy_rtos_queue_init(cy_queue_t* queue, size_t length, size_t itemsize)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_put
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_put(const cy_queue_t* queue, const void* item_ptr, cy_time_t timeout_ms)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -987,7 +1006,7 @@ cy_rslt_t cy_rtos_queue_put(cy_queue_t* queue, const void* item_ptr, cy_time_t t
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_get
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
+cy_rslt_t cy_rtos_queue_get(const cy_queue_t* queue, void* item_ptr, cy_time_t timeout_ms)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -1019,7 +1038,7 @@ cy_rslt_t cy_rtos_queue_get(cy_queue_t* queue, void* item_ptr, cy_time_t timeout
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_count
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting)
+cy_rslt_t cy_rtos_queue_count(const cy_queue_t* queue, size_t* num_waiting)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -1039,7 +1058,7 @@ cy_rslt_t cy_rtos_queue_count(cy_queue_t* queue, size_t* num_waiting)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_space
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces)
+cy_rslt_t cy_rtos_queue_space(const cy_queue_t* queue, size_t* num_spaces)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -1059,7 +1078,7 @@ cy_rslt_t cy_rtos_queue_space(cy_queue_t* queue, size_t* num_spaces)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_reset
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue)
+cy_rslt_t cy_rtos_queue_reset(const cy_queue_t* queue)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -1078,6 +1097,8 @@ cy_rslt_t cy_rtos_queue_reset(cy_queue_t* queue)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; this backend deinit updates handle state.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_queue_deinit
 //--------------------------------------------------------------------------------------------------
@@ -1104,6 +1125,9 @@ cy_rslt_t cy_rtos_queue_deinit(cy_queue_t* queue)
 
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************
@@ -1151,7 +1175,7 @@ cy_rslt_t cy_rtos_timer_init(cy_timer_t* timer, cy_timer_trigger_type_t type,
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_start
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
+cy_rslt_t cy_rtos_timer_start(const cy_timer_t* timer, cy_time_t num_ms)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -1173,7 +1197,7 @@ cy_rslt_t cy_rtos_timer_start(cy_timer_t* timer, cy_time_t num_ms)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_stop
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
+cy_rslt_t cy_rtos_timer_stop(const cy_timer_t* timer)
 {
     cy_rslt_t       status;
     cy_rtos_error_t statusInternal;
@@ -1195,7 +1219,7 @@ cy_rslt_t cy_rtos_timer_stop(cy_timer_t* timer)
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_is_running
 //--------------------------------------------------------------------------------------------------
-cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
+cy_rslt_t cy_rtos_timer_is_running(const cy_timer_t* timer, bool* state)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
 
@@ -1212,6 +1236,8 @@ cy_rslt_t cy_rtos_timer_is_running(cy_timer_t* timer, bool* state)
 }
 
 
+CY_MISRA_DEVIATE_BLOCK_START("MISRA C-2012 Rule 8.13", 1,
+                             "Public API signature in cyabs_rtos.h is non-const for cross-kernel compatibility; this backend deinit updates handle state.");
 //--------------------------------------------------------------------------------------------------
 // cy_rtos_timer_deinit
 //--------------------------------------------------------------------------------------------------
@@ -1238,6 +1264,9 @@ cy_rslt_t cy_rtos_timer_deinit(cy_timer_t* timer)
 
     return status;
 }
+
+
+CY_MISRA_BLOCK_END("MISRA C-2012 Rule 8.13");
 
 
 /******************************************************

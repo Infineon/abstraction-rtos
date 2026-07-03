@@ -12,5 +12,5 @@ var searchData=
   ['cy_5ftimer_5fcallback_5farg_5ft_9',['cy_timer_callback_arg_t',['../group__group__abstraction__rtos__port.html#gaae8f42a65f808106d77113794ab7dd30',1,'cyabs_rtos_impl.h']]],
   ['cy_5ftimer_5fcallback_5ft_10',['cy_timer_callback_t',['../group__group__abstraction__rtos__timer.html#ga92b29af1c848137e18dec1ae1cb5ffec',1,'cyabs_rtos.h']]],
   ['cy_5ftimer_5ft_11',['cy_timer_t',['../group__group__abstraction__rtos__port.html#gacf9d99e8262de333b482417053756624',1,'cyabs_rtos_impl.h']]],
-  ['cy_5fworker_5fthread_5ffunc_5ft_12',['cy_worker_thread_func_t',['../group__group__worker__thread__util.html#gaeb4fb0e41f7d0092cc135f7cc5e41250',1,'cy_worker_thread.h']]]
+  ['cy_5fworker_5fthread_5ffunc_5ft_12',['cy_worker_thread_func_t',['../group__group__worker__thread__util.html#ga5a35ac09429933764aa8f8d0af2b9bcf',1,'cy_worker_thread.h']]]
 ];
